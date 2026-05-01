@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elaine Chen — Motion Designer & Artist</title>
+  <link rel="icon" href="brand_assets/favicon.svg" type="image/svg+xml">
+  <script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Elms+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --red:   #e33e3e;
+      --black: #080808;
+      --white: #f0ede6;
+      --dark:  #101010;
+      --card:  #151515;
+      --line:  #222222;
+      --muted: rgba(240,237,230,0.45);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'IBM Plex Mono', monospace;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ─── Cursor ─────────────────────────────────────── */
+    #cur {
+      position: fixed; z-index: 9999;
+      width: 10px; height: 10px;
+      background: var(--red); border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%,-50%);
+      transition: width .15s, height .15s;
+      mix-blend-mode: difference;
+    }
+    #cur-ring {
+      position: fixed; z-index: 9998;
+      width: 38px; height: 38px;
+      border: 1px solid rgba(227,62,62,.45); border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%,-50%);
+      transition: left .1s ease, top .1s ease, width .25s, height .25s;
+    }
+    body.hovering #cur      { width: 18px; height: 18px; }
+    body.hovering #cur-ring { width: 58px; height: 58px; }
+
+    /* ─── Nav ────────────────────────────────────────── */
+    nav {
+      position: fixed; inset: 0 0 auto 0; z-index: 200;
+      padding: 28px 52px;
+      display: flex; justify-content: space-between; align-items: center;
+      mix-blend-mode: difference;
+    }
+    .nav-logo {
+      display: flex; align-items: center; text-decoration: none;
+    }
+    .nav-logo img { height: 24px; display: block; }
+    .nav-links { display: flex; gap: 40px; }
+    .nav-links a {
+      font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--white); text-decoration: none;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px; background: var(--red);
+      transition: width .3s ease;
+    }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* ─── Hero ───────────────────────────────────────── */
+    #hero {
+      position: relative; width: 100%; height: 100vh;
+      overflow: hidden; background: var(--black);
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 20% 50%, rgba(227,62,62,.12) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 70% at 80% 30%, rgba(227,62,62,.07) 0%, transparent 60%),
+        var(--black);
+      animation: bgPulse 8s ease-in-out infinite alternate;
+    }
+    @keyframes bgPulse { 0% { opacity: .8; } 100% { opacity: 1; } }
+    .hero-video { position: absolute; inset: 0; pointer-events: none; }
+    .hero-video iframe, .hero-video video {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 177.78vh; height: 56.25vw;
+      min-width: 100%; min-height: 100%;
+      object-fit: cover;
+    }
+    .grain {
+      position: absolute; inset: 0; z-index: 1;
+      opacity: .06; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 220px 220px;
+    }
+    .hero-vignette {
+      position: absolute; inset: 0; z-index: 2;
+      background: radial-gradient(ellipse at center, rgba(8,8,8,.3) 0%, rgba(8,8,8,.8) 100%);
+    }
+    .hero-content {
+      position: absolute; inset: 0; z-index: 3;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 0 52px;
+    }
+    .hero-eyebrow {
+      font-size: .65rem; letter-spacing: .28em; text-transform: uppercase;
+      color: var(--red); margin-bottom: 24px;
+      opacity: 0; animation: fadeUp .7s ease .4s forwards;
+    }
+    .hero-name {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(5.5rem, 16vw, 17rem);
+      line-height: .88; letter-spacing: -.02em; text-transform: uppercase;
+      opacity: 0; animation: fadeUp .8s ease .6s forwards;
+    }
+    .hero-name .line2 { color: var(--red); display: block; }
+    .hero-tagline {
+      margin-top: 36px; font-size: .78rem; letter-spacing: .1em; color: var(--muted);
+      opacity: 0; animation: fadeUp .7s ease .9s forwards;
+    }
+    .hero-scroll {
+      position: absolute; bottom: 44px; right: 52px; z-index: 3;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      font-size: .6rem; letter-spacing: .22em; text-transform: uppercase; color: var(--muted);
+      opacity: 0; animation: fadeIn 1s ease 1.4s forwards;
+    }
+    .scroll-line {
+      width: 1px; height: 56px;
+      background: linear-gradient(to bottom, var(--red), transparent);
+      animation: scrollPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%,100% { transform: scaleY(1); transform-origin: top; opacity: 1; }
+      50%      { transform: scaleY(.4); transform-origin: top; opacity: .5; }
+    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    /* ─── Section ────────────────────────────────────── */
+    .section { padding: 120px 52px; }
+    .s-label {
+      font-size: .62rem; letter-spacing: .3em; text-transform: uppercase;
+      color: var(--red); margin-bottom: 14px;
+    }
+    .s-title {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(3.5rem, 9vw, 9rem);
+      line-height: .88; letter-spacing: -.02em; text-transform: uppercase;
+    }
+
+    /* ─── Works ──────────────────────────────────────── */
+    #works { background: var(--black); }
+    .works-head {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 56px;
+    }
+    .works-sub {
+      font-size: .65rem; letter-spacing: .15em; color: var(--line); padding-bottom: 4px;
+    }
+    .works-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3px;
+      margin-left: -52px; margin-right: -52px;
+    }
+    .works-grid .work-card { aspect-ratio: 16/9; }
+    .work-card { position: relative; overflow: hidden; background: var(--card); cursor: none; }
+    .work-thumb {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+      filter: grayscale(15%); transition: transform .65s ease, filter .5s ease;
+    }
+    .work-placeholder {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .62rem; letter-spacing: .2em; color: #2a2a2a; background: var(--card);
+    }
+    .work-card-overlay {
+      position: absolute; inset: 0; background: rgba(8,8,8,0);
+      display: flex; align-items: flex-end; padding: 28px;
+      transition: background .4s ease;
+    }
+    .work-card:hover .work-card-overlay { background: rgba(8,8,8,.78); }
+    .work-card:hover .work-thumb { transform: scale(1.04); filter: grayscale(0%); }
+    .work-meta { transform: translateY(12px); opacity: 0; transition: transform .4s ease, opacity .35s ease; }
+    .work-card:hover .work-meta { transform: translateY(0); opacity: 1; }
+    .work-num { font-size: .58rem; letter-spacing: .22em; color: var(--red); margin-bottom: 5px; }
+    .work-title {
+      font-family: 'Anton', sans-serif; font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+      text-transform: uppercase; letter-spacing: .01em; line-height: 1;
+    }
+    .work-type { font-size: .65rem; letter-spacing: .1em; color: var(--muted); margin-top: 6px; }
+    .work-card::after {
+      content: ''; position: absolute; top: 0; right: 0;
+      width: 0; height: 3px; background: var(--red); transition: width .4s ease;
+    }
+    .work-card:hover::after { width: 60px; }
+
+    /* View All CTA */
+    .works-cta { margin-top: 52px; text-align: center; }
+    .view-all-btn {
+      display: inline-flex; align-items: center; gap: 14px;
+      font-size: .72rem; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none;
+      border: 1px solid var(--line); padding: 18px 44px;
+      transition: border-color .25s ease, color .25s ease;
+    }
+    .view-all-btn:hover { border-color: var(--red); color: var(--white); }
+    .view-all-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    /* ─── Footer ─────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--line);
+      padding: 80px 52px 40px;
+      background: var(--black);
+    }
+    .foot-main {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 80px; margin-bottom: 80px;
+    }
+    .foot-nav { display: flex; flex-direction: column; }
+    .foot-nav a {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(2.8rem, 5vw, 5rem);
+      line-height: 1; letter-spacing: -.02em; text-transform: uppercase;
+      color: var(--white); text-decoration: none;
+      transition: color .2s ease; padding-bottom: 6px;
+    }
+    .foot-nav a:hover { color: var(--red); }
+    .foot-info { display: flex; flex-direction: column; gap: 20px; padding-top: 12px; }
+    .foot-contact-item { display: flex; flex-direction: column; gap: 3px; }
+    .foot-contact-label {
+      font-size: .6rem; letter-spacing: .28em; text-transform: uppercase;
+      color: var(--red);
+    }
+    .foot-contact-row {
+      font-family: "Elms Sans", sans-serif;
+      font-size: 1.05rem; line-height: 1.4; color: var(--muted);
+      text-decoration: none; transition: color .2s ease;
+    }
+    .foot-contact-row:hover { color: var(--white); }
+    .foot-bottom {
+      border-top: 1px solid var(--line); padding-top: 28px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .foot-copy { font-size: .8rem; letter-spacing: .08em; color: #444; }
+    .foot-top {
+      font-size: .8rem; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color .2s ease;
+    }
+    .foot-top:hover { color: var(--red); }
+
+    /* ─── Project Detail Overlay ─────────────────────── */
+    #detail {
+      position: fixed; inset: 0; z-index: 300;
+      background: var(--black); overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform .65s cubic-bezier(.76,0,.24,1);
+    }
+    #detail.open { transform: translateY(0); }
+    .detail-topbar {
+      position: sticky; top: 0; z-index: 10;
+      padding: 22px 52px;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(8,8,8,.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .detail-back {
+      display: flex; align-items: center; gap: 14px;
+      font-size: .7rem; letter-spacing: .16em; text-transform: uppercase;
+      color: var(--white); text-decoration: none; cursor: none;
+      transition: color .2s ease;
+    }
+    .detail-back:hover { color: var(--red); }
+    .back-line {
+      width: 32px; height: 1px; background: currentColor; position: relative;
+      transition: width .3s ease;
+    }
+    .detail-back:hover .back-line { width: 50px; }
+    .back-line::before {
+      content: ''; position: absolute; left: 0; top: -4px;
+      width: 8px; height: 8px;
+      border-left: 1px solid currentColor; border-bottom: 1px solid currentColor;
+      transform: rotate(45deg);
+    }
+    .detail-counter { font-size: .65rem; letter-spacing: .18em; color: #444; }
+    .detail-body { padding: 60px 52px; max-width: 1440px; margin: 0 auto; }
+    .detail-label {
+      font-size: .82rem; letter-spacing: .28em; text-transform: uppercase;
+      color: var(--red); margin-bottom: 14px;
+    }
+    .detail-title {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(3rem, 7vw, 8rem);
+      text-transform: uppercase; line-height: .88; letter-spacing: -.02em;
+      margin-bottom: 48px;
+    }
+    .detail-video-wrap {
+      position: relative; width: 100%; padding-bottom: 56.25%;
+      background: var(--card); margin-bottom: 60px;
+    }
+    .detail-video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .detail-hero-images {
+      display: none; grid-template-columns: repeat(3, 1fr);
+      gap: 4px; margin-bottom: 60px;
+    }
+    .detail-hero-images.show { display: grid; }
+    .detail-hero-images img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; cursor: none; filter: grayscale(20%); transition: transform .3s ease, filter .3s ease; }
+    .detail-hero-images img:hover { transform: scale(1.04); filter: grayscale(0%) brightness(1.06); }
+    .transcripts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 52px; }
+    .transcript-label { font-family: 'IBM Plex Mono', monospace; font-size: .7rem; letter-spacing: .18em; color: var(--red); margin-bottom: 10px; }
+    .transcript-body { font-family: 'Elms Sans', sans-serif; font-size: .92rem; line-height: 1.75; color: var(--muted); }
+    .detail-info {
+      display: grid; grid-template-columns: 2fr 1fr; gap: 60px; margin-bottom: 80px;
+    }
+    .detail-desc {
+      font-family: "Elms Sans", sans-serif; font-optical-sizing: auto;
+      font-size: 1.25rem; line-height: 1.9; color: rgba(240,237,230,.75);
+      white-space: pre-line;
+    }
+    .detail-specs { border-top: 1px solid var(--line); padding-top: 22px; }
+    .spec-row { margin-bottom: 22px; }
+    .spec-label {
+      font-size: .75rem; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--red); margin-bottom: 4px;
+    }
+    .spec-val { font-size: 1rem; color: var(--white); }
+    .detail-illustration { margin-bottom: 60px; display: flex; justify-content: center; }
+    .detail-illustration img {
+      max-width: 120px; width: 10%;
+      filter: drop-shadow(0 0 40px rgba(227,62,62,.15));
+    }
+    .detail-deco { margin: 40px 0 60px; display: flex; justify-content: center; }
+    .detail-deco img { max-width: 420px; width: 37.5%; }
+    .process-section { margin-bottom: 52px; }
+    .process-section-label {
+      font-size: .75rem; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--red); margin-bottom: 20px;
+    }
+    .process-section-grid { display: grid; gap: 3px; }
+    .process-section-grid img { width: 100%; height: auto; display: block; filter: grayscale(20%); }
+    .process-cap { font-size: .8rem; letter-spacing: .16em; text-transform: uppercase; color: #444; margin-top: 10px; }
+    .process-two-col {
+      display: grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-bottom: 52px;
+    }
+    .process-two-col-left .process-section,
+    .process-two-col-right .process-section { margin-bottom: 16px; }
+    .process-two-col-right { display: flex; flex-direction: column; padding-left: 48px; }
+    .detail-footer { border-top: 1px solid var(--line); padding: 80px 52px 40px; }
+
+    /* ─── Lightbox ─── */
+    #lightbox {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(5,5,5,.96);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .35s ease;
+    }
+    #lightbox::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: var(--red);
+    }
+    #lightbox.lb-open { opacity: 1; pointer-events: all; }
+    #lb-stage {
+      flex: 1; width: 100%; display: flex; align-items: center; justify-content: center;
+      padding: 72px 80px 20px; min-height: 0;
+    }
+    #lb-img {
+      max-width: 100%; max-height: 100%; object-fit: contain;
+      opacity: 0; transform: scale(.97);
+      transition: opacity .4s ease, transform .4s cubic-bezier(.16,1,.3,1);
+    }
+    #lb-img.lb-vis { opacity: 1; transform: scale(1); }
+    #lb-close {
+      position: absolute; top: 24px; right: 36px;
+      width: 40px; height: 40px;
+      background: transparent; border: 1px solid rgba(240,237,230,.2); border-radius: 50%;
+      cursor: none; display: flex; align-items: center; justify-content: center;
+      transition: border-color .2s, background .2s;
+    }
+    #lb-close::before, #lb-close::after {
+      content: ''; position: absolute;
+      width: 14px; height: 1px; background: var(--white); border-radius: 1px;
+    }
+    #lb-close::before { transform: rotate(45deg); }
+    #lb-close::after  { transform: rotate(-45deg); }
+    #lb-close:hover   { border-color: var(--red); background: rgba(227,62,62,.12); }
+    #lb-footer {
+      width: 100%; padding: 16px 80px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0; position: relative;
+    }
+    #lb-info {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      pointer-events: none; text-align: center;
+    }
+    #lb-group   { font-size: .58rem; letter-spacing: .32em; text-transform: uppercase; color: var(--red); }
+    #lb-counter { font-size: .72rem; letter-spacing: .16em; color: var(--muted); }
+    #lb-prev, #lb-next {
+      background: transparent; border: 1px solid rgba(240,237,230,.2);
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: none; transition: border-color .2s, background .2s; flex-shrink: 0;
+    }
+    #lb-prev:hover, #lb-next:hover { border-color: var(--red); background: rgba(227,62,62,.12); }
+    #lb-prev svg, #lb-next svg {
+      width: 14px; height: 14px; stroke: var(--white); stroke-width: 1.5;
+      fill: none; stroke-linecap: round; stroke-linejoin: round; pointer-events: none;
+    }
+    .process-section-grid img { cursor: none; transition: transform .3s ease, filter .3s ease; }
+    .process-section-grid img:hover { transform: scale(1.02); filter: grayscale(0%) brightness(1.06) !important; }
+    .process-body {
+      font-family: "Elms Sans", sans-serif; font-optical-sizing: auto;
+      font-size: 1.05rem; line-height: 1.85; color: rgba(240,237,230,.72); max-width: 680px;
+    }
+
+    /* ─── Reel Modal ─── */
+    #reel-modal {
+      position: fixed; inset: 0; z-index: 600;
+      background: #000;
+      opacity: 0; pointer-events: none;
+      transition: opacity .4s ease;
+    }
+    #reel-modal.open { opacity: 1; pointer-events: all; }
+    #reel-modal-video {
+      width: 100%; height: 100%; object-fit: contain; display: block;
+    }
+    #reel-close {
+      position: absolute; top: 24px; right: 36px;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: transparent; border: 1px solid rgba(240,237,230,.25);
+      color: var(--white); font-size: 1.1rem; line-height: 1;
+      cursor: none; display: flex; align-items: center; justify-content: center;
+      transition: border-color .2s ease, background .2s ease;
+    }
+    #reel-close:hover { border-color: var(--red); background: rgba(227,62,62,.1); }
+    #reel-ctrl-zone {
+      position: absolute; bottom: 0; left: 0; right: 0; height: 130px;
+    }
+    #reel-controls {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 52px 48px 30px;
+      background: linear-gradient(transparent, rgba(0,0,0,.82));
+      display: flex; align-items: center; gap: 18px;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s ease;
+    }
+    #reel-ctrl-zone:hover #reel-controls { opacity: 1; pointer-events: all; }
+    .rc-btn {
+      background: none; border: none; color: var(--white); cursor: none;
+      width: 32px; height: 32px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: color .2s ease;
+    }
+    .rc-btn:hover { color: var(--red); }
+    .rc-btn svg { width: 20px; height: 20px; }
+    #rc-progress {
+      flex: 1; height: 3px; background: rgba(240,237,230,.2);
+      border-radius: 2px; position: relative; cursor: none;
+    }
+    #rc-progress:hover { height: 5px; }
+    #rc-fill { height: 100%; background: var(--red); border-radius: 2px; width: 0%; }
+    #rc-time {
+      font-size: .65rem; letter-spacing: .1em; white-space: nowrap;
+      color: rgba(240,237,230,.55);
+    }
+
+    /* ─── Scroll Reveal ──────────────────────────────── */
+    .reveal { opacity: 0; transform: translateY(36px); transition: opacity .8s ease, transform .8s ease; }
+    .reveal.vis { opacity: 1; transform: translateY(0); }
+
+    /* ─── Responsive ─────────────────────────────────── */
+    @media (max-width: 900px) {
+      nav { padding: 20px 24px; }
+      .section { padding: 80px 24px; }
+      .hero-content { padding: 0 24px; }
+      .hero-scroll { right: 24px; }
+      .works-grid { grid-template-columns: 1fr; margin-left: -24px; margin-right: -24px; }
+      .detail-body { padding: 40px 24px; }
+      .detail-topbar { padding: 18px 24px; }
+      .detail-info { grid-template-columns: 1fr; gap: 36px; }
+      .nav-links { gap: 24px; }
+      footer, .detail-footer { padding: 60px 24px 32px; }
+      .foot-main { grid-template-columns: 1fr; gap: 48px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<!-- ── Nav ──────────────────────────────────────── -->
+<nav>
+  <a href="index.html" class="nav-logo"><img src="brand_assets/LOGO.png" alt="Elaine Chen"></a>
+  <div class="nav-links">
+    <a href="works.html">Works</a>
+    <a href="reel.html">Reel</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-video" id="hero-video">
+    <video autoplay muted loop playsinline>
+      <source src="Project file/Demoreel no opening_1.mp4" type="video/mp4">
+    </video>
+  </div>
+  <div class="grain"></div>
+  <div class="hero-vignette"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">Motion Designer &amp; Artist — Savannah</p>
+    <h1 class="hero-name">
+      ELAINE<span class="line2">CHEN</span>
+    </h1>
+    <p class="hero-tagline">Exploring different perspectives &nbsp;·&nbsp; Pushing the boundaries</p>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- ── Featured Works ────────────────────────────── -->
+<section id="works" class="section">
+  <div class="works-head reveal">
+    <div>
+      <p class="s-label">Selected Works</p>
+      <h2 class="s-title">WORKS</h2>
+    </div>
+    <span class="works-sub">07 Projects</span>
+  </div>
+
+  <div class="works-grid">
+    <div class="work-card reveal" onclick="openProject(0)">
+      <div class="work-placeholder" id="thumb-0">…</div>
+      <div class="work-card-overlay"><div class="work-meta">
+        <div class="work-num">01</div>
+        <div class="work-title" id="wtitle-0">NEW YORK PULSE</div>
+        <div class="work-type" id="wtype-0">Motion Graphics · 2026</div>
+      </div></div>
+    </div>
+    <div class="work-card reveal" onclick="openProject(1)">
+      <div class="work-placeholder" id="thumb-1">…</div>
+      <div class="work-card-overlay"><div class="work-meta">
+        <div class="work-num">02</div>
+        <div class="work-title" id="wtitle-1">THE MILKY WAY HOME</div>
+        <div class="work-type" id="wtype-1">Motion Graphics · 2026</div>
+      </div></div>
+    </div>
+    <div class="work-card reveal" onclick="openProject(2)">
+      <div class="work-placeholder" id="thumb-2">…</div>
+      <div class="work-card-overlay"><div class="work-meta">
+        <div class="work-num">03</div>
+        <div class="work-title" id="wtitle-2">THE GOOD, THE BAD, and THE UGLY</div>
+        <div class="work-type" id="wtype-2">Ending Title Sequence · 2025</div>
+      </div></div>
+    </div>
+    <div class="work-card reveal" onclick="openProject(3)">
+      <div class="work-placeholder" id="thumb-3">…</div>
+      <div class="work-card-overlay"><div class="work-meta">
+        <div class="work-num">04</div>
+        <div class="work-title" id="wtitle-3">The Geometry of Logic - Adelphi</div>
+        <div class="work-type" id="wtype-3">Motion Graphic · 2026</div>
+      </div></div>
+    </div>
+    <div class="work-card reveal" onclick="openProject(4)">
+      <div class="work-placeholder" id="thumb-4">…</div>
+      <div class="work-card-overlay"><div class="work-meta">
+        <div class="work-num">05</div>
+        <div class="work-title" id="wtitle-4">NIKE SNEAKER PROJECTION</div>
+        <div class="work-type" id="wtype-4">Projection · 2026</div>
+      </div></div>
+    </div>
+    <div class="work-card reveal" onclick="openProject(5)">
+      <div class="work-placeholder" id="thumb-5">…</div>
+      <div class="work-card-overlay"><div class="work-meta">
+        <div class="work-num">06</div>
+        <div class="work-title" id="wtitle-5">7 KINDS OF REST</div>
+        <div class="work-type" id="wtype-5">Styleframe Design · 2026</div>
+      </div></div>
+    </div>
+    <div class="work-card reveal" onclick="openProject(6)">
+      <div class="work-placeholder" id="thumb-6">…</div>
+      <div class="work-card-overlay"><div class="work-meta">
+        <div class="work-num">07</div>
+        <div class="work-title" id="wtitle-6">WORLD ATHLETICS</div>
+        <div class="work-type" id="wtype-6">Styleframe Design · 2026</div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="works-cta reveal">
+    <a href="works.html" class="view-all-btn">
+      View Works Archive
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M1 7h12M7 1l6 6-6 6"/>
+      </svg>
+    </a>
+  </div>
+</section>
+
+<!-- ── Footer ─────────────────────────────────────── -->
+<footer>
+  <div class="foot-main">
+    <div class="foot-nav">
+      <a href="works.html">Works</a>
+      <a href="reel.html">Reel</a>
+      <a href="about.html">About</a>
+    </div>
+    <div class="foot-info">
+      <div class="foot-contact-item">
+        <span class="foot-contact-label">Email</span>
+        <a href="mailto:olaine123456@gmail.com" class="foot-contact-row">olaine123456@gmail.com</a>
+      </div>
+      <div class="foot-contact-item">
+        <span class="foot-contact-label">Location</span>
+        <div class="foot-contact-row">Savannah, GA · USA</div>
+      </div>
+      <div class="foot-contact-item">
+        <span class="foot-contact-label">LinkedIn</span>
+        <a href="https://www.linkedin.com/in/elainechen-motion" target="_blank" rel="noopener" class="foot-contact-row">linkedin.com/in/elainechen-motion ↗</a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span class="foot-copy">© 2026 Elaine Chen. All rights reserved.</span>
+    <a href="#hero" class="foot-top">Back to Top ↑</a>
+  </div>
+</footer>
+
+<!-- ── Project Detail Overlay ──────────────────── -->
+<div id="detail">
+  <div class="detail-topbar">
+    <a href="#" class="detail-back" id="btn-close">
+      <div class="back-line"></div>
+      <span>Back to Works</span>
+    </a>
+    <span class="detail-counter" id="d-counter">01 / 06</span>
+  </div>
+
+  <div class="detail-body">
+    <p class="detail-label" id="d-label">Motion Graphics</p>
+    <h2 class="detail-title" id="d-title">PROJECT TITLE</h2>
+
+    <div class="detail-video-wrap" id="d-video-wrap">
+      <iframe id="d-video" src="" frameborder="0"
+        allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div id="d-hero-images" class="detail-hero-images"></div>
+
+    <div class="detail-info">
+      <p class="detail-desc" id="d-desc"></p>
+      <div class="detail-specs" id="d-specs"></div>
+    </div>
+
+    <div id="d-illustration"></div>
+    <div id="d-deco"></div>
+    <div id="d-process"></div>
+  </div>
+
+  <footer class="detail-footer">
+    <div class="foot-main">
+      <div class="foot-nav">
+        <a href="works.html">Works</a>
+        <a href="index.html">Reel</a>
+        <a href="about.html">About</a>
+      </div>
+      <div class="foot-info">
+        <div class="foot-contact-item">
+          <span class="foot-contact-label">Email</span>
+          <a href="mailto:olaine123456@gmail.com" class="foot-contact-row">olaine123456@gmail.com</a>
+        </div>
+        <div class="foot-contact-item">
+          <span class="foot-contact-label">Location</span>
+          <div class="foot-contact-row">Savannah, GA · USA</div>
+        </div>
+        <div class="foot-contact-item">
+          <span class="foot-contact-label">LinkedIn</span>
+          <a href="https://www.linkedin.com/in/elainechen-motion" target="_blank" rel="noopener" class="foot-contact-row">linkedin.com/in/elainechen-motion ↗</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span class="foot-copy">© 2026 Elaine Chen. All rights reserved.</span>
+      <a href="#" class="foot-top" onclick="document.getElementById('detail').scrollTo({top:0,behavior:'smooth'}); return false;">Back to Top ↑</a>
+    </div>
+  </footer>
+</div>
+
+<!-- ── Reel Modal ── -->
+<div id="reel-modal" role="dialog" aria-modal="true">
+  <video id="reel-modal-video" playsinline>
+    <source src="Project file/2026.04 Demoreel.mp4" type="video/mp4">
+  </video>
+  <button id="reel-close" aria-label="Close reel">✕</button>
+  <div id="reel-ctrl-zone">
+    <div id="reel-controls">
+      <button class="rc-btn" id="rc-play" aria-label="Play / Pause">
+        <svg id="rc-play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <svg id="rc-pause-icon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+      </button>
+      <div id="rc-progress"><div id="rc-fill"></div></div>
+      <span id="rc-time">0:00 / 0:00</span>
+      <button class="rc-btn" id="rc-vol" aria-label="Mute / Unmute">
+        <svg id="rc-vol-on" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+        <svg id="rc-vol-off" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+      </button>
+      <button class="rc-btn" id="rc-fs" aria-label="Fullscreen">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Lightbox ── -->
+<div id="lightbox">
+  <button id="lb-close" aria-label="Close"></button>
+  <div id="lb-stage">
+    <img id="lb-img" src="" alt="">
+  </div>
+  <div id="lb-footer">
+    <button id="lb-prev" aria-label="Previous">
+      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div id="lb-info">
+      <span id="lb-group"></span>
+      <span id="lb-counter"></span>
+    </div>
+    <button id="lb-next" aria-label="Next">
+      <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  const DEMOREEL_ID = '1186376055';
+
+  const projects = [
+    {
+      num: '01', label: 'Motion Graphics',
+      title: 'NEW YORK PULSE',
+      type: 'Motion Graphics · 2026',
+      vimeoId: '1170310909',
+      desc: 'This project expresses the pure excitement of finally experiencing New York City, a place imagined for a lifetime. Through the language of geometry, I aim to simplify and celebrate the city\'s complexity. Different shapes symbolize the global diversity of people. The animation wants to show the energy and infinite potential of New York, turning personal emotions into a vibrant, rhythmic motion piece.',
+      specs: [
+        { k: 'Year',     v: '2026' },
+        { k: 'Type',     v: 'Motion Graphics' },
+        { k: 'Location', v: 'USA' },
+      ],
+      thumb: 'Project file/NEW YORK PULSE/Styleframe06.jpg',
+      illustration: 'Project file/NEW YORK PULSE/apple.png.webp',
+      processGroups: [
+        {
+          group: 'Mind Map',
+          maxWidth: '60%',
+          items: [{ src: 'Project file/NEW YORK PULSE/mindmap.webp' }],
+        },
+        {
+          group: 'Storyboard',
+          items: [
+            { src: 'Project file/NEW YORK PULSE/Storyboard01.jpg' },
+            { src: 'Project file/NEW YORK PULSE/Storyboard02.jpg' },
+          ],
+        },
+        { group: 'Color', maxWidth: '30%', items: [{ src: 'Project file/NEW YORK PULSE/Color.webp' }] },
+        {
+          group: 'Styleframe',
+          items: [
+            { src: 'Project file/NEW YORK PULSE/Styleframe01.jpg' },
+            { src: 'Project file/NEW YORK PULSE/Styleframe02.jpg' },
+            { src: 'Project file/NEW YORK PULSE/Styleframe03.jpg' },
+            { src: 'Project file/NEW YORK PULSE/Styleframe04.png' },
+            { src: 'Project file/NEW YORK PULSE/styleframe05.jpg' },
+            { src: 'Project file/NEW YORK PULSE/Styleframe06.jpg' },
+            { src: 'Project file/NEW YORK PULSE/Styleframe07.jpg' },
+            { src: 'Project file/NEW YORK PULSE/Styleframe08.png' },
+            { src: 'Project file/NEW YORK PULSE/Styleframe09.png' },
+          ],
+        },
+      ],
+    },
+    {
+      num: '02', label: 'Motion Graphics',
+      title: 'THE MILKY WAY HOME',
+      type: 'Motion Graphics · 2026',
+      vimeoId: '1170313437',
+      desc: '"The Milky Way Home" follows an extraterrestrial visitor who explores Earth through a lens of whimsical confusion, viewing the giant Pyramids and finding more beauty in a stray cat\'s purr than in human monuments.\n\nAfter befriending the world by doodling smiley faces on "Beware of Alien" signs and discovering the joy of cinema story, he decides to depart not with Earth\'s gold, but with a single, calm dairy cow, choosing a lifetime supply of fresh milk as the ultimate souvenir.',
+      specs: [
+        { k: 'Year',     v: '2026' },
+        { k: 'Type',     v: 'Motion Graphics' },
+        { k: 'Location', v: 'USA' },
+      ],
+      thumb: 'Project file/The Milky Way Home/Styleframe/Frame-06.jpg',
+      processGroups: [
+        {
+          layout: 'two-col',
+          left: {
+            group: 'Character Development',
+            items: [
+              { src: 'Project file/The Milky Way Home/character development.png' },
+            ],
+          },
+          right: [
+            {
+              group: 'Moodboard',
+              items: [{ src: 'Project file/The Milky Way Home/moodboard.png' }],
+            },
+            {
+              group: 'Styleboard',
+              items: [{ src: 'Project file/The Milky Way Home/Styleboard.png' }],
+            },
+          ],
+        },
+        { group: 'Color', maxWidth: '30%', items: [{ src: 'Project file/The Milky Way Home/color.png' }] },
+        {
+          group: 'Storyboard',
+          items: [
+            { src: 'Project file/The Milky Way Home/Storyboard_3x2 1.jpg' },
+            { src: 'Project file/The Milky Way Home/Storyboard_3x2 3.jpg' },
+          ],
+        },
+        { group: 'Styleframe', cols: 3, items: [
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-01.jpg' },
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-02.jpg' },
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-03.jpg' },
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-04.jpg' },
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-05.jpg' },
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-06.jpg' },
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-07.jpg' },
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-08.jpg' },
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-09.jpg' },
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-10.jpg' },
+        ]},
+      ],
+    },
+    {
+      num: '03', label: 'Motion Graphics',
+      title: 'THE GOOD, THE BAD, and THE UGLY',
+      type: 'Ending Title Sequence · 2025',
+      vimeoId: '1170318485',
+      desc: 'For this original drama\'s end credits, I dove deep into the script and worked closely with the director and writer. We wanted to create a visual journey that really captured the protagonist\'s search for happiness.\n\nUsing kaleidoscope effects and Dolly-in visuals to pull the audience into the story. I also wove in key locations like the breakfast shop, beauty salon, and toy store. To add more narrative tension, I hid "Easter eggs" throughout the sequence, such as a Chinese chess piece that symbolizes manipulation.',
+      specs: [
+        { k: 'Year', v: '2025' },
+        { k: 'Type', v: 'Ending Title Sequence' },
+        { k: 'Location', v: 'Taiwan' },
+      ],
+      thumb: 'Project file/THE GOOD, THE BAD, and THE UGLY/thumbnail.webp',
+      deco: 'Project file/THE GOOD, THE BAD, and THE UGLY/Deco.png',
+      processGroups: [
+        {
+          layout: 'two-col',
+          ratio: '1fr 1.5fr',
+          left: {
+            group: 'Official Poster',
+            items: [{ src: 'Project file/THE GOOD, THE BAD, and THE UGLY/poster.png' }],
+          },
+          right: [
+            { group: '', items: [{ src: 'Project file/THE GOOD, THE BAD, and THE UGLY/logo_white.png' }], maxWidth: '50%' },
+            { type: 'text', group: 'Technical Execution', body: 'My work was inspired by Fons de Haan\'s visuals for J.I.D and the aesthetic of music videos like Washed Out\'s \'Zonked.\' I built the entire sequence in After Effects using complex scale expressions to create a layered and "infinite" 3D motion feel.' },
+            { type: 'text', group: 'The Process', body: 'To push the visuals even further, I integrated AI tools like MidJourney, Tripio AI, and Magnific.ai for concept and asset development. I also collaborated with photographers and shot additional footage myself to make sure the final piece felt seamless and hit all the right emotional notes.' },
+          ],
+        },
+        {
+          group: 'Moodboard',
+          maxWidth: '75%',
+          items: [{ src: 'Project file/THE GOOD, THE BAD, and THE UGLY/moodboard.png' }],
+        },
+        {
+          group: 'Styleframe',
+          cols: 5,
+          items: [
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe01.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe02.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe03.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe04.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe05.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe06.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe07.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe08.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe09.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe10.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe11.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe12.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe13.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe14.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe15.png' },
+          ],
+        },
+      ],
+    },
+    {
+      num: '04', label: 'Motion Graphic',
+      title: 'The Geometry of Logic - Adelphi',
+      type: 'Motion Graphic · 2026',
+      vimeoId: '1183195558',
+      desc: '"Bridging Rationality and Form"\n\nThis motion piece is a visual exploration of Adelphi, capturing its essence of mathematical precision and British modernism. By integrating Bauhaus-inspired aesthetics with contemporary motion design, I\'ve transformed static letterforms into a choreography of engineering.\nThe animation highlights the subtle tension between elementary geometry and functional pragmatism, celebrating the \'scientific\' soul behind this redefined sans-serif.',
+      specs: [
+        { k: 'Year', v: '2026' }, { k: 'Type', v: 'Motion Graphic' },
+      ],
+      thumb: 'Project file/The Geometry of Logic - Adelphi/Adelphi kinetic specimen.png',
+      processGroups: [
+        {
+          group: 'Moodboard',
+          items: [{ src: 'Project file/The Geometry of Logic - Adelphi/moodboard.png' }],
+        },
+        {
+          group: 'Styleframe',
+          cols: 4,
+          items: [
+            { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-01.jpg' },
+            { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-02.jpg' },
+            { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-03.jpg' },
+            { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-04.jpg' },
+            { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-05.jpg' },
+            { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-06.jpg' },
+            { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-07.jpg' },
+            { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-08.jpg' },
+            { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-09.jpg' },
+            { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-10.jpg' },
+            { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-11.jpg' },
+            { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-12.jpg' },
+            { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-13.jpg' },
+          ],
+        },
+      ],
+    },
+    {
+      num: '05', label: 'Projection',
+      title: 'NIKE SNEAKER PROJECTION',
+      type: 'Projection · 2026',
+      vimeoId: '1186439648',
+      desc: 'Utilizing a retro CRT look to explore how Nike\'s visual identity can transform a space and illustrate the \'energy\' of sneaker culture through motion and light',
+      specs: [
+        { k: 'Year', v: '2026' },
+        { k: 'Type', v: 'Projection' },
+        { k: 'Location', v: 'USA' },
+      ],
+      thumb: 'Project file/Nike Sneaker Projection/Thumbnail.png',
+      processGroups: [
+        { group: 'Moodboard',              items: [{ src: 'Project file/Nike Sneaker Projection/01moodboard.png' }] },
+        { group: 'Texture Experiment',     items: [{ src: 'Project file/Nike Sneaker Projection/02Texture experiment.png' }] },
+        { group: 'First Time Mapping Test',items: [{ src: 'Project file/Nike Sneaker Projection/03First time mapping test.png' }] },
+        { group: 'Mapping Process',        items: [{ src: 'Project file/Nike Sneaker Projection/04Mapping Process.png' }] },
+        { group: 'Spatial Setup',          items: [{ src: 'Project file/Nike Sneaker Projection/05Spatial setup.png' }] },
+      ],
+    },
+    {
+      num: '06', label: 'Styleframe Design',
+      title: '7 KINDS OF REST',
+      type: 'Styleframe Design · 2026',
+      heroImages: [
+        'Project file/7 kinds of rest/Styleframe/01.jpg',
+        'Project file/7 kinds of rest/Styleframe/02.jpg',
+        'Project file/7 kinds of rest/Styleframe/03.jpg',
+        'Project file/7 kinds of rest/Styleframe/04.jpg',
+        'Project file/7 kinds of rest/Styleframe/05.jpg',
+        'Project file/7 kinds of rest/Styleframe/06.jpg',
+      ],
+      thumb: 'Project file/7 kinds of rest/Styleframe/04.jpg',
+      desc: "In Dr. Saundra Dalton-Smith's book, Sacred Rest, she outlines different kinds of rest you may be craving. From the mental to the physical, Dalton-Smith shares how to identify what kind of respite you need and how to embrace rest.",
+      specs: [
+        { k: 'Year', v: '2026' },
+        { k: 'Type', v: 'Styleframe Design' },
+        { k: 'Location', v: 'USA' },
+      ],
+      processGroups: [
+        { group: 'Transcripts', type: 'transcripts', entries: [
+          { label: 'S01 / 02', body: 'I separate mental and emotional rest because mental rest, we focus primarily on mental processes — decision-making, memory function, the ability to have recall, to concentrate.' },
+          { label: 'S03', body: 'or performance where you don\'t have the ability to authentically express your emotions in that moment. Emotional labor in the process of staying at a high level of customer service, ruminating over all of the things that happen in the day.' },
+          { label: 'S04 / 05', body: 'Or it\'s a person who finds that they are very forgetful or can\'t seem to focus their attention to get a job done. And so that\'s the mental part of it, the decision, focus aspect of the brain.' },
+          { label: 'S06', body: 'The emotional rest part of it is looking at how you process your emotions. And it tends to be one that I find that a lot of people struggle greatly with.' },
+          { label: 'S07 / 08', body: 'because many of us have jobs and careers and lifestyles where we carry a large amount of professional emotional labor in the process of staying at a high level of customer service' },
+          { label: 'S09', body: 'or performance where you don\'t have the ability to authentically express your emotions in that moment. Emotional labor in the process of staying at a high level of customer service.' },
+        ]},
+        { group: '', items: [{ src: 'Project file/7 kinds of rest/Visual Essay Boards.jpg' }] },
+      ],
+    },
+    {
+      num: '07', label: 'Styleframe Design',
+      title: 'WORLD ATHLETICS',
+      type: 'Styleframe Design · 2026',
+      heroImages: [
+        'Project file/World Athletics/Styleframe/Styleframe 1.jpg',
+        'Project file/World Athletics/Styleframe/Styleframe 2.jpg',
+        'Project file/World Athletics/Styleframe/Styleframe 3.jpg',
+        'Project file/World Athletics/Styleframe/Styleframe 4.jpg',
+        'Project file/World Athletics/Styleframe/Styleframe 5.jpg',
+        'Project file/World Athletics/Styleframe/Styleframe 6.jpg',
+        'Project file/World Athletics/Styleframe/Styleframe 7.jpg',
+        'Project file/World Athletics/Styleframe/Styleframe 8.jpg',
+        'Project file/World Athletics/Styleframe/Styleframe 9.jpg',
+      ],
+      thumb: 'Project file/World Athletics/Styleframe/Styleframe 8.jpg',
+      desc: 'This motion piece focuses on the intricate details of an athlete\'s sprint. Using slowmotion shots to amplify subtle movements, combined with high-speed kinetic lines to show how athletes push past their physical limits.\n\nWorld Athletics is about more than just a race on the track, it\'s a celebration of human strength and potential. Every second, every step, all for pushing the limits.',
+      specs: [
+        { k: 'Year', v: '2026' },
+        { k: 'Type', v: 'Styleframe Design' },
+        { k: 'Location', v: 'USA' },
+      ],
+      processGroups: [
+        { group: 'Storyboard', maxWidth: '50%', items: [{ src: 'Project file/World Athletics/Storyboard.jpg' }] },
+        { group: 'Visual Experiment', items: [
+          { src: 'Project file/World Athletics/Visual test/Styleframe 1.jpg' },
+          { src: 'Project file/World Athletics/Visual test/Styleframe 2.jpg' },
+          { src: 'Project file/World Athletics/Visual test/Styleframe 3.jpg' },
+          { src: 'Project file/World Athletics/Visual test/Styleframe 4.jpg' },
+          { src: 'Project file/World Athletics/Visual test/Styleframe 5.jpg' },
+          { src: 'Project file/World Athletics/Visual test/Styleframe 6.jpg' },
+        ]},
+        { group: 'Final Styleframe', cols: 3, items: [
+          { src: 'Project file/World Athletics/Styleframe/Styleframe 1.jpg' },
+          { src: 'Project file/World Athletics/Styleframe/Styleframe 2.jpg' },
+          { src: 'Project file/World Athletics/Styleframe/Styleframe 3.jpg' },
+          { src: 'Project file/World Athletics/Styleframe/Styleframe 4.jpg' },
+          { src: 'Project file/World Athletics/Styleframe/Styleframe 5.jpg' },
+          { src: 'Project file/World Athletics/Styleframe/Styleframe 6.jpg' },
+          { src: 'Project file/World Athletics/Styleframe/Styleframe 7.jpg' },
+          { src: 'Project file/World Athletics/Styleframe/Styleframe 8.jpg' },
+          { src: 'Project file/World Athletics/Styleframe/Styleframe 9.jpg' },
+        ]},
+      ],
+    },
+  ];
+
+
+  projects.forEach((p, i) => {
+    const t = document.getElementById(`wtitle-${i}`);
+    const ty = document.getElementById(`wtype-${i}`);
+    if (t) t.textContent = p.title;
+    if (ty) ty.textContent = p.type;
+    if (p.thumb) {
+      const el = document.getElementById(`thumb-${i}`);
+      if (el) el.outerHTML = `<img class="work-thumb" src="${p.thumb}" alt="${p.title}" loading="lazy">`;
+    } else if (p.vimeoId && !p.vimeoId.startsWith('YOUR')) {
+      fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${p.vimeoId}&width=800`)
+        .then(r => r.json())
+        .then(d => {
+          const el = document.getElementById(`thumb-${i}`);
+          if (el) el.outerHTML = `<img class="work-thumb" src="${d.thumbnail_url}" alt="${p.title}" loading="lazy">`;
+        }).catch(() => {});
+    }
+  });
+
+  /* ── Cursor ────────────────────────────────── */
+  const cur = document.getElementById('cur');
+  const ring = document.getElementById('cur-ring');
+  document.addEventListener('mousemove', e => {
+    cur.style.left  = e.clientX + 'px';
+    cur.style.top   = e.clientY + 'px';
+    ring.style.left = e.clientX + 'px';
+    ring.style.top  = e.clientY + 'px';
+  });
+  document.querySelectorAll('a, button, .work-card').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+  });
+
+  /* ── Scroll Reveal ──────────────────────────── */
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+  }, { threshold: .12 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  /* ── Project Detail ─────────────────────────── */
+  function openProject(i) {
+    const p = projects[i];
+    document.getElementById('d-counter').textContent = `${p.num}`;
+    document.getElementById('d-label').textContent   = p.label;
+    const _titleEl = document.getElementById('d-title');
+    _titleEl.textContent = p.title;
+    _titleEl.style.fontSize = p.title.length > 20 ? 'clamp(2rem, 5vw, 5rem)' : '';
+    document.getElementById('d-desc').textContent    = p.desc;
+
+    const videoWrap = document.getElementById('d-video-wrap');
+    const heroEl = document.getElementById('d-hero-images');
+    if (p.heroImages) {
+      videoWrap.style.display = 'none';
+      heroEl.classList.add('show');
+    } else if (p.noVideo) {
+      videoWrap.style.display = 'none';
+      heroEl.classList.remove('show');
+      heroEl.innerHTML = '';
+    } else {
+      videoWrap.style.display = '';
+      heroEl.classList.remove('show');
+      heroEl.innerHTML = '';
+      document.getElementById('d-video').src =
+        `https://player.vimeo.com/video/${p.vimeoId}?autoplay=0&color=e33e3e&title=0&byline=0`;
+    }
+
+    document.getElementById('d-specs').innerHTML = p.specs.map(s =>
+      `<div class="spec-row">
+         <div class="spec-label">${s.k}</div>
+         <div class="spec-val">${s.v}</div>
+       </div>`).join('');
+
+    const illEl = document.getElementById('d-illustration');
+    illEl.innerHTML = p.illustration
+      ? `<div class="detail-illustration"><img src="${p.illustration}" alt="Illustration"></div>` : '';
+
+    const decoEl = document.getElementById('d-deco');
+    decoEl.innerHTML = p.deco
+      ? `<div class="detail-deco"><img src="${p.deco}" alt="Deco"></div>` : '';
+
+    const procEl = document.getElementById('d-process');
+    window._lbGroups = [];
+
+    if (p.heroImages) {
+      const lbIdx = window._lbGroups.length;
+      window._lbGroups.push({ label: 'Styleframe', srcs: p.heroImages });
+      heroEl.innerHTML = p.heroImages.map((src, idx) =>
+        `<img src="${src}" alt="${p.title}" loading="lazy" onclick="lbOpen(${lbIdx},${idx})">`
+      ).join('');
+    }
+
+    if (p.processGroups) {
+      const renderGroup = g => {
+        if (g.type === 'text') {
+          return `<div class="process-section">
+            ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
+            <p class="process-body">${g.body}</p>
+          </div>`;
+        }
+        if (g.type === 'transcripts') {
+          return `<div class="process-section">
+            ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
+            <div class="transcripts-grid">
+              ${g.entries.map(e => `<div class="transcript-entry"><div class="transcript-label">${e.label}</div><p class="transcript-body">${e.body}</p></div>`).join('')}
+            </div>
+          </div>`;
+        }
+        const grpIdx = window._lbGroups.length;
+        window._lbGroups.push({ label: g.group, srcs: g.items.map(i => i.src) });
+        const n = g.cols || (g.items.length === 1 ? 1 : g.items.length === 2 ? 2 : 3);
+        const st = [`grid-template-columns:repeat(${n},1fr)`, g.maxWidth ? `max-width:${g.maxWidth};margin:0 auto` : ''].filter(Boolean).join(';');
+        return `<div class="process-section">
+          ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
+          <div class="process-section-grid" style="${st}">
+            ${g.items.map((img, idx) => `<img src="${img.src}" alt="${g.group}" loading="lazy" onclick="lbOpen(${grpIdx},${idx})">`).join('')}
+          </div></div>`;
+      };
+      procEl.innerHTML = p.processGroups.map(g => {
+        if (g.layout === 'two-col') {
+          const ratio = g.ratio || '1fr 2fr';
+          return `<div class="process-two-col" style="grid-template-columns:${ratio}">
+            <div class="process-two-col-left">${renderGroup(g.left)}</div>
+            <div class="process-two-col-right">${g.right.map(renderGroup).join('')}</div>
+          </div>`;
+        }
+        return renderGroup(g);
+      }).join('');
+    } else if (p.process) {
+      procEl.innerHTML = `<div class="process-section-grid cols-3">
+        ${p.process.map(img =>
+          `<div><img src="${img.src}" alt="${img.cap}" loading="lazy">
+           <div class="process-cap">${img.cap}</div></div>`).join('')}
+      </div>`;
+    }
+
+    const detail = document.getElementById('detail');
+    detail.classList.add('open');
+    detail.scrollTop = 0;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDetail(e) {
+    e && e.preventDefault();
+    document.getElementById('detail').classList.remove('open');
+    document.getElementById('d-video').src = '';
+    const heroEl = document.getElementById('d-hero-images');
+    heroEl.classList.remove('show');
+    heroEl.innerHTML = '';
+    document.getElementById('d-video-wrap').style.display = '';
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('btn-close').addEventListener('click', closeDetail);
+
+  /* ── Lightbox ──────────────────────────────── */
+  window._lbGroups = [];
+  let _lbGrp = 0, _lbIdx = 0;
+  const lbEl    = document.getElementById('lightbox');
+  const lbImg   = document.getElementById('lb-img');
+  const lbGrpEl = document.getElementById('lb-group');
+  const lbCntEl = document.getElementById('lb-counter');
+  const lbPrevEl = document.getElementById('lb-prev');
+  const lbNextEl = document.getElementById('lb-next');
+
+  function lbOpen(grpIdx, imgIdx) {
+    _lbGrp = grpIdx; _lbIdx = imgIdx;
+    const grp = window._lbGroups[grpIdx];
+    lbImg.src = grp.srcs[imgIdx];
+    lbGrpEl.textContent = grp.label;
+    lbCntEl.textContent = `${imgIdx + 1} / ${grp.srcs.length}`;
+    lbPrevEl.style.visibility = grp.srcs.length > 1 ? 'visible' : 'hidden';
+    lbNextEl.style.visibility = grp.srcs.length > 1 ? 'visible' : 'hidden';
+    lbEl.classList.add('lb-open');
+    requestAnimationFrame(() => requestAnimationFrame(() => lbImg.classList.add('lb-vis')));
+  }
+
+  function lbClose() {
+    lbImg.classList.remove('lb-vis');
+    lbEl.classList.remove('lb-open');
+    setTimeout(() => { lbImg.src = ''; }, 380);
+  }
+
+  function lbChange(delta) {
+    const len = window._lbGroups[_lbGrp].srcs.length;
+    _lbIdx = (_lbIdx + delta + len) % len;
+    lbImg.classList.remove('lb-vis');
+    setTimeout(() => {
+      const grp = window._lbGroups[_lbGrp];
+      lbImg.src = grp.srcs[_lbIdx];
+      lbCntEl.textContent = `${_lbIdx + 1} / ${grp.srcs.length}`;
+      requestAnimationFrame(() => requestAnimationFrame(() => lbImg.classList.add('lb-vis')));
+    }, 200);
+  }
+
+  document.getElementById('lb-close').addEventListener('click', lbClose);
+  lbPrevEl.addEventListener('click', () => lbChange(-1));
+  lbNextEl.addEventListener('click', () => lbChange(1));
+  lbEl.addEventListener('click', e => { if (e.target === lbEl) lbClose(); });
+
+  document.querySelectorAll('#lb-close, #lb-prev, #lb-next').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+  });
+  document.getElementById('detail').addEventListener('mouseover', e => {
+    if (e.target.matches('.process-section-grid img')) document.body.classList.add('hovering');
+  });
+  document.getElementById('detail').addEventListener('mouseout', e => {
+    if (e.target.matches('.process-section-grid img')) document.body.classList.remove('hovering');
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      const rm = document.getElementById('reel-modal');
+      if (rm.classList.contains('open')) { closeReel(); }
+      else if (lbEl.classList.contains('lb-open')) { lbClose(); }
+      else { closeDetail(); }
+    }
+    if (e.key === 'ArrowLeft'  && lbEl.classList.contains('lb-open')) lbChange(-1);
+    if (e.key === 'ArrowRight' && lbEl.classList.contains('lb-open')) lbChange(1);
+  });
+
+  const _reelModal = document.getElementById('reel-modal');
+  const _reelVideo = document.getElementById('reel-modal-video');
+  const _rcPlayIcon  = document.getElementById('rc-play-icon');
+  const _rcPauseIcon = document.getElementById('rc-pause-icon');
+  const _rcFill      = document.getElementById('rc-fill');
+  const _rcTime      = document.getElementById('rc-time');
+  const _rcVolOn     = document.getElementById('rc-vol-on');
+  const _rcVolOff    = document.getElementById('rc-vol-off');
+
+  function _fmtTime(s) {
+    const m = Math.floor(s / 60), sec = String(Math.floor(s % 60)).padStart(2,'0');
+    return `${m}:${sec}`;
+  }
+
+  document.getElementById('rc-play').addEventListener('click', () =>
+    _reelVideo.paused ? _reelVideo.play() : _reelVideo.pause());
+
+  _reelVideo.addEventListener('play',  () => { _rcPlayIcon.style.display='none'; _rcPauseIcon.style.display=''; });
+  _reelVideo.addEventListener('pause', () => { _rcPlayIcon.style.display=''; _rcPauseIcon.style.display='none'; });
+  _reelVideo.addEventListener('timeupdate', () => {
+    if (!_reelVideo.duration) return;
+    _rcFill.style.width = (_reelVideo.currentTime / _reelVideo.duration * 100) + '%';
+    _rcTime.textContent = _fmtTime(_reelVideo.currentTime) + ' / ' + _fmtTime(_reelVideo.duration);
+  });
+
+  document.getElementById('rc-progress').addEventListener('click', e => {
+    const r = e.currentTarget.getBoundingClientRect();
+    _reelVideo.currentTime = ((e.clientX - r.left) / r.width) * _reelVideo.duration;
+  });
+
+  document.getElementById('rc-vol').addEventListener('click', () => {
+    _reelVideo.muted = !_reelVideo.muted;
+    _rcVolOn.style.display  = _reelVideo.muted ? 'none' : '';
+    _rcVolOff.style.display = _reelVideo.muted ? '' : 'none';
+  });
+
+  document.getElementById('rc-fs').addEventListener('click', () => {
+    (_reelModal.requestFullscreen || _reelModal.webkitRequestFullscreen).call(_reelModal);
+  });
+
+  _reelVideo.addEventListener('click', () =>
+    _reelVideo.paused ? _reelVideo.play() : _reelVideo.pause());
+
+  document.getElementById('reel-close').addEventListener('click', closeReel);
+
+  function openReel() {
+    _reelModal.classList.add('open');
+    _reelVideo.currentTime = 0;
+    _reelVideo.play();
+    document.body.style.overflow = 'hidden';
+  }
+  function closeReel() {
+    _reelModal.classList.remove('open');
+    _reelVideo.pause();
+    document.body.style.overflow = '';
+  }
+</script>
+</body>
+</html>

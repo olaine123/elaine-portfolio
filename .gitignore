@@ -1,0 +1,7 @@
+.DS_Store
+**/.DS_Store
+.claude/
+temporary screenshots/
+node_modules/
+截圖*.png
+HANDOFF.md

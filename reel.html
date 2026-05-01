@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reel — Elaine Chen</title>
+  <link rel="icon" href="brand_assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --red:   #e33e3e;
+      --black: #080808;
+      --white: #f0ede6;
+      --muted: rgba(240,237,230,0.45);
+    }
+    html, body {
+      width: 100%; height: 100%;
+      background: #000; color: var(--white);
+      font-family: 'IBM Plex Mono', monospace;
+      overflow: hidden; cursor: none;
+    }
+
+    /* ─── Cursor ─── */
+    #cur {
+      position: fixed; z-index: 9999; width: 10px; height: 10px;
+      background: var(--red); border-radius: 50%; pointer-events: none;
+      transform: translate(-50%,-50%); transition: width .15s, height .15s;
+      mix-blend-mode: difference;
+    }
+    #cur-ring {
+      position: fixed; z-index: 9998; width: 38px; height: 38px;
+      border: 1px solid rgba(227,62,62,.45); border-radius: 50%; pointer-events: none;
+      transform: translate(-50%,-50%);
+      transition: left .1s ease, top .1s ease, width .25s, height .25s;
+    }
+    body.hovering #cur      { width: 18px; height: 18px; }
+    body.hovering #cur-ring { width: 58px; height: 58px; }
+
+    /* ─── Nav ─── */
+    nav {
+      position: fixed; inset: 0 0 auto 0; z-index: 200;
+      padding: 28px 52px;
+      display: flex; justify-content: space-between; align-items: center;
+      mix-blend-mode: difference;
+      pointer-events: none;
+    }
+    nav .nav-logo, nav .nav-links a { pointer-events: all; }
+    .nav-logo {
+      display: flex; align-items: center; text-decoration: none;
+    }
+    .nav-logo img { height: 24px; display: block; }
+    .nav-links { display: flex; gap: 40px; }
+    .nav-links a {
+      font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--white); text-decoration: none; position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px; background: var(--red); transition: width .3s ease;
+    }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-links a.active::after { width: 100%; }
+    .nav-links a.active { color: var(--red); }
+
+    /* ─── Video Stage ─── */
+    #stage { position: fixed; inset: 0; }
+    #reel-video { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+    /* ─── Center Play Overlay ─── */
+    #play-overlay {
+      position: fixed; inset: 0; z-index: 10;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity .4s ease;
+    }
+    #play-overlay.hidden { opacity: 0; pointer-events: none; }
+    #play-btn-big {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: rgba(227,62,62,.15); border: 1.5px solid rgba(227,62,62,.5);
+      display: flex; align-items: center; justify-content: center;
+      transition: background .25s ease, border-color .25s ease, transform .25s ease;
+    }
+    #play-btn-big:hover { background: rgba(227,62,62,.28); border-color: var(--red); transform: scale(1.08); }
+    #play-btn-big svg { width: 34px; height: 34px; fill: var(--white); margin-left: 4px; }
+
+    /* ─── Controls Zone ─── */
+    #ctrl-zone {
+      position: fixed; bottom: 0; left: 0; right: 0; height: 140px; z-index: 20;
+    }
+    #reel-controls {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 56px 52px 32px;
+      background: linear-gradient(transparent, rgba(0,0,0,.88));
+      display: flex; align-items: center; gap: 18px;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s ease;
+    }
+    #ctrl-zone:hover #reel-controls,
+    #reel-controls.force-show { opacity: 1; pointer-events: all; }
+
+    .rc-btn {
+      background: none; border: none; color: var(--white); cursor: none;
+      width: 32px; height: 32px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: color .2s ease;
+    }
+    .rc-btn:hover { color: var(--red); }
+    .rc-btn svg { width: 20px; height: 20px; }
+
+    #rc-time {
+      font-size: .65rem; letter-spacing: .1em; white-space: nowrap;
+      color: rgba(240,237,230,.55);
+    }
+
+    /* ─── Progress Bar ─── */
+    #rc-progress-wrap {
+      flex: 1; position: relative;
+      height: 28px; display: flex; align-items: center;
+      cursor: none;
+    }
+    #rc-bar {
+      width: 100%; height: 3px;
+      background: rgba(240,237,230,.18);
+      border-radius: 2px; position: relative;
+      transition: height .15s ease;
+      overflow: visible;
+    }
+    #rc-progress-wrap:hover #rc-bar { height: 5px; }
+    #rc-fill { height: 100%; background: var(--red); border-radius: 2px; width: 0%; position: relative; }
+
+    /* scrub dot */
+    #rc-dot {
+      position: absolute; right: -5px; top: 50%;
+      width: 11px; height: 11px; border-radius: 50%;
+      background: var(--red); transform: translateY(-50%) scale(0);
+      transition: transform .15s ease;
+    }
+    #rc-progress-wrap:hover #rc-dot { transform: translateY(-50%) scale(1); }
+
+    /* hover position line */
+    #rc-hover-line {
+      position: absolute; top: -4px; bottom: -4px; width: 1px;
+      background: rgba(240,237,230,.35); pointer-events: none;
+      opacity: 0; transition: opacity .1s ease;
+    }
+    #rc-progress-wrap:hover #rc-hover-line { opacity: 1; }
+
+    /* ─── Thumbnail Preview ─── */
+    #thumb-preview {
+      position: absolute; bottom: calc(100% + 14px);
+      display: flex; flex-direction: column; align-items: center; gap: 0;
+      pointer-events: none; opacity: 0;
+      transition: opacity .15s ease;
+    }
+    #thumb-preview.show { opacity: 1; }
+    #thumb-canvas {
+      display: block; width: 192px; height: 108px;
+      background: #0a0a0a;
+      outline: 1px solid rgba(227,62,62,.45);
+    }
+    #thumb-time-label {
+      font-size: .6rem; letter-spacing: .12em;
+      color: var(--white); background: rgba(8,8,8,.92);
+      padding: 3px 8px; margin-top: 6px;
+      border: 1px solid rgba(240,237,230,.1);
+    }
+
+    /* ─── Volume wrap & slider ─── */
+    .vol-wrap { display: flex; align-items: center; gap: 6px; }
+    #rc-vol-slider {
+      -webkit-appearance: none; appearance: none;
+      width: 0; height: 3px;
+      background: rgba(240,237,230,.18); border-radius: 2px;
+      cursor: none; outline: none;
+      transition: width .25s ease, opacity .25s ease;
+      opacity: 0; flex-shrink: 0;
+    }
+    .vol-wrap:hover #rc-vol-slider { width: 72px; opacity: 1; }
+    #rc-vol-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--red); cursor: none;
+    }
+    #rc-vol-slider::-moz-range-thumb {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--red); cursor: none; border: none;
+    }
+
+    /* capture ready dot */
+    #capture-status {
+      position: fixed; bottom: 90px; right: 52px;
+      font-size: .55rem; letter-spacing: .12em; text-transform: uppercase;
+      color: rgba(240,237,230,.25);
+      z-index: 30; pointer-events: none;
+      opacity: 0; transition: opacity .5s ease;
+    }
+    #capture-status.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<nav>
+  <a href="index.html" class="nav-logo"><img src="brand_assets/LOGO.png" alt="Elaine Chen"></a>
+  <div class="nav-links">
+    <a href="works.html">Works</a>
+    <a class="active">Reel</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<div id="stage">
+  <video id="reel-video" playsinline>
+    <source src="Project file/2026.04 Demoreel.mp4" type="video/mp4">
+  </video>
+</div>
+
+<div id="play-overlay">
+  <button id="play-btn-big" aria-label="Play">
+    <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+  </button>
+</div>
+
+<div id="ctrl-zone">
+  <div id="reel-controls">
+    <button class="rc-btn" id="rc-play" aria-label="Play / Pause">
+      <svg id="rc-play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      <svg id="rc-pause-icon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+    </button>
+
+    <!-- Progress with thumbnail preview -->
+    <div id="rc-progress-wrap">
+      <div id="rc-bar">
+        <div id="rc-fill"><div id="rc-dot"></div></div>
+        <div id="rc-hover-line"></div>
+      </div>
+      <div id="thumb-preview">
+        <canvas id="thumb-canvas" width="192" height="108"></canvas>
+        <span id="thumb-time-label">0:00</span>
+      </div>
+    </div>
+
+    <span id="rc-time">0:00 / 0:00</span>
+    <div class="vol-wrap">
+      <button class="rc-btn" id="rc-vol" aria-label="Mute / Unmute">
+        <svg id="rc-vol-on" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+        <svg id="rc-vol-off" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+      </button>
+      <input type="range" id="rc-vol-slider" min="0" max="1" step="0.02" value="1" aria-label="Volume">
+    </div>
+    <button class="rc-btn" id="rc-fs" aria-label="Fullscreen">
+      <svg id="rc-fs-expand" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+      <svg id="rc-fs-compress" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/></svg>
+    </button>
+  </div>
+</div>
+
+<div id="capture-status"></div>
+
+<script>
+/* ── Cursor ── */
+const cur = document.getElementById('cur');
+const ring = document.getElementById('cur-ring');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px';
+  ring.style.left = e.clientX + 'px'; ring.style.top = e.clientY + 'px';
+});
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+  el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+});
+
+/* ── Elements ── */
+const vid         = document.getElementById('reel-video');
+const overlay     = document.getElementById('play-overlay');
+const playIcon    = document.getElementById('rc-play-icon');
+const pauseIcon   = document.getElementById('rc-pause-icon');
+const fill        = document.getElementById('rc-fill');
+const timeEl      = document.getElementById('rc-time');
+const volOn       = document.getElementById('rc-vol-on');
+const volOff      = document.getElementById('rc-vol-off');
+const progressWrap = document.getElementById('rc-progress-wrap');
+const hoverLine   = document.getElementById('rc-hover-line');
+const thumbPreview = document.getElementById('thumb-preview');
+const thumbCanvas  = document.getElementById('thumb-canvas');
+const thumbTimeLabel = document.getElementById('thumb-time-label');
+const thumbCtx     = thumbCanvas.getContext('2d');
+const captureStatus = document.getElementById('capture-status');
+
+function fmt(s) {
+  if (!isFinite(s)) return '0:00';
+  const m = Math.floor(s / 60), sec = String(Math.floor(s % 60)).padStart(2, '0');
+  return `${m}:${sec}`;
+}
+
+/* ── Play state ── */
+function syncPlayState() {
+  const paused = vid.paused;
+  overlay.classList.toggle('hidden', !paused);
+  playIcon.style.display  = paused ? '' : 'none';
+  pauseIcon.style.display = paused ? 'none' : '';
+}
+vid.addEventListener('play',  syncPlayState);
+vid.addEventListener('pause', syncPlayState);
+vid.addEventListener('ended', () => { vid.currentTime = 0; syncPlayState(); });
+
+vid.addEventListener('timeupdate', () => {
+  if (!vid.duration || isDragging) return;
+  fill.style.width = (vid.currentTime / vid.duration * 100) + '%';
+  timeEl.textContent = fmt(vid.currentTime) + ' / ' + fmt(vid.duration);
+});
+
+document.getElementById('play-btn-big').addEventListener('click', () => vid.play());
+vid.addEventListener('click', () => vid.paused ? vid.play() : vid.pause());
+document.getElementById('rc-play').addEventListener('click', () =>
+  vid.paused ? vid.play() : vid.pause());
+
+/* ── Volume ── */
+const volSlider = document.getElementById('rc-vol-slider');
+
+function syncVolUI() {
+  const silent = vid.muted || vid.volume === 0;
+  volOn.style.display  = silent ? 'none' : '';
+  volOff.style.display = silent ? '' : 'none';
+  volSlider.value = vid.muted ? 0 : vid.volume;
+}
+
+document.getElementById('rc-vol').addEventListener('click', () => {
+  vid.muted = !vid.muted;
+  if (!vid.muted && vid.volume === 0) vid.volume = 0.5;
+  syncVolUI();
+});
+
+volSlider.addEventListener('input', () => {
+  vid.volume = parseFloat(volSlider.value);
+  vid.muted = vid.volume === 0;
+  syncVolUI();
+});
+
+/* ── Fullscreen ── */
+const fsExpand   = document.getElementById('rc-fs-expand');
+const fsCompress = document.getElementById('rc-fs-compress');
+
+function syncFsUI() {
+  const inFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+  fsExpand.style.display   = inFs ? 'none' : '';
+  fsCompress.style.display = inFs ? '' : 'none';
+}
+document.addEventListener('fullscreenchange', syncFsUI);
+document.addEventListener('webkitfullscreenchange', syncFsUI);
+
+document.getElementById('rc-fs').addEventListener('click', () => {
+  if (document.fullscreenElement || document.webkitFullscreenElement) {
+    (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+  } else {
+    const el = document.documentElement;
+    (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
+  }
+});
+
+/* ── Space bar ── */
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' && e.target === document.body) {
+    e.preventDefault(); vid.paused ? vid.play() : vid.pause();
+  }
+});
+
+/* ──────────────────────────────────────────────
+   THUMBNAIL CAPTURE
+   Pre-capture frames from a second video element.
+   Every THUMB_INTERVAL seconds → draw to canvas → store as ImageData.
+────────────────────────────────────────────── */
+const THUMB_W = 192, THUMB_H = 108, THUMB_INTERVAL = 3;
+
+const capVid = document.createElement('video');
+capVid.muted = true;
+capVid.preload = 'auto';
+capVid.crossOrigin = 'anonymous';
+// Share the same source
+const srcEl = document.createElement('source');
+srcEl.src = 'Project file/2026.04 Demoreel.mp4';
+srcEl.type = 'video/mp4';
+capVid.appendChild(srcEl);
+
+const offCanvas = document.createElement('canvas');
+offCanvas.width = THUMB_W; offCanvas.height = THUMB_H;
+const offCtx = offCanvas.getContext('2d');
+
+const thumbFrames = []; // array of ImageData
+let capQueue = [];
+let capIdx = 0;
+let capReady = false;
+
+function captureNext() {
+  if (capIdx >= capQueue.length) {
+    capReady = true;
+    captureStatus.textContent = 'preview ready';
+    captureStatus.classList.add('show');
+    setTimeout(() => captureStatus.classList.remove('show'), 2000);
+    return;
+  }
+  capVid.currentTime = capQueue[capIdx];
+}
+
+capVid.addEventListener('seeked', () => {
+  try {
+    offCtx.drawImage(capVid, 0, 0, THUMB_W, THUMB_H);
+    thumbFrames[capIdx] = offCtx.getImageData(0, 0, THUMB_W, THUMB_H);
+  } catch(e) {}
+  capIdx++;
+  captureNext();
+});
+
+vid.addEventListener('loadedmetadata', () => {
+  const dur = vid.duration;
+  capQueue = [];
+  for (let t = 0; t < dur; t += THUMB_INTERVAL) capQueue.push(t);
+  // small delay so main video can buffer first
+  setTimeout(() => capVid.load(), 800);
+});
+
+capVid.addEventListener('loadedmetadata', () => {
+  capIdx = 0;
+  captureNext();
+});
+
+/* ── Get thumbnail for a fraction 0–1 ── */
+function drawThumb(frac) {
+  const time = frac * (vid.duration || 0);
+  const idx = Math.min(Math.round(time / THUMB_INTERVAL), thumbFrames.length - 1);
+  if (idx >= 0 && thumbFrames[idx]) {
+    thumbCtx.putImageData(thumbFrames[idx], 0, 0);
+  } else {
+    // fallback: show a frame from main video if nothing captured yet
+    try { thumbCtx.drawImage(vid, 0, 0, THUMB_W, THUMB_H); } catch(e) {}
+  }
+}
+
+/* ──────────────────────────────────────────────
+   PROGRESS BAR — hover + drag scrubbing
+────────────────────────────────────────────── */
+let isDragging = false;
+const PREVIEW_W = 192;
+
+function getBarRect() { return progressWrap.getBoundingClientRect(); }
+function getFrac(clientX) {
+  const r = getBarRect();
+  return Math.max(0, Math.min(1, (clientX - r.left) / r.width));
+}
+
+function updatePreviewAt(frac, clientX) {
+  const r = getBarRect();
+  const barW = r.width;
+  const xInBar = frac * barW;
+
+  // position hover line
+  hoverLine.style.left = xInBar + 'px';
+
+  // position thumbnail, clamped so it stays within bar
+  let previewLeft = xInBar - PREVIEW_W / 2;
+  previewLeft = Math.max(0, Math.min(barW - PREVIEW_W, previewLeft));
+  thumbPreview.style.left = previewLeft + 'px';
+
+  // update time label
+  const t = frac * (vid.duration || 0);
+  thumbTimeLabel.textContent = fmt(t);
+
+  // draw thumbnail
+  drawThumb(frac);
+}
+
+progressWrap.addEventListener('mouseenter', () => {
+  thumbPreview.classList.add('show');
+});
+progressWrap.addEventListener('mouseleave', () => {
+  if (!isDragging) thumbPreview.classList.remove('show');
+});
+progressWrap.addEventListener('mousemove', e => {
+  const frac = getFrac(e.clientX);
+  updatePreviewAt(frac, e.clientX);
+});
+
+progressWrap.addEventListener('mousedown', e => {
+  e.preventDefault();
+  isDragging = true;
+  document.getElementById('reel-controls').classList.add('force-show');
+  const frac = getFrac(e.clientX);
+  vid.currentTime = frac * vid.duration;
+  fill.style.width = (frac * 100) + '%';
+  timeEl.textContent = fmt(frac * vid.duration) + ' / ' + fmt(vid.duration);
+  updatePreviewAt(frac, e.clientX);
+  thumbPreview.classList.add('show');
+});
+
+document.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  const frac = getFrac(e.clientX);
+  const t = frac * (vid.duration || 0);
+  vid.currentTime = t;
+  fill.style.width = (frac * 100) + '%';
+  timeEl.textContent = fmt(t) + ' / ' + fmt(vid.duration);
+  updatePreviewAt(frac, e.clientX);
+});
+
+document.addEventListener('mouseup', () => {
+  if (!isDragging) return;
+  isDragging = false;
+  document.getElementById('reel-controls').classList.remove('force-show');
+  thumbPreview.classList.remove('show');
+});
+</script>
+</body>
+</html>
