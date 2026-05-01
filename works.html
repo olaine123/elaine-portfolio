@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Works — Elaine Chen</title>
+  <link rel="icon" href="brand_assets/favicon.svg" type="image/svg+xml">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Elms+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --red:   #e33e3e;
+      --black: #080808;
+      --white: #f0ede6;
+      --dark:  #101010;
+      --card:  #151515;
+      --line:  #222222;
+      --muted: rgba(240,237,230,0.45);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black); color: var(--white);
+      font-family: 'IBM Plex Mono', monospace;
+      overflow-x: hidden; cursor: none;
+    }
+
+    /* ─── Cursor ─── */
+    #cur {
+      position: fixed; z-index: 9999; width: 10px; height: 10px;
+      background: var(--red); border-radius: 50%; pointer-events: none;
+      transform: translate(-50%,-50%); transition: width .15s, height .15s;
+      mix-blend-mode: difference;
+    }
+    #cur-ring {
+      position: fixed; z-index: 9998; width: 38px; height: 38px;
+      border: 1px solid rgba(227,62,62,.45); border-radius: 50%; pointer-events: none;
+      transform: translate(-50%,-50%);
+      transition: left .1s ease, top .1s ease, width .25s, height .25s;
+    }
+    body.hovering #cur      { width: 18px; height: 18px; }
+    body.hovering #cur-ring { width: 58px; height: 58px; }
+
+    /* ─── Nav ─── */
+    nav {
+      position: fixed; inset: 0 0 auto 0; z-index: 200;
+      padding: 28px 52px;
+      display: flex; justify-content: space-between; align-items: center;
+      mix-blend-mode: difference;
+    }
+    .nav-logo {
+      display: flex; align-items: center; text-decoration: none;
+    }
+    .nav-logo img { height: 24px; display: block; }
+    .nav-links { display: flex; gap: 40px; }
+    .nav-links a {
+      font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--white); text-decoration: none; position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px; background: var(--red); transition: width .3s ease;
+    }
+    .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+    .nav-links a.active { color: var(--red); }
+
+    /* ─── Page Header ─── */
+    .page-header {
+      padding: 160px 52px 80px;
+      border-bottom: 1px solid var(--line);
+    }
+    .s-label {
+      font-size: .62rem; letter-spacing: .3em; text-transform: uppercase;
+      color: var(--red); margin-bottom: 14px;
+    }
+    .s-title {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(3.5rem, 9vw, 9rem);
+      line-height: .88; letter-spacing: -.02em; text-transform: uppercase;
+    }
+    .works-count {
+      font-size: .65rem; letter-spacing: .15em; color: var(--line);
+      margin-top: 20px;
+    }
+
+    /* ─── Works Grid ─── */
+    @keyframes gridFadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .grid-fade { animation: gridFadeIn .45s ease forwards; }
+    .works-section { padding: 3px 0 0; }
+    .w2-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
+    .w2-grid .work-card { aspect-ratio: 16/9; }
+
+    /* ─── Playground Cards (unchanged) ─── */
+    .work-card { position: relative; overflow: hidden; background: var(--card); cursor: none; }
+    .work-thumb {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+      filter: grayscale(15%); transition: transform .65s ease, filter .4s ease;
+    }
+    .work-card:hover .work-thumb { filter: grayscale(0%); }
+    .work-placeholder {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .62rem; letter-spacing: .2em; color: #2a2a2a; background: var(--card);
+    }
+    .work-card-overlay {
+      position: absolute; inset: 0; background: rgba(8,8,8,0);
+      display: flex; align-items: flex-end; padding: 28px;
+      transition: background .4s ease;
+    }
+    .work-card:hover .work-card-overlay { background: rgba(8,8,8,.78); }
+    .work-card:hover .work-thumb { transform: scale(1.04); }
+    .work-meta { transform: translateY(12px); opacity: 0; transition: transform .4s ease, opacity .35s ease; }
+    .work-card:hover .work-meta { transform: translateY(0); opacity: 1; }
+    .work-num { font-size: .58rem; letter-spacing: .22em; color: var(--red); margin-bottom: 5px; }
+    .work-title {
+      font-family: 'Anton', sans-serif; font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+      text-transform: uppercase; letter-spacing: .01em; line-height: 1;
+    }
+    .work-type { font-size: .65rem; letter-spacing: .1em; color: var(--muted); margin-top: 6px; }
+    .work-card::after {
+      content: ''; position: absolute; top: 0; right: 0;
+      width: 0; height: 3px; background: var(--red); transition: width .4s ease;
+    }
+    .work-card:hover::after { width: 60px; }
+
+    /* ─── More Projects Nav ─── */
+    .detail-more-projects { padding: 40px 52px 0; border-top: 1px solid var(--line); margin-top: 60px; }
+    .dmp-label { font-size: .62rem; letter-spacing: .3em; text-transform: uppercase; color: var(--red); margin-bottom: 28px; text-align: center; }
+    .dmp-nav { display: grid; grid-template-columns: 1fr 1fr; }
+    .dmp-item { padding: 20px 0; cursor: none; position: relative; border-top: 1px solid var(--line); }
+    .dmp-item:first-child { padding-right: 52px; border-right: 1px solid var(--line); }
+    .dmp-item:last-child { padding-left: 52px; text-align: right; }
+    .dmp-dir { font-size: .6rem; letter-spacing: .25em; text-transform: uppercase; color: #444; margin-bottom: 16px; }
+    .dmp-title {
+      font-family: 'Anton', sans-serif; font-size: clamp(1.5rem, 2.5vw, 2.6rem);
+      text-transform: uppercase; letter-spacing: -.01em; line-height: 1;
+      color: var(--white); transition: color .25s ease;
+    }
+    .dmp-title-wrap { display: flex; align-items: flex-start; gap: 12px; }
+    .dmp-title-wrap--right { justify-content: flex-end; }
+    .dmp-arrow { flex-shrink: 0; font-family: 'Anton', sans-serif; font-size: clamp(1.5rem, 2.5vw, 2.6rem); line-height: 1; color: var(--white); transition: color .25s ease; }
+    .dmp-item:hover .dmp-arrow { color: var(--red); }
+    .dmp-item:hover .dmp-title { color: var(--red); }
+    .dmp-type { font-size: .68rem; letter-spacing: .1em; color: var(--muted); margin-top: 10px; }
+    .dmp-thumb {
+      position: absolute; bottom: calc(100% + 16px); left: 0;
+      width: 280px; aspect-ratio: 16/9; overflow: hidden; background: var(--card);
+      opacity: 0; transform: translateY(10px);
+      transition: opacity .3s ease, transform .3s ease;
+      pointer-events: none; border: 1px solid rgba(255,255,255,.08); z-index: 10;
+    }
+    .dmp-item:last-child .dmp-thumb { left: auto; right: 0; }
+    .dmp-item:hover .dmp-thumb { opacity: 1; transform: translateY(0); }
+    .dmp-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* ─── Chair Scatter ─── */
+    #detail-main { position: relative; }
+    #chair-scatter { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+    #chair-scatter img { position: absolute; pointer-events: none; display: block; }
+
+    /* ─── Chair Flipbook ─── */
+    #chair-strip {
+      position: fixed;
+      left: 20px; top: 160px;
+      width: 240px;
+      z-index: 350; pointer-events: none;
+      opacity: 0; transition: opacity .5s ease;
+    }
+    #chair-strip.visible { opacity: 1; }
+    #chair-frame-img { width: 100%; display: block; }
+
+    /* ─── Footer ─── */
+    footer {
+      border-top: 1px solid var(--line); padding: 80px 52px 40px;
+      background: var(--black);
+    }
+    .foot-main { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-bottom: 80px; }
+    .foot-nav { display: flex; flex-direction: column; }
+    .foot-nav a {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(2.8rem, 5vw, 5rem);
+      line-height: 1; letter-spacing: -.02em; text-transform: uppercase;
+      color: var(--white); text-decoration: none;
+      transition: color .2s ease; padding-bottom: 6px;
+    }
+    .foot-nav a:hover { color: var(--red); }
+    .foot-info { display: flex; flex-direction: column; gap: 20px; padding-top: 12px; }
+    .foot-contact-item { display: flex; flex-direction: column; gap: 3px; }
+    .foot-contact-label {
+      font-size: .6rem; letter-spacing: .28em; text-transform: uppercase;
+      color: var(--red);
+    }
+    .foot-contact-row {
+      font-family: "Elms Sans", sans-serif;
+      font-size: 1.05rem; line-height: 1.4; color: var(--muted);
+      text-decoration: none; transition: color .2s ease;
+    }
+    .foot-contact-row:hover { color: var(--white); }
+    .foot-bottom {
+      border-top: 1px solid var(--line); padding-top: 28px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .foot-copy { font-size: .8rem; letter-spacing: .08em; color: #444; }
+    .foot-top {
+      font-size: .8rem; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color .2s ease;
+    }
+    .foot-top:hover { color: var(--red); }
+
+    /* ─── Project Detail Overlay ─── */
+    #detail {
+      position: fixed; inset: 0; z-index: 300;
+      background: var(--black); overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform .65s cubic-bezier(.76,0,.24,1);
+    }
+    #detail.open { transform: translateY(0); }
+    .detail-topbar {
+      position: sticky; top: 0; z-index: 10; padding: 22px 52px;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(8,8,8,.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+    .detail-back {
+      display: flex; align-items: center; gap: 14px;
+      font-size: .7rem; letter-spacing: .16em; text-transform: uppercase;
+      color: var(--white); text-decoration: none; cursor: none; transition: color .2s ease;
+    }
+    .detail-back:hover { color: var(--red); }
+    .back-line {
+      width: 32px; height: 1px; background: currentColor; position: relative;
+      transition: width .3s ease;
+    }
+    .detail-back:hover .back-line { width: 50px; }
+    .back-line::before {
+      content: ''; position: absolute; left: 0; top: -4px; width: 8px; height: 8px;
+      border-left: 1px solid currentColor; border-bottom: 1px solid currentColor;
+      transform: rotate(45deg);
+    }
+    .detail-counter { font-size: .65rem; letter-spacing: .18em; color: #444; }
+    .detail-body { padding: 60px 52px; max-width: 1440px; margin: 0 auto; }
+    .detail-label {
+      font-size: .82rem; letter-spacing: .28em; text-transform: uppercase;
+      color: var(--red); margin-bottom: 14px;
+    }
+    .detail-title {
+      font-family: 'Anton', sans-serif; font-size: clamp(3rem, 7vw, 8rem);
+      text-transform: uppercase; line-height: .88; letter-spacing: -.02em; margin-bottom: 48px;
+    }
+    .detail-video-wrap {
+      position: relative; width: 100%; padding-bottom: 56.25%;
+      background: var(--card); margin-bottom: 60px;
+    }
+    .detail-video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .detail-stacked-video { margin-bottom: 60px; }
+    .video-stack { position: relative; padding-bottom: 56.25%; height: 0; margin-bottom: 32px; }
+    .stack-card {
+      position: absolute; inset: 0;
+      transition: transform .5s cubic-bezier(.25,.46,.45,.94), box-shadow .4s ease, opacity .4s ease;
+      cursor: pointer; background: var(--card);
+      border: 1px solid rgba(255,255,255,.04);
+    }
+    .stack-card[data-pos="0"] {
+      z-index: 3; transform: translateY(0) scale(1); cursor: default;
+      box-shadow: 0 16px 48px rgba(0,0,0,.6);
+    }
+    .stack-card[data-pos="1"] {
+      z-index: 2; transform: translateY(14px) scale(0.97); opacity: .82;
+    }
+    .stack-card[data-pos="2"] {
+      z-index: 1; transform: translateY(26px) scale(0.94); opacity: .64;
+    }
+    .stack-card iframe { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .stack-card:not([data-pos="0"]) iframe { pointer-events: none; }
+    .stack-tabs { display: flex; gap: 8px; margin-top: 20px; }
+    .stack-tab {
+      font-family: 'IBM Plex Mono', monospace; font-size: .7rem;
+      letter-spacing: .2em; text-transform: uppercase;
+      padding: 8px 20px; border: 1px solid var(--line);
+      background: transparent; color: var(--muted); cursor: pointer;
+      transition: border-color .25s ease, color .25s ease;
+    }
+    .stack-tab.active { border-color: var(--red); color: var(--red); }
+    .stack-tab:hover:not(.active) { border-color: var(--white); color: var(--white); }
+    .detail-loop-videos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-bottom: 60px; }
+    .detail-loop-videos video { width: 100%; display: block; aspect-ratio: 16/9; object-fit: cover; pointer-events: none; }
+    .detail-hero-images {
+      display: none; grid-template-columns: repeat(3, 1fr);
+      gap: 4px; margin-bottom: 60px;
+    }
+    .detail-hero-images.show { display: grid; }
+    .detail-hero-images img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; cursor: none; transition: transform .3s ease; }
+    .detail-hero-images img:hover { transform: scale(1.04); }
+    .transcripts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px 52px; }
+    .transcript-label { font-family: 'IBM Plex Mono', monospace; font-size: .7rem; letter-spacing: .18em; color: var(--red); margin-bottom: 10px; }
+    .transcript-body { font-family: 'Elms Sans', sans-serif; font-size: .92rem; line-height: 1.75; color: var(--muted); }
+    .detail-info { display: grid; grid-template-columns: 2fr 1fr; gap: 60px; margin-bottom: 80px; }
+    .detail-desc {
+      font-family: "Elms Sans", sans-serif; font-optical-sizing: auto;
+      font-size: 1.25rem; line-height: 1.9; color: rgba(240,237,230,.75);
+      white-space: pre-line;
+    }
+    .detail-specs { border-top: 1px solid var(--line); padding-top: 22px; }
+    .spec-row { margin-bottom: 22px; }
+    .spec-label {
+      font-size: .75rem; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--red); margin-bottom: 4px;
+    }
+    .spec-val { font-size: 1rem; color: var(--white); }
+    .detail-illustration { margin-bottom: 60px; display: flex; justify-content: center; }
+    .detail-illustration img { max-width: 120px; width: 10%; filter: drop-shadow(0 0 40px rgba(227,62,62,.15)); }
+    .detail-deco { margin: 40px 0 60px; display: flex; justify-content: center; }
+    .detail-deco img { max-width: 420px; width: 37.5%; }
+    .process-section { margin-bottom: 52px; }
+    .process-section-label {
+      font-size: .75rem; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--red); margin-bottom: 20px;
+    }
+    .process-section-grid { display: grid; gap: 3px; }
+    .process-section-grid img { width: 100%; height: auto; display: block; }
+    .process-cap { font-size: .8rem; letter-spacing: .16em; text-transform: uppercase; color: #444; margin-top: 10px; }
+    .process-two-col {
+      display: grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-bottom: 52px;
+    }
+    .process-two-col-left .process-section,
+    .process-two-col-right .process-section { margin-bottom: 16px; }
+    .process-two-col-right { display: flex; flex-direction: column; padding-left: 48px; }
+    .detail-footer { border-top: 1px solid var(--line); padding: 80px 52px 40px; }
+
+    /* ─── Lightbox ─── */
+    #lightbox {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(5,5,5,.96);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity .35s ease;
+    }
+    #lightbox::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: var(--red);
+    }
+    #lightbox.lb-open { opacity: 1; pointer-events: all; }
+    #lb-stage {
+      flex: 1; width: 100%; display: flex; align-items: center; justify-content: center;
+      padding: 72px 80px 20px; min-height: 0;
+    }
+    #lb-img {
+      max-width: 100%; max-height: 100%; object-fit: contain;
+      opacity: 0; transform: scale(.97);
+      transition: opacity .4s ease, transform .4s cubic-bezier(.16,1,.3,1);
+    }
+    #lb-img.lb-vis { opacity: 1; transform: scale(1); }
+    #lb-video {
+      max-width: 100%; max-height: 100%; object-fit: contain;
+      display: none; outline: none; background: var(--black);
+    }
+    #lb-close {
+      position: absolute; top: 24px; right: 36px;
+      width: 40px; height: 40px;
+      background: transparent; border: 1px solid rgba(240,237,230,.2); border-radius: 50%;
+      cursor: none; display: flex; align-items: center; justify-content: center;
+      transition: border-color .2s, background .2s;
+    }
+    #lb-close::before, #lb-close::after {
+      content: ''; position: absolute;
+      width: 14px; height: 1px; background: var(--white); border-radius: 1px;
+    }
+    #lb-close::before { transform: rotate(45deg); }
+    #lb-close::after  { transform: rotate(-45deg); }
+    #lb-close:hover   { border-color: var(--red); background: rgba(227,62,62,.12); }
+    #lb-footer {
+      width: 100%; padding: 16px 80px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0; position: relative;
+    }
+    #lb-info {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      pointer-events: none; text-align: center;
+    }
+    #lb-group   { font-size: .58rem; letter-spacing: .32em; text-transform: uppercase; color: var(--red); }
+    #lb-counter { font-size: .72rem; letter-spacing: .16em; color: var(--muted); }
+    #lb-prev, #lb-next {
+      background: transparent; border: 1px solid rgba(240,237,230,.2);
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: none; transition: border-color .2s, background .2s; flex-shrink: 0;
+    }
+    #lb-prev:hover, #lb-next:hover { border-color: var(--red); background: rgba(227,62,62,.12); }
+    #lb-prev svg, #lb-next svg {
+      width: 14px; height: 14px; stroke: var(--white); stroke-width: 1.5;
+      fill: none; stroke-linecap: round; stroke-linejoin: round; pointer-events: none;
+    }
+    .process-section-grid img { cursor: none; transition: transform .3s ease; }
+    .process-section-grid img:hover { transform: scale(1.02); }
+    .process-body {
+      font-family: "Elms Sans", sans-serif; font-optical-sizing: auto;
+      font-size: 1.05rem; line-height: 1.85; color: rgba(240,237,230,.72); max-width: 680px;
+    }
+
+    /* ─── Playground Grid ─── */
+    .playground-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px;
+    }
+    .playground-grid .work-card { aspect-ratio: 1 / 1; }
+    .playground-section-label {
+      padding: 48px 52px 20px;
+      font-size: .62rem; letter-spacing: .3em; text-transform: uppercase;
+      color: var(--red); border-top: 1px solid var(--line);
+    }
+
+    /* ─── Filter Tabs ─── */
+    .header-row { display: flex; justify-content: space-between; align-items: flex-end; }
+    .filter-tabs { display: flex; gap: 28px; padding-bottom: 14px; }
+    .ftab {
+      background: none; border: none; cursor: none;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: .62rem; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--muted); position: relative; padding-bottom: 4px;
+      transition: color .2s ease;
+    }
+    .ftab::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 0; height: 1px; background: var(--red); transition: width .3s ease;
+    }
+    .ftab.active { color: var(--red); }
+    .ftab.active::after { width: 100%; }
+    .ftab:hover:not(.active) { color: var(--white); }
+    .works-empty {
+      grid-column: 1 / -1; padding: 120px 52px;
+      font-size: .62rem; letter-spacing: .25em; text-transform: uppercase;
+      color: #333; text-align: center;
+    }
+
+    /* ─── Scroll Reveal ─── */
+    .reveal { opacity: 0; transform: translateY(36px); transition: opacity .8s ease, transform .8s ease; }
+    .reveal.vis { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 900px) {
+      nav { padding: 20px 24px; }
+      .page-header { padding: 120px 24px 60px; }
+      .header-row { flex-direction: column; align-items: flex-start; gap: 24px; }
+      .filter-tabs { flex-wrap: wrap; gap: 16px 24px; padding-bottom: 0; }
+      .w2-grid { grid-template-columns: 1fr; }
+      .detail-body { padding: 40px 24px; }
+      .detail-topbar { padding: 18px 24px; }
+      .detail-info { grid-template-columns: 1fr; gap: 36px; }
+      .nav-links { gap: 24px; }
+      footer, .detail-footer { padding: 60px 24px 32px; }
+      .foot-main { grid-template-columns: 1fr; gap: 48px; }
+      .detail-more-projects { padding: 60px 24px 0; }
+      .dmp-item:first-child { padding-right: 24px; }
+      .dmp-item:last-child { padding-left: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<!-- ── Nav ── -->
+<nav>
+  <a href="index.html" class="nav-logo"><img src="brand_assets/LOGO.png" alt="Elaine Chen"></a>
+  <div class="nav-links">
+    <a href="works.html" class="active">Works</a>
+    <a href="reel.html">Reel</a>
+    <a href="about.html">About</a>
+  </div>
+</nav>
+
+<!-- ── Page Header ── -->
+<div class="page-header">
+  <p class="s-label">Selected Works</p>
+  <div class="header-row">
+    <h1 class="s-title">WORKS</h1>
+    <div class="filter-tabs">
+      <button class="ftab active" data-filter="all">All</button>
+      <button class="ftab" data-filter="works">Works</button>
+      <button class="ftab" data-filter="live-action">Live Action Motion</button>
+      <button class="ftab" data-filter="playground">Playground</button>
+    </div>
+  </div>
+  <p class="works-count" id="works-count">07 Projects</p>
+</div>
+
+<!-- ── Works Grid ── -->
+<div class="works-section">
+  <div class="works-grid" id="works-grid"></div>
+  <div id="live-action-section" style="display:none"></div>
+  <div id="playground-section" style="display:none"></div>
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="foot-main">
+    <div class="foot-nav">
+      <a href="works.html">Works</a>
+      <a href="reel.html">Reel</a>
+      <a href="about.html">About</a>
+    </div>
+    <div class="foot-info">
+      <div class="foot-contact-item">
+        <span class="foot-contact-label">Email</span>
+        <a href="mailto:olaine123456@gmail.com" class="foot-contact-row">olaine123456@gmail.com</a>
+      </div>
+      <div class="foot-contact-item">
+        <span class="foot-contact-label">Location</span>
+        <div class="foot-contact-row">Savannah, GA · USA</div>
+      </div>
+      <div class="foot-contact-item">
+        <span class="foot-contact-label">LinkedIn</span>
+        <a href="https://www.linkedin.com/in/elainechen-motion" target="_blank" rel="noopener" class="foot-contact-row">linkedin.com/in/elainechen-motion ↗</a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span class="foot-copy">© 2026 Elaine Chen. All rights reserved.</span>
+    <a href="#" class="foot-top" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">Back to Top ↑</a>
+  </div>
+</footer>
+
+<!-- ── Chair Flipbook Strip ── -->
+<div id="chair-strip">
+  <img id="chair-frame-img" src="" alt="">
+</div>
+
+<!-- ── Project Detail Overlay ── -->
+<div id="detail">
+  <div class="detail-topbar">
+    <a href="#" class="detail-back" id="btn-close">
+      <div class="back-line"></div>
+      <span>Back to Works</span>
+    </a>
+    <span class="detail-counter" id="d-counter">01 / 06</span>
+  </div>
+
+  <div id="detail-main">
+  <div id="chair-scatter"></div>
+  <div class="detail-body">
+    <p class="detail-label" id="d-label">Motion Graphics</p>
+    <h2 class="detail-title" id="d-title">PROJECT TITLE</h2>
+    <div class="detail-video-wrap" id="d-video-wrap">
+      <iframe id="d-video" src="" frameborder="0"
+        allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div id="d-hero-images" class="detail-hero-images"></div>
+    <div class="detail-info">
+      <p class="detail-desc" id="d-desc"></p>
+      <div class="detail-specs" id="d-specs"></div>
+    </div>
+    <div id="d-illustration"></div>
+    <div id="d-deco"></div>
+    <div id="d-process"></div>
+    <div id="d-loop-videos"></div>
+    <div id="d-more-projects"></div>
+  </div>
+
+  <footer class="detail-footer">
+    <div class="foot-main">
+      <div class="foot-nav">
+        <a href="works.html">Works</a>
+        <a href="reel.html">Reel</a>
+        <a href="about.html">About</a>
+      </div>
+      <div class="foot-info">
+        <div class="foot-contact-item">
+          <span class="foot-contact-label">Email</span>
+          <a href="mailto:olaine123456@gmail.com" class="foot-contact-row">olaine123456@gmail.com</a>
+        </div>
+        <div class="foot-contact-item">
+          <span class="foot-contact-label">Location</span>
+          <div class="foot-contact-row">Savannah, GA · USA</div>
+        </div>
+        <div class="foot-contact-item">
+          <span class="foot-contact-label">LinkedIn</span>
+          <a href="https://www.linkedin.com/in/elainechen-motion" target="_blank" rel="noopener" class="foot-contact-row">linkedin.com/in/elainechen-motion ↗</a>
+        </div>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span class="foot-copy">© 2026 Elaine Chen. All rights reserved.</span>
+      <a href="#" class="foot-top" onclick="document.getElementById('detail').scrollTo({top:0,behavior:'smooth'}); return false;">Back to Top ↑</a>
+    </div>
+  </footer>
+  </div><!-- /detail-main -->
+</div>
+
+<!-- ── Lightbox ── -->
+<div id="lightbox">
+  <button id="lb-close" aria-label="Close"></button>
+  <div id="lb-stage">
+    <img id="lb-img" src="" alt="">
+    <video id="lb-video" controls autoplay playsinline></video>
+  </div>
+  <div id="lb-footer">
+    <button id="lb-prev" aria-label="Previous">
+      <svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div id="lb-info">
+      <span id="lb-group"></span>
+      <span id="lb-counter"></span>
+    </div>
+    <button id="lb-next" aria-label="Next">
+      <svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+  const projects = [
+    {
+      num: '01', category: 'works', label: 'Motion Graphics',
+      title: 'NEW YORK PULSE',
+      type: 'Motion Graphics · 2026',
+      vimeoId: '1170310909',
+      desc: 'This project expresses the pure excitement of finally experiencing New York City, a place imagined for a lifetime. Through the language of geometry, I aim to simplify and celebrate the city\'s complexity. Different shapes symbolize the global diversity of people. The animation wants to show the energy and infinite potential of New York, turning personal emotions into a vibrant, rhythmic motion piece.',
+      specs: [
+        { k: 'Year', v: '2026' }, { k: 'Type', v: 'Motion Graphics' },
+        { k: 'Location', v: 'USA' },
+      ],
+      thumb: 'Project file/NEW YORK PULSE/Styleframe06.jpg',
+      illustration: 'Project file/NEW YORK PULSE/apple.png.webp',
+      processGroups: [
+        { group: 'Mind Map', maxWidth: '60%', items: [{ src: 'Project file/NEW YORK PULSE/mindmap.webp' }] },
+        { group: 'Storyboard', items: [{ src: 'Project file/NEW YORK PULSE/Storyboard01.jpg' }, { src: 'Project file/NEW YORK PULSE/Storyboard02.jpg' }] },
+        { group: 'Color', maxWidth: '30%', items: [{ src: 'Project file/NEW YORK PULSE/Color.webp' }] },
+        { group: 'Styleframe', items: [
+          { src: 'Project file/NEW YORK PULSE/Styleframe01.jpg' },
+          { src: 'Project file/NEW YORK PULSE/Styleframe02.jpg' },
+          { src: 'Project file/NEW YORK PULSE/Styleframe03.jpg' },
+          { src: 'Project file/NEW YORK PULSE/Styleframe04.png' },
+          { src: 'Project file/NEW YORK PULSE/styleframe05.jpg' },
+          { src: 'Project file/NEW YORK PULSE/Styleframe06.jpg' },
+          { src: 'Project file/NEW YORK PULSE/Styleframe07.jpg' },
+          { src: 'Project file/NEW YORK PULSE/Styleframe08.png' },
+          { src: 'Project file/NEW YORK PULSE/Styleframe09.png' },
+        ]},
+      ],
+    },
+    {
+      num: '02', category: 'works', label: 'Motion Graphics',
+      title: 'THE MILKY WAY HOME',
+      type: 'Motion Graphics · 2026',
+      vimeoId: '1170313437',
+      desc: '"The Milky Way Home" follows an extraterrestrial visitor who explores Earth through a lens of whimsical confusion, viewing the giant Pyramids and finding more beauty in a stray cat\'s purr than in human monuments.\n\nAfter befriending the world by doodling smiley faces on "Beware of Alien" signs and discovering the joy of cinema story, he decides to depart not with Earth\'s gold, but with a single, calm dairy cow, choosing a lifetime supply of fresh milk as the ultimate souvenir.',
+      specs: [
+        { k: 'Year',     v: '2026' },
+        { k: 'Type',     v: 'Motion Graphics' },
+        { k: 'Location', v: 'USA' },
+      ],
+      thumb: 'Project file/The Milky Way Home/Styleframe/Frame-06.jpg',
+      processGroups: [
+        {
+          layout: 'two-col',
+          left: {
+            group: 'Character Development',
+            items: [
+              { src: 'Project file/The Milky Way Home/character development.png' },
+            ],
+          },
+          right: [
+            {
+              group: 'Moodboard',
+              items: [{ src: 'Project file/The Milky Way Home/moodboard.png' }],
+            },
+            {
+              group: 'Styleboard',
+              items: [{ src: 'Project file/The Milky Way Home/Styleboard.png' }],
+            },
+          ],
+        },
+        { group: 'Color', maxWidth: '30%', items: [{ src: 'Project file/The Milky Way Home/color.png' }] },
+        {
+          group: 'Storyboard',
+          items: [
+            { src: 'Project file/The Milky Way Home/Storyboard_3x2 1.jpg' },
+            { src: 'Project file/The Milky Way Home/Storyboard_3x2 3.jpg' },
+          ],
+        },
+        { group: 'Styleframe', cols: 3, items: [
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-01.jpg' },
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-02.jpg' },
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-03.jpg' },
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-04.jpg' },
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-05.jpg' },
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-06.jpg' },
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-07.jpg' },
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-08.jpg' },
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-09.jpg' },
+          { src: 'Project file/The Milky Way Home/Styleframe/Frame-10.jpg' },
+        ]},
+      ],
+    },
+    {
+      num: '03', category: 'works', label: 'Motion Graphics',
+      title: 'THE GOOD, THE BAD, and THE UGLY',
+      type: 'Ending Title Sequence · 2025',
+      vimeoId: '1170318485',
+      chairFrames: Array.from({length:14}, (_,i) => `Project file/THE GOOD, THE BAD, and THE UGLY/chair/${i+1}.png`),
+      desc: 'For this original drama\'s end credits, I dove deep into the script and worked closely with the director and writer. We wanted to create a visual journey that really captured the protagonist\'s search for happiness.\n\nUsing kaleidoscope effects and Dolly-in visuals to pull the audience into the story. I also wove in key locations like the breakfast shop, beauty salon, and toy store. To add more narrative tension, I hid "Easter eggs" throughout the sequence, such as a Chinese chess piece that symbolizes manipulation.',
+      specs: [
+        { k: 'Year', v: '2025' },
+        { k: 'Type', v: 'Ending Title Sequence' },
+        { k: 'Location', v: 'Taiwan' },
+      ],
+      thumb: 'Project file/THE GOOD, THE BAD, and THE UGLY/thumbnail.webp',
+      deco: 'Project file/THE GOOD, THE BAD, and THE UGLY/Deco.png',
+      processGroups: [
+        {
+          layout: 'two-col',
+          ratio: '1fr 1.5fr',
+          left: {
+            group: 'Official Poster',
+            items: [{ src: 'Project file/THE GOOD, THE BAD, and THE UGLY/poster.png' }],
+          },
+          right: [
+            { group: '', items: [{ src: 'Project file/THE GOOD, THE BAD, and THE UGLY/logo_white.png' }], maxWidth: '50%' },
+            { type: 'text', group: 'Technical Execution', body: 'My work was inspired by Fons de Haan\'s visuals for J.I.D and the aesthetic of music videos like Washed Out\'s \'Zonked.\' I built the entire sequence in After Effects using complex scale expressions to create a layered and "infinite" 3D motion feel.' },
+            { type: 'text', group: 'The Process', body: 'To push the visuals even further, I integrated AI tools like MidJourney, Tripio AI, and Magnific.ai for concept and asset development. I also collaborated with photographers and shot additional footage myself to make sure the final piece felt seamless and hit all the right emotional notes.' },
+          ],
+        },
+        {
+          group: 'Moodboard',
+          maxWidth: '75%',
+          items: [{ src: 'Project file/THE GOOD, THE BAD, and THE UGLY/moodboard.png' }],
+        },
+        {
+          group: 'Styleframe',
+          cols: 5,
+          items: [
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe01.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe02.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe03.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe04.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe05.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe06.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe07.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe08.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe09.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe10.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe11.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe12.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe13.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe14.png' },
+            { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe15.png' },
+          ],
+        },
+      ],
+    },
+    { num: '04', category: 'works', label: 'Motion Graphic', title: 'The Geometry of Logic - Adelphi', type: 'Motion Graphic · 2026', vimeoId: '1183195558', desc: '"Bridging Rationality and Form"\n\nThis motion piece is a visual exploration of Adelphi, capturing its essence of mathematical precision and British modernism. By integrating Bauhaus-inspired aesthetics with contemporary motion design, I\'ve transformed static letterforms into a choreography of engineering.\nThe animation highlights the subtle tension between elementary geometry and functional pragmatism, celebrating the \'scientific\' soul behind this redefined sans-serif.', thumb: 'Project file/The Geometry of Logic - Adelphi/Adelphi kinetic specimen.png', specs: [{ k: 'Year', v: '2026' }, { k: 'Type', v: 'Motion Graphic' }], processGroups: [{ group: 'Moodboard', items: [{ src: 'Project file/The Geometry of Logic - Adelphi/moodboard.png' }] }, { group: 'Styleframe', cols: 4, items: [{ src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-01.jpg' }, { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-02.jpg' }, { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-03.jpg' }, { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-04.jpg' }, { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-05.jpg' }, { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-06.jpg' }, { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-07.jpg' }, { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-08.jpg' }, { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-09.jpg' }, { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-10.jpg' }, { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-11.jpg' }, { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-12.jpg' }, { src: 'Project file/The Geometry of Logic - Adelphi/Styleframe/StyleFrame-13.jpg' }] }] },
+    {
+      num: '05', category: 'works', label: 'Projection',
+      title: 'NIKE SNEAKER PROJECTION',
+      type: 'Projection · 2026',
+      vimeoId: '1186439648',
+      desc: 'Utilizing a retro CRT look to explore how Nike\'s visual identity can transform a space and illustrate the \'energy\' of sneaker culture through motion and light',
+      thumb: 'Project file/Nike Sneaker Projection/Thumbnail.png',
+      specs: [
+        { k: 'Year', v: '2026' },
+        { k: 'Type', v: 'Projection' },
+        { k: 'Location', v: 'USA' },
+      ],
+      processGroups: [
+        { group: 'Moodboard',                  items: [{ src: 'Project file/Nike Sneaker Projection/01moodboard.png' }] },
+        { group: 'Texture Experiment',          items: [{ src: 'Project file/Nike Sneaker Projection/02Texture experiment.png' }] },
+        { group: 'First Time Mapping Test',     items: [{ src: 'Project file/Nike Sneaker Projection/03First time mapping test.png' }] },
+        { group: 'Mapping Process',             items: [{ src: 'Project file/Nike Sneaker Projection/04Mapping Process.png' }] },
+        { group: 'Spatial Setup',               items: [{ src: 'Project file/Nike Sneaker Projection/05Spatial setup.png' }] },
+      ],
+    },
+    {
+      num: '06', category: 'works', label: 'Styleframe Design',
+      title: '7 KINDS OF REST',
+      type: 'Styleframe Design · 2026',
+      heroImages: [
+        'Project file/7 kinds of rest/Styleframe/01.jpg',
+        'Project file/7 kinds of rest/Styleframe/02.jpg',
+        'Project file/7 kinds of rest/Styleframe/03.jpg',
+        'Project file/7 kinds of rest/Styleframe/04.jpg',
+        'Project file/7 kinds of rest/Styleframe/05.jpg',
+        'Project file/7 kinds of rest/Styleframe/06.jpg',
+      ],
+      thumb: 'Project file/7 kinds of rest/Styleframe/04.jpg',
+      desc: "In Dr. Saundra Dalton-Smith's book, Sacred Rest, she outlines different kinds of rest you may be craving. From the mental to the physical, Dalton-Smith shares how to identify what kind of respite you need and how to embrace rest.",
+      specs: [
+        { k: 'Year', v: '2026' },
+        { k: 'Type', v: 'Styleframe Design' },
+        { k: 'Location', v: 'USA' },
+      ],
+      processGroups: [
+        { group: 'Transcripts', type: 'transcripts', entries: [
+          { label: 'S01 / 02', body: 'I separate mental and emotional rest because mental rest, we focus primarily on mental processes — decision-making, memory function, the ability to have recall, to concentrate.' },
+          { label: 'S03', body: 'or performance where you don\'t have the ability to authentically express your emotions in that moment. Emotional labor in the process of staying at a high level of customer service, ruminating over all of the things that happen in the day.' },
+          { label: 'S04 / 05', body: 'Or it\'s a person who finds that they are very forgetful or can\'t seem to focus their attention to get a job done. And so that\'s the mental part of it, the decision, focus aspect of the brain.' },
+          { label: 'S06', body: 'The emotional rest part of it is looking at how you process your emotions. And it tends to be one that I find that a lot of people struggle greatly with.' },
+          { label: 'S07 / 08', body: 'because many of us have jobs and careers and lifestyles where we carry a large amount of professional emotional labor in the process of staying at a high level of customer service' },
+          { label: 'S09', body: 'or performance where you don\'t have the ability to authentically express your emotions in that moment. Emotional labor in the process of staying at a high level of customer service.' },
+        ]},
+        { group: '', items: [{ src: 'Project file/7 kinds of rest/Visual Essay Boards.jpg' }] },
+      ],
+    },
+    {
+      num: '07', category: 'works', label: 'Styleframe Design',
+      title: 'WORLD ATHLETICS',
+      type: 'Styleframe Design · 2026',
+      heroImages: [
+        'Project file/World Athletics/Styleframe/Styleframe 1.jpg',
+        'Project file/World Athletics/Styleframe/Styleframe 2.jpg',
+        'Project file/World Athletics/Styleframe/Styleframe 3.jpg',
+        'Project file/World Athletics/Styleframe/Styleframe 4.jpg',
+        'Project file/World Athletics/Styleframe/Styleframe 5.jpg',
+        'Project file/World Athletics/Styleframe/Styleframe 6.jpg',
+        'Project file/World Athletics/Styleframe/Styleframe 7.jpg',
+        'Project file/World Athletics/Styleframe/Styleframe 8.jpg',
+        'Project file/World Athletics/Styleframe/Styleframe 9.jpg',
+      ],
+      thumb: 'Project file/World Athletics/Styleframe/Styleframe 8.jpg',
+      desc: 'This motion piece focuses on the intricate details of an athlete\'s sprint. Using slowmotion shots to amplify subtle movements, combined with high-speed kinetic lines to show how athletes push past their physical limits.\n\nWorld Athletics is about more than just a race on the track, it\'s a celebration of human strength and potential. Every second, every step, all for pushing the limits.',
+      specs: [
+        { k: 'Year', v: '2026' },
+        { k: 'Type', v: 'Styleframe Design' },
+        { k: 'Location', v: 'USA' },
+      ],
+      processGroups: [
+        { group: 'Storyboard', maxWidth: '50%', items: [{ src: 'Project file/World Athletics/Storyboard.jpg' }] },
+        { group: 'Visual Experiment', items: [
+          { src: 'Project file/World Athletics/Visual test/Styleframe 1.jpg' },
+          { src: 'Project file/World Athletics/Visual test/Styleframe 2.jpg' },
+          { src: 'Project file/World Athletics/Visual test/Styleframe 3.jpg' },
+          { src: 'Project file/World Athletics/Visual test/Styleframe 4.jpg' },
+          { src: 'Project file/World Athletics/Visual test/Styleframe 5.jpg' },
+          { src: 'Project file/World Athletics/Visual test/Styleframe 6.jpg' },
+        ]},
+        { group: 'Final Styleframe', cols: 3, items: [
+          { src: 'Project file/World Athletics/Styleframe/Styleframe 1.jpg' },
+          { src: 'Project file/World Athletics/Styleframe/Styleframe 2.jpg' },
+          { src: 'Project file/World Athletics/Styleframe/Styleframe 3.jpg' },
+          { src: 'Project file/World Athletics/Styleframe/Styleframe 4.jpg' },
+          { src: 'Project file/World Athletics/Styleframe/Styleframe 5.jpg' },
+          { src: 'Project file/World Athletics/Styleframe/Styleframe 6.jpg' },
+          { src: 'Project file/World Athletics/Styleframe/Styleframe 7.jpg' },
+          { src: 'Project file/World Athletics/Styleframe/Styleframe 8.jpg' },
+          { src: 'Project file/World Athletics/Styleframe/Styleframe 9.jpg' },
+        ]},
+      ],
+    },
+    {
+      num: '01', category: 'live-action', label: 'Live Action Motion',
+      title: 'Christmasland in New Taipei City',
+      type: 'Television Commercial · 2025',
+      vimeoId: '1187493872',
+      desc: 'The Magic of Christmas\n\nThere\'s something special about the way light brings the holidays to life. For this project, I used glowing lines to unveil the festive energy of the city\'s Christmas event, leading the audience through a wonderland of festive decorations.\n\nTo keep the vibe warm and joyful, I used the animation with charming, childlike illustrations. It\'s a mix of that pure, innocent Christmas spirit we all love.',
+      specs: [
+        { k: 'Year', v: '2025' }, { k: 'Type', v: 'Television Commercial' }, { k: 'Role', v: 'Motion Design' }, { k: 'Location', v: 'Taiwan' },
+      ],
+      thumb: '',
+      loopVideos: [
+        'Project file/Live action motion/新北耶誕城/01.mp4',
+        'Project file/Live action motion/新北耶誕城/02.mp4',
+        'Project file/Live action motion/新北耶誕城/03.mp4',
+      ],
+      processGroups: [],
+    },
+    {
+      num: '02', category: 'live-action', label: 'Live Action Motion',
+      title: 'Taoyuan Pearl Coast Music Festival',
+      type: 'Television Commercial · 2025',
+      vimeoId: '1187495431',
+      desc: '',
+      specs: [
+        { k: 'Year', v: '2025' }, { k: 'Type', v: 'Television Commercial' }, { k: 'Role', v: 'Motion Design' }, { k: 'Location', v: 'Taiwan' },
+      ],
+      thumb: '',
+      loopVideos: [
+        'Project file/Live action motion/桃園音樂節/01.mp4',
+        'Project file/Live action motion/桃園音樂節/02.mp4',
+        'Project file/Live action motion/桃園音樂節/03.mp4',
+      ],
+      processGroups: [],
+    },
+    {
+      num: '03', category: 'live-action', label: 'Live Action Motion',
+      title: 'Taipei City Cup International Esports Tournament',
+      type: 'Television Commercial · 2025',
+      vimeoId: '1187495234',
+      desc: '',
+      specs: [
+        { k: 'Year', v: '2025' }, { k: 'Type', v: 'Television Commercial' }, { k: 'Role', v: 'VFX' },
+      ],
+      thumb: '',
+      loopVideos: [
+        'Project file/Live action motion/台北城市盃/01.mp4',
+        'Project file/Live action motion/台北城市盃/02.mp4',
+        'Project file/Live action motion/台北城市盃/03.mp4',
+      ],
+      processGroups: [],
+    },
+    {
+      num: '04', category: 'live-action', label: 'Live Action Motion',
+      title: 'Love On a Shoestring',
+      type: 'Television Commercial · 2024',
+      vimeoIds: ['1187499775', '1187499776', '1187500035'],
+      desc: 'Created an advertisement for drama promotion that highlights the distinct personalities of three main characters, embracing a humorous tone that matches the drama\'s style.\n\nDrawing inspiration from Japanese commercial aesthetics, the advertisement features exaggerated elements and includes a unique segment recreating the iconic Sailor Moon opening sequence. Each character received a personalized "Super" design, adding to the playful nature of the promotion.',
+      specs: [
+        { k: 'Year', v: '2024' }, { k: 'Type', v: 'Television Commercial' }, { k: 'Role', v: 'Motion Design' }, { k: 'Location', v: 'Taiwan' },
+      ],
+      thumb: '',
+      loopVideos: [
+        'Project file/Live action motion/完全省錢/01.mp4',
+        'Project file/Live action motion/完全省錢/02.mp4',
+        'Project file/Live action motion/完全省錢/03.mp4',
+        'Project file/Live action motion/完全省錢/04.mp4',
+        'Project file/Live action motion/完全省錢/05.mp4',
+        'Project file/Live action motion/完全省錢/06.mp4',
+        'Project file/Live action motion/完全省錢/07.mp4',
+      ],
+      processGroups: [
+        {
+          layout: 'two-col', ratio: '1fr 1fr', rightStyle: 'justify-content: space-between',
+          left: { group: 'Assist on the filming set', maxWidth: '50%', items: [{ src: 'Project file/Live action motion/完全省錢/Assist of the filming set.png' }] },
+          right: [
+            { group: 'Visual experiments and prototyping', items: [{ src: 'Project file/Live action motion/完全省錢/Visual experiment.png' }] },
+            { type: 'text', group: 'Production Process', body: 'Comprehensive pre-production included collaborative layout design with the director. Provided on-set guidance for actor positioning and tracking marker setup.' },
+          ],
+        },
+        { group: 'Moodboard', maxWidth: '60%', items: [{ src: 'Project file/Live action motion/完全省錢/moodboard.png' }] },
+      ],
+    },
+    {
+      num: '05', category: 'live-action', label: 'Live Action Motion',
+      title: "Who's The Boss Teaser",
+      type: 'Television Commercial · 2024',
+      vimeoId: '1187501636',
+      desc: '',
+      specs: [
+        { k: 'Year', v: '2024' }, { k: 'Type', v: 'Television Commercial' }, { k: 'Role', v: 'Motion Design' }, { k: 'Location', v: 'Taiwan' },
+      ],
+      thumb: '',
+      loopVideos: [
+        'Project file/Live action motion/秘書俱樂部/01.mp4',
+        'Project file/Live action motion/秘書俱樂部/02.mp4',
+        'Project file/Live action motion/秘書俱樂部/03.mp4',
+      ],
+      processGroups: [],
+    },
+  ];
+
+  const playgroundItems = [
+    { type: 'image', title: 'Sushiro', src: 'Project file/Playground/sushiro.png' },
+    { type: 'image', title: 'Memory', src: 'Project file/Playground/memory.gif' },
+    { type: 'video', title: 'Me Time', src: 'Project file/Playground/Me time.mp4' },
+    { type: 'video', title: 'Shower', src: 'Project file/Playground/Shower.mp4' },
+    { type: 'video', title: 'Mario', src: 'Project file/Playground/Mario.mov' },
+    { type: 'video', title: 'L', src: 'Project file/Playground/L.mov' },
+    { type: 'video', title: 'N', src: 'Project file/Playground/N.mp4' },
+  ];
+
+  let _firstRender = true;
+  function _applyFade(el) {
+    if (_firstRender) return;
+    el.classList.remove('grid-fade');
+    void el.offsetWidth; // force reflow to restart animation
+    el.classList.add('grid-fade');
+  }
+
+  function renderWorks(filter) {
+    document.querySelectorAll('.ftab').forEach(b => b.classList.toggle('active', b.dataset.filter === filter));
+    const grid = document.getElementById('works-grid');
+    const laSection = document.getElementById('live-action-section');
+    const pgSection = document.getElementById('playground-section');
+    const showWorks = filter === 'all' || filter === 'works';
+    const showLa    = filter === 'all' || filter === 'live-action';
+    const showPg    = filter === 'all' || filter === 'playground';
+
+    const worksItems  = projects.map((p, i) => ({ p, i })).filter(({ p }) => p.category === 'works');
+    const laItems     = projects.map((p, i) => ({ p, i })).filter(({ p }) => p.category === 'live-action');
+    const totalCount  = (showWorks ? worksItems.length : 0)
+                      + (showLa   ? laItems.length     : 0)
+                      + (showPg   ? playgroundItems.length : 0);
+    document.getElementById('works-count').textContent =
+      `${String(totalCount).padStart(2,'0')} Projects`;
+
+    // ── Card builder
+    const makeCard = ({ p, i }) => {
+      const vimeoSrc = p.vimeoId || (p.vimeoIds && p.vimeoIds[0]) || '';
+      const thumb = p.thumb
+        ? `<img class="work-thumb" src="${p.thumb}" alt="${p.title}" loading="lazy">`
+        : `<div class="work-placeholder" data-vimeo="${vimeoSrc}" data-title="${p.title}"></div>`;
+      return `<div class="work-card" onclick="openProject(${i})">
+        ${thumb}
+        <div class="work-card-overlay"><div class="work-meta">
+          <div class="work-num">${p.num}</div>
+          <div class="work-title">${p.title}</div>
+          <div class="work-type">${p.type}</div>
+        </div></div>
+      </div>`;
+    };
+    const bindHover = (el) => el.querySelectorAll('.work-card').forEach(c => {
+      c.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+      c.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+    });
+    const fetchVimeoThumbs = (container) => {
+      container.querySelectorAll('[data-vimeo]').forEach(el => {
+        const vid = el.dataset.vimeo;
+        if (!vid) return;
+        fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${vid}&width=800`)
+          .then(r => r.json())
+          .then(d => {
+            const img = document.createElement('img');
+            img.className = 'work-thumb';
+            img.src = d.thumbnail_url;
+            img.alt = el.dataset.title || ''; img.loading = 'lazy';
+            el.replaceWith(img);
+          }).catch(() => {});
+      });
+    };
+
+    // ── Works grid
+    if (!showWorks || worksItems.length === 0) {
+      grid.innerHTML = ''; grid.style.display = 'none';
+    } else {
+      grid.style.display = '';
+      grid.innerHTML = `<div class="w2-grid">${worksItems.map(it => makeCard(it)).join('')}</div>`;
+      _applyFade(grid);
+      bindHover(grid);
+      fetchVimeoThumbs(grid);
+    }
+
+    // ── Live Action Motion grid
+    if (!showLa || laItems.length === 0) {
+      laSection.style.display = 'none'; laSection.innerHTML = '';
+    } else {
+      laSection.style.display = '';
+      laSection.innerHTML =
+        (filter === 'all' ? '<div class="playground-section-label">Live Action Motion /</div>' : '') +
+        `<div class="w2-grid">${laItems.map(it => makeCard(it)).join('')}</div>`;
+      _applyFade(laSection);
+      bindHover(laSection);
+      fetchVimeoThumbs(laSection);
+    }
+
+    // ── Playground square grid
+    if (!showPg) { pgSection.style.display = 'none'; pgSection.innerHTML = ''; return; }
+    pgSection.style.display = '';
+    pgSection.innerHTML = `
+      ${filter === 'all' ? '<div class="playground-section-label">Playground /</div>' : ''}
+      <div class="playground-grid">
+        ${playgroundItems.map((item, i) => {
+          const thumb = item.type === 'video'
+            ? `<video class="work-thumb" src="${item.src}" autoplay muted loop playsinline></video>`
+            : `<img class="work-thumb" src="${item.src}" alt="${item.title}" loading="lazy">`;
+          return `<div class="work-card" onclick="playgroundLbOpen(${i})">
+            ${thumb}
+            <div class="work-card-overlay"><div class="work-meta">
+              <div class="work-num">Playground</div>
+              <div class="work-title">${item.title}</div>
+              <div class="work-type">${item.type === 'video' ? 'Video' : 'Image'}</div>
+            </div></div>
+          </div>`;
+        }).join('')}
+      </div>`;
+    _applyFade(pgSection);
+    pgSection.querySelectorAll('.work-card').forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+    });
+    _firstRender = false;
+  }
+
+  renderWorks('all');
+  _firstRender = false;
+
+  document.querySelectorAll('.ftab').forEach(btn => {
+    btn.addEventListener('click', () => renderWorks(btn.dataset.filter));
+    btn.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+    btn.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+  });
+
+  const cur = document.getElementById('cur');
+  const ring = document.getElementById('cur-ring');
+  document.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px';
+    ring.style.left = e.clientX + 'px'; ring.style.top = e.clientY + 'px';
+  });
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+  });
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+  }, { threshold: .12 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  function updateMoreProjects(currentIdx) {
+    const n = projects.length;
+    const prevIdx = (currentIdx - 1 + n) % n;
+    const nextIdx = (currentIdx + 1) % n;
+    const prev = projects[prevIdx], next = projects[nextIdx];
+    const thumbHtml = (p) => {
+      if (p.thumb) return `<img src="${p.thumb}" alt="${p.title}" loading="lazy">`;
+      const vid = p.vimeoId || (p.vimeoIds && p.vimeoIds[0]) || '';
+      return vid ? `<span class="dmp-vimeo-ph" data-vimeo="${vid}" style="display:block;width:100%;height:100%"></span>` : '';
+    };
+    const el = document.getElementById('d-more-projects');
+    el.className = 'detail-more-projects';
+    el.innerHTML = `
+      <p class="dmp-label">More Projects /</p>
+      <div class="dmp-nav">
+        <div class="dmp-item" onclick="openProject(${prevIdx})">
+          <div class="dmp-thumb">${thumbHtml(prev)}</div>
+          <div class="dmp-title-wrap"><span class="dmp-arrow">←</span><span class="dmp-title">${prev.title}</span></div>
+        </div>
+        <div class="dmp-item" onclick="openProject(${nextIdx})">
+          <div class="dmp-thumb">${thumbHtml(next)}</div>
+          <div class="dmp-title-wrap dmp-title-wrap--right"><span class="dmp-title">${next.title}</span><span class="dmp-arrow">→</span></div>
+        </div>
+      </div>`;
+    el.querySelectorAll('.dmp-vimeo-ph').forEach(ph => {
+      fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${ph.dataset.vimeo}&width=600`)
+        .then(r => r.json())
+        .then(d => {
+          const img = document.createElement('img');
+          img.src = d.thumbnail_url; img.loading = 'lazy';
+          img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
+          ph.replaceWith(img);
+        }).catch(() => {});
+    });
+    el.querySelectorAll('.dmp-item').forEach(item => {
+      item.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+      item.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+    });
+  }
+
+  function stackSelect(idx) {
+    const cards = document.querySelectorAll('#d-multi-video .stack-card');
+    const tabs  = document.querySelectorAll('#d-multi-video .stack-tab');
+    const n = cards.length;
+    cards.forEach((card, i) => { card.dataset.pos = (i - idx + n) % n; });
+    tabs.forEach((tab, i) => tab.classList.toggle('active', i === idx));
+  }
+
+  function openProject(i) {
+    const p = projects[i];
+    document.getElementById('d-counter').textContent = `${p.num} / 07`;
+    document.getElementById('d-label').textContent   = p.label;
+    const _titleEl = document.getElementById('d-title');
+    _titleEl.textContent = p.title;
+    _titleEl.style.fontSize = p.title.length > 20 ? 'clamp(2rem, 5vw, 5rem)' : '';
+    document.getElementById('d-desc').textContent    = p.desc;
+
+    const videoWrap = document.getElementById('d-video-wrap');
+    const heroEl = document.getElementById('d-hero-images');
+    if (p.heroImages) {
+      videoWrap.style.display = 'none';
+      heroEl.classList.add('show');
+    } else if (p.noVideo) {
+      videoWrap.style.display = 'none';
+      heroEl.classList.remove('show');
+      heroEl.innerHTML = '';
+    } else if (p.vimeoIds) {
+      videoWrap.style.display = 'none';
+      heroEl.classList.remove('show');
+      heroEl.innerHTML = '';
+      const existing = document.getElementById('d-multi-video');
+      if (existing) existing.remove();
+      const multi = document.createElement('div');
+      multi.id = 'd-multi-video';
+      multi.className = 'detail-stacked-video';
+      multi.innerHTML = `
+        <div class="video-stack">
+          ${p.vimeoIds.map((id, i) => `
+            <div class="stack-card" data-pos="${i}" onclick="stackSelect(${i})">
+              <iframe src="https://player.vimeo.com/video/${id}?autoplay=0&color=e33e3e&title=0&byline=0"
+                frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+            </div>`).join('')}
+        </div>
+        <div class="stack-tabs">
+          ${p.vimeoIds.map((_, i) => `
+            <button class="stack-tab${i === 0 ? ' active' : ''}" onclick="stackSelect(${i})">
+              ${String(i + 1).padStart(2, '0')}
+            </button>`).join('')}
+        </div>`;
+      videoWrap.parentNode.insertBefore(multi, videoWrap.nextSibling);
+    } else {
+      const existing = document.getElementById('d-multi-video');
+      if (existing) existing.remove();
+      videoWrap.style.display = '';
+      heroEl.classList.remove('show');
+      heroEl.innerHTML = '';
+      document.getElementById('d-video').src =
+        `https://player.vimeo.com/video/${p.vimeoId}?autoplay=0&color=e33e3e&title=0&byline=0`;
+    }
+
+    // ── Loop videos (after description)
+    const loopEl = document.getElementById('d-loop-videos');
+    if (p.loopVideos && p.loopVideos.length) {
+      loopEl.className = '';
+      loopEl.innerHTML = `<div class="process-section-label" style="margin-bottom:20px">Final clips</div>
+        <div class="detail-loop-videos">${p.loopVideos.map(src =>
+          `<video src="${src}" autoplay muted loop playsinline></video>`
+        ).join('')}</div>`;
+    } else {
+      loopEl.innerHTML = '';
+    }
+
+    document.getElementById('d-specs').innerHTML = p.specs.map(s =>
+      `<div class="spec-row"><div class="spec-label">${s.k}</div><div class="spec-val">${s.v}</div></div>`).join('');
+
+    const illEl = document.getElementById('d-illustration');
+    illEl.innerHTML = p.illustration
+      ? `<div class="detail-illustration"><img src="${p.illustration}" alt="Illustration"></div>` : '';
+
+    const decoEl = document.getElementById('d-deco');
+    decoEl.innerHTML = p.deco
+      ? `<div class="detail-deco"><img src="${p.deco}" alt="Deco"></div>` : '';
+
+    const procEl = document.getElementById('d-process');
+    window._lbGroups = [];
+
+    if (p.heroImages) {
+      const lbIdx = window._lbGroups.length;
+      window._lbGroups.push({ label: 'Styleframe', srcs: p.heroImages });
+      heroEl.innerHTML = p.heroImages.map((src, idx) =>
+        `<img src="${src}" alt="${p.title}" loading="lazy" onclick="lbOpen(${lbIdx},${idx})">`
+      ).join('');
+    }
+
+    if (p.processGroups) {
+      const renderGroup = g => {
+        if (g.type === 'text') {
+          return `<div class="process-section">
+            ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
+            <p class="process-body">${g.body}</p>
+          </div>`;
+        }
+        if (g.type === 'transcripts') {
+          return `<div class="process-section">
+            ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
+            <div class="transcripts-grid">
+              ${g.entries.map(e => `<div class="transcript-entry"><div class="transcript-label">${e.label}</div><p class="transcript-body">${e.body}</p></div>`).join('')}
+            </div>
+          </div>`;
+        }
+        const grpIdx = window._lbGroups.length;
+        window._lbGroups.push({ label: g.group, srcs: g.items.map(i => i.src) });
+        const n = g.cols || (g.items.length === 1 ? 1 : g.items.length === 2 ? 2 : 3);
+        const st = [`grid-template-columns:repeat(${n},1fr)`, g.maxWidth ? `max-width:${g.maxWidth};margin:0 auto` : ''].filter(Boolean).join(';');
+        return `<div class="process-section">
+          ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
+          <div class="process-section-grid" style="${st}">
+            ${g.items.map((img, idx) => `<img src="${img.src}" alt="${g.group}" loading="lazy" onclick="lbOpen(${grpIdx},${idx})">`).join('')}
+          </div></div>`;
+      };
+      procEl.innerHTML = p.processGroups.map(g => {
+        if (g.layout === 'two-col') {
+          const ratio = g.ratio || '1fr 2fr';
+          const rightStyle = g.rightStyle || '';
+          return `<div class="process-two-col" style="grid-template-columns:${ratio}">
+            <div class="process-two-col-left">${renderGroup(g.left)}</div>
+            <div class="process-two-col-right" style="${rightStyle}">${g.right.map(renderGroup).join('')}</div>
+          </div>`;
+        }
+        return renderGroup(g);
+      }).join('');
+    } else if (p.process) {
+      procEl.innerHTML = `<div class="process-section-grid" style="grid-template-columns:repeat(3,1fr)">
+        ${p.process.map(img =>
+          `<div><img src="${img.src}" alt="${img.cap}" loading="lazy">
+           <div class="process-cap">${img.cap}</div></div>`).join('')}
+      </div>`;
+    }
+
+    updateMoreProjects(i);
+
+    const detail = document.getElementById('detail');
+    detail.classList.add('open');
+    detail.scrollTop = 0;
+    document.body.style.overflow = 'hidden';
+
+    // Chair flipbook
+    const chairStrip = document.getElementById('chair-strip');
+    const chairFrameImg = document.getElementById('chair-frame-img');
+    window._chairFrames = p.chairFrames || [];
+    if (window._chairFrames.length) {
+      chairFrameImg.src = window._chairFrames[0];
+      chairStrip.classList.add('visible');
+    } else {
+      chairStrip.classList.remove('visible');
+    }
+  }
+
+  function closeDetail(e) {
+    e && e.preventDefault();
+    document.getElementById('detail').classList.remove('open');
+    document.getElementById('d-video').src = '';
+    const heroEl = document.getElementById('d-hero-images');
+    heroEl.classList.remove('show');
+    heroEl.innerHTML = '';
+    document.getElementById('d-video-wrap').style.display = '';
+    document.body.style.overflow = '';
+    document.getElementById('chair-strip').classList.remove('visible');
+    window._chairFrames = [];
+  }
+
+  // Chair scroll listener
+  document.getElementById('detail').addEventListener('scroll', function() {
+    const frames = window._chairFrames;
+    if (!frames || !frames.length) return;
+    const el = this;
+    const progress = el.scrollTop / Math.max(1, el.scrollHeight - el.clientHeight);
+    const loops = 3;
+    const idx = Math.floor(progress * frames.length * loops) % frames.length;
+    document.getElementById('chair-frame-img').src = frames[idx];
+  });
+
+  document.getElementById('btn-close').addEventListener('click', closeDetail);
+
+  /* ── Lightbox ──────────────────────────────── */
+  window._lbGroups = [];
+  let _lbGrp = 0, _lbIdx = 0;
+  const lbEl    = document.getElementById('lightbox');
+  const lbImg   = document.getElementById('lb-img');
+  const lbVideo = document.getElementById('lb-video');
+  const lbGrpEl = document.getElementById('lb-group');
+  const lbCntEl = document.getElementById('lb-counter');
+  const lbPrevEl = document.getElementById('lb-prev');
+  const lbNextEl = document.getElementById('lb-next');
+
+  function _lbShowMedia(src, type) {
+    if (type === 'video') {
+      lbImg.style.display = 'none'; lbImg.classList.remove('lb-vis'); lbImg.src = '';
+      lbVideo.style.display = 'block';
+      lbVideo.src = src; lbVideo.load(); lbVideo.play().catch(() => {});
+    } else {
+      lbVideo.style.display = 'none'; lbVideo.pause(); lbVideo.src = '';
+      lbImg.style.display = 'block';
+      lbImg.src = src;
+      requestAnimationFrame(() => requestAnimationFrame(() => lbImg.classList.add('lb-vis')));
+    }
+  }
+
+  function lbOpen(grpIdx, imgIdx) {
+    _lbGrp = grpIdx; _lbIdx = imgIdx;
+    const grp = window._lbGroups[grpIdx];
+    lbGrpEl.textContent = grp.label;
+    lbCntEl.textContent = `${imgIdx + 1} / ${grp.srcs.length}`;
+    lbPrevEl.style.visibility = grp.srcs.length > 1 ? 'visible' : 'hidden';
+    lbNextEl.style.visibility = grp.srcs.length > 1 ? 'visible' : 'hidden';
+    lbEl.classList.add('lb-open');
+    _lbShowMedia(grp.srcs[imgIdx], 'image');
+  }
+
+  function playgroundLbOpen(idx) {
+    _lbGrp = -1; _lbIdx = idx;
+    const item = playgroundItems[idx];
+    lbGrpEl.textContent = 'Playground';
+    lbCntEl.textContent = `${idx + 1} / ${playgroundItems.length}`;
+    lbPrevEl.style.visibility = playgroundItems.length > 1 ? 'visible' : 'hidden';
+    lbNextEl.style.visibility = playgroundItems.length > 1 ? 'visible' : 'hidden';
+    lbEl.classList.add('lb-open');
+    _lbShowMedia(item.src, item.type);
+  }
+
+  function lbClose() {
+    lbImg.classList.remove('lb-vis');
+    lbEl.classList.remove('lb-open');
+    setTimeout(() => { lbImg.src = ''; lbVideo.pause(); lbVideo.src = ''; lbVideo.style.display = 'none'; }, 380);
+  }
+
+  function lbChange(delta) {
+    if (_lbGrp === -1) {
+      _lbIdx = (_lbIdx + delta + playgroundItems.length) % playgroundItems.length;
+      lbImg.classList.remove('lb-vis'); lbVideo.pause();
+      setTimeout(() => {
+        const item = playgroundItems[_lbIdx];
+        lbCntEl.textContent = `${_lbIdx + 1} / ${playgroundItems.length}`;
+        _lbShowMedia(item.src, item.type);
+      }, 200);
+      return;
+    }
+    const len = window._lbGroups[_lbGrp].srcs.length;
+    _lbIdx = (_lbIdx + delta + len) % len;
+    lbImg.classList.remove('lb-vis');
+    setTimeout(() => {
+      const grp = window._lbGroups[_lbGrp];
+      lbImg.src = grp.srcs[_lbIdx];
+      lbCntEl.textContent = `${_lbIdx + 1} / ${grp.srcs.length}`;
+      requestAnimationFrame(() => requestAnimationFrame(() => lbImg.classList.add('lb-vis')));
+    }, 200);
+  }
+
+  document.getElementById('lb-close').addEventListener('click', lbClose);
+  lbPrevEl.addEventListener('click', () => lbChange(-1));
+  lbNextEl.addEventListener('click', () => lbChange(1));
+  lbEl.addEventListener('click', e => { if (e.target === lbEl || e.target.id === 'lb-stage') lbClose(); });
+
+  document.querySelectorAll('#lb-close, #lb-prev, #lb-next').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+  });
+  document.getElementById('detail').addEventListener('mouseover', e => {
+    if (e.target.matches('.process-section-grid img')) document.body.classList.add('hovering');
+  });
+  document.getElementById('detail').addEventListener('mouseout', e => {
+    if (e.target.matches('.process-section-grid img')) document.body.classList.remove('hovering');
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape')    { lbEl.classList.contains('lb-open') ? lbClose() : closeDetail(); }
+    if (e.key === 'ArrowLeft'  && lbEl.classList.contains('lb-open')) lbChange(-1);
+    if (e.key === 'ArrowRight' && lbEl.classList.contains('lb-open')) lbChange(1);
+  });
+</script>
+</body>
+</html>

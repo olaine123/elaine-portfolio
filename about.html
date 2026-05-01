@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — Elaine Chen</title>
+  <link rel="icon" href="brand_assets/favicon.svg" type="image/svg+xml">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Elms+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --red:   #e33e3e;
+      --black: #080808;
+      --white: #f0ede6;
+      --dark:  #101010;
+      --card:  #151515;
+      --line:  #222222;
+      --muted: rgba(240,237,230,0.45);
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black); color: var(--white);
+      font-family: 'IBM Plex Mono', monospace;
+      overflow-x: hidden; cursor: none;
+    }
+
+    /* ─── Cursor ─── */
+    #cur {
+      position: fixed; z-index: 9999; width: 10px; height: 10px;
+      background: var(--red); border-radius: 50%; pointer-events: none;
+      transform: translate(-50%,-50%); transition: width .15s, height .15s;
+      mix-blend-mode: difference;
+    }
+    #cur-ring {
+      position: fixed; z-index: 9998; width: 38px; height: 38px;
+      border: 1px solid rgba(227,62,62,.45); border-radius: 50%; pointer-events: none;
+      transform: translate(-50%,-50%);
+      transition: left .1s ease, top .1s ease, width .25s, height .25s;
+    }
+    body.hovering #cur      { width: 18px; height: 18px; }
+    body.hovering #cur-ring { width: 58px; height: 58px; }
+
+    /* ─── Nav ─── */
+    nav {
+      position: fixed; inset: 0 0 auto 0; z-index: 200;
+      padding: 28px 52px;
+      display: flex; justify-content: space-between; align-items: center;
+      mix-blend-mode: difference;
+    }
+    .nav-logo {
+      display: flex; align-items: center; text-decoration: none;
+    }
+    .nav-logo img { height: 24px; display: block; }
+    .nav-links { display: flex; gap: 40px; }
+    .nav-links a {
+      font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--white); text-decoration: none; position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px; background: var(--red); transition: width .3s ease;
+    }
+    .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+    .nav-links a.active { color: var(--red); }
+
+    /* ─── Page Header ─── */
+    .page-header {
+      padding: 160px 52px 80px;
+      border-bottom: 1px solid var(--line);
+      background: var(--dark);
+    }
+    .s-label {
+      font-size: .62rem; letter-spacing: .3em; text-transform: uppercase;
+      color: var(--red); margin-bottom: 14px;
+    }
+    .s-title {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(3.5rem, 9vw, 9rem);
+      line-height: .88; letter-spacing: -.02em; text-transform: uppercase;
+    }
+
+    /* ─── About Section ─── */
+    .about-section {
+      padding: 100px 52px 120px;
+      background: var(--dark);
+    }
+    .about-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
+      margin-top: 64px;
+    }
+    .about-bio {
+      font-family: "Elms Sans", sans-serif; font-optical-sizing: auto;
+      font-size: 1.25rem; line-height: 1.9; color: rgba(240,237,230,.75);
+      margin-bottom: 52px;
+    }
+    .about-bio strong { color: var(--red); }
+    .edu-head {
+      font-size: .82rem; letter-spacing: .3em; text-transform: uppercase;
+      color: var(--red); margin-bottom: 20px;
+    }
+    .edu-item { padding: 22px 0; border-top: 1px solid var(--line); }
+    .edu-item:last-child { border-bottom: 1px solid var(--line); }
+    .edu-year { font-size: .75rem; letter-spacing: .14em; color: #444; margin-bottom: 5px; }
+    .edu-school { font-size: 1.1rem; margin-bottom: 3px; }
+    .edu-degree { font-size: 1rem; color: var(--muted); line-height: 1.5; }
+    .edu-loc { font-size: .82rem; color: #444; margin-top: 4px; }
+    .awards-wrap { margin-top: 48px; }
+    .award-item {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 14px 0; border-top: 1px solid var(--line);
+    }
+    .award-item:last-child { border-bottom: 1px solid var(--line); }
+    .award-name { font-size: 1rem; }
+    .award-sub { font-size: .78rem; color: var(--muted); margin-top: 4px; font-family: 'IBM Plex Mono', monospace; letter-spacing: .04em; }
+    .award-yr { font-size: .75rem; letter-spacing: .15em; color: var(--red); padding-top: 2px; }
+    .avatar-wrap {
+      position: sticky; top: 140px;
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .avatar-frame { width: 55%; border-radius: 50%; overflow: hidden; }
+    .avatar-frame img { width: 100%; display: block; border-radius: 50%; filter: contrast(1.05) brightness(.98); }
+    .avatar-tag {
+      margin-top: 20px; font-size: .75rem; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--muted); text-align: center;
+    }
+
+    /* ─── Footer ─── */
+    footer {
+      border-top: 1px solid var(--line); padding: 80px 52px 40px;
+      background: var(--black);
+    }
+    .foot-main { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; margin-bottom: 80px; }
+    .foot-nav { display: flex; flex-direction: column; }
+    .foot-nav a {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(2.8rem, 5vw, 5rem);
+      line-height: 1; letter-spacing: -.02em; text-transform: uppercase;
+      color: var(--white); text-decoration: none;
+      transition: color .2s ease; padding-bottom: 6px;
+    }
+    .foot-nav a:hover { color: var(--red); }
+    .foot-info { display: flex; flex-direction: column; gap: 20px; padding-top: 12px; }
+    .foot-contact-item { display: flex; flex-direction: column; gap: 3px; }
+    .foot-contact-label {
+      font-size: .6rem; letter-spacing: .28em; text-transform: uppercase;
+      color: var(--red);
+    }
+    .foot-contact-row {
+      font-family: "Elms Sans", sans-serif;
+      font-size: 1.05rem; line-height: 1.4; color: var(--muted);
+      text-decoration: none; transition: color .2s ease;
+    }
+    .foot-contact-row:hover { color: var(--white); }
+    .foot-bottom {
+      border-top: 1px solid var(--line); padding-top: 28px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .foot-copy { font-size: .8rem; letter-spacing: .08em; color: #444; }
+    .foot-top {
+      font-size: .8rem; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color .2s ease;
+    }
+    .foot-top:hover { color: var(--red); }
+
+    /* ─── Scroll Reveal ─── */
+    .reveal { opacity: 0; transform: translateY(36px); transition: opacity .8s ease, transform .8s ease; }
+    .reveal.vis { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 900px) {
+      nav { padding: 20px 24px; }
+      .page-header { padding: 120px 24px 60px; }
+      .about-section { padding: 60px 24px 80px; }
+      .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .avatar-wrap { position: static; order: -1; }
+      .nav-links { gap: 24px; }
+      footer { padding: 60px 24px 32px; }
+      .foot-main { grid-template-columns: 1fr; gap: 48px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<!-- ── Nav ── -->
+<nav>
+  <a href="index.html" class="nav-logo"><img src="brand_assets/LOGO.png" alt="Elaine Chen"></a>
+  <div class="nav-links">
+    <a href="works.html">Works</a>
+    <a href="reel.html">Reel</a>
+    <a href="about.html" class="active">About</a>
+  </div>
+</nav>
+
+<!-- ── Page Header ── -->
+<div class="page-header">
+  <p class="s-label reveal">About Me</p>
+  <h1 class="s-title reveal">ABOUT</h1>
+</div>
+
+<!-- ── About Content ── -->
+<div class="about-section">
+  <div class="about-grid">
+    <div>
+      <p class="about-bio reveal">
+        Hello, I'm <strong>Elaine Chen</strong>, a Motion Designer
+        based in Savannah with a passion for exploring different perspectives
+        and pushing the boundaries of my work.<br><br>
+        Nice to meet u!
+      </p>
+
+      <div class="reveal">
+        <p class="edu-head">Education /</p>
+        <div class="edu-item">
+          <div class="edu-year">2025 — 2027</div>
+          <div class="edu-school">Savannah College of Art and Design</div>
+          <div class="edu-degree">Master of Art in Motion Media Design</div>
+          <div class="edu-loc">Savannah, GA, USA</div>
+        </div>
+        <div class="edu-item">
+          <div class="edu-year">2018 — 2022</div>
+          <div class="edu-school">Fu Jen Catholic University</div>
+          <div class="edu-degree">
+            Bachelor of Fine Arts in Applied Arts<br>
+            InfoMotion Graphic Micro Program
+          </div>
+          <div class="edu-loc">New Taipei, Taiwan</div>
+        </div>
+      </div>
+
+      <div class="awards-wrap reveal">
+        <p class="edu-head" style="margin-top:44px">Award /</p>
+        <div class="award-item">
+          <div>
+            <div class="award-name">Creative Communication Award</div>
+            <div class="award-sub">Student Entries — Best of Best</div>
+          </div>
+          <span class="award-yr">2022</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="avatar-wrap reveal">
+      <div class="avatar-frame">
+        <img src="brand_assets/Elaine Chen.jpg" alt="Elaine Chen">
+      </div>
+      <p class="avatar-tag">Elaine Chen · Motion Designer</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="foot-main">
+    <div class="foot-nav">
+      <a href="works.html">Works</a>
+      <a href="reel.html">Reel</a>
+      <a href="about.html">About</a>
+    </div>
+    <div class="foot-info">
+      <div class="foot-contact-item">
+        <span class="foot-contact-label">Email</span>
+        <a href="mailto:olaine123456@gmail.com" class="foot-contact-row">olaine123456@gmail.com</a>
+      </div>
+      <div class="foot-contact-item">
+        <span class="foot-contact-label">Location</span>
+        <div class="foot-contact-row">Savannah, GA · USA</div>
+      </div>
+      <div class="foot-contact-item">
+        <span class="foot-contact-label">LinkedIn</span>
+        <a href="https://www.linkedin.com/in/elainechen-motion" target="_blank" rel="noopener" class="foot-contact-row">linkedin.com/in/elainechen-motion ↗</a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-bottom">
+    <span class="foot-copy">© 2026 Elaine Chen. All rights reserved.</span>
+    <a href="#" class="foot-top" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">Back to Top ↑</a>
+  </div>
+</footer>
+
+<script>
+  const cur = document.getElementById('cur');
+  const ring = document.getElementById('cur-ring');
+  document.addEventListener('mousemove', e => {
+    cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px';
+    ring.style.left = e.clientX + 'px'; ring.style.top = e.clientY + 'px';
+  });
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+  });
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+  }, { threshold: .12 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
