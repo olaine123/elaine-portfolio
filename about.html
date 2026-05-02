@@ -179,6 +179,10 @@
       footer { padding: 60px 24px 32px; }
       .foot-main { grid-template-columns: 1fr; gap: 48px; }
     }
+    @media (pointer: coarse) {
+      #cur, #cur-ring { display: none; }
+      body { cursor: auto !important; }
+    }
   </style>
 </head>
 <body>
