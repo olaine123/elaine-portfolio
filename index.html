@@ -507,9 +507,67 @@
       #lb-stage { padding: 56px 12px 8px; }
       #lb-footer { padding: 8px 16px 20px; }
     }
+
+    /* ─── Preloader ─── */
+    #preloader {
+      position: fixed; inset: 0; z-index: 10000;
+      background: var(--black);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform .9s cubic-bezier(.76,0,.24,1);
+    }
+    #preloader.pl-done { transform: translateY(-100%); }
+    .pl-inner { text-align: center; width: min(560px, 88vw); }
+    .pl-eyebrow {
+      font-size: .55rem; letter-spacing: .45em; text-transform: uppercase;
+      color: var(--red); margin-bottom: 32px;
+      opacity: 0; animation: fadeIn .5s ease .1s forwards;
+    }
+    .pl-name {
+      font-family: 'Anton', sans-serif;
+      font-size: clamp(3.8rem, 14vw, 10rem);
+      line-height: .88; letter-spacing: -.02em; text-transform: uppercase;
+      opacity: 0; animation: fadeUp .7s ease .25s forwards;
+    }
+    .pl-name .pl-red { color: var(--red); display: block; }
+    .pl-divider {
+      width: 100%; height: 1px;
+      background: rgba(240,237,230,.08);
+      margin: 40px 0 0; position: relative;
+    }
+    .pl-line {
+      position: absolute; inset: 0;
+      background: var(--red); transform-origin: left;
+      transform: scaleX(0); transition: transform .1s linear;
+    }
+    .pl-foot {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-top: 14px;
+      opacity: 0; animation: fadeIn .5s ease .65s forwards;
+    }
+    .pl-role {
+      font-size: .58rem; letter-spacing: .28em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    #pl-pct {
+      font-size: .58rem; letter-spacing: .15em; color: var(--red);
+      font-variant-numeric: tabular-nums;
+    }
   </style>
 </head>
 <body>
+
+<!-- ── Preloader ── -->
+<div id="preloader">
+  <div class="pl-inner">
+    <p class="pl-eyebrow">Portfolio 2025</p>
+    <h2 class="pl-name">ELAINE<span class="pl-red">CHEN</span></h2>
+    <div class="pl-divider"><div class="pl-line" id="pl-line"></div></div>
+    <div class="pl-foot">
+      <span class="pl-role">Motion Designer</span>
+      <span id="pl-pct">0%</span>
+    </div>
+  </div>
+</div>
 
 <div id="cur"></div>
 <div id="cur-ring"></div>
@@ -745,6 +803,44 @@
 </div>
 
 <script>
+/* ── Preloader ── */
+(function () {
+  const pl      = document.getElementById('preloader');
+  const plLine  = document.getElementById('pl-line');
+  const pctEl   = document.getElementById('pl-pct');
+  const heroVid = document.querySelector('.hero-video video');
+  let progress = 0, dismissed = false;
+
+  function setP(p) {
+    progress = Math.min(100, p);
+    plLine.style.transform = 'scaleX(' + (progress / 100) + ')';
+    pctEl.textContent = Math.round(progress) + '%';
+  }
+
+  function dismiss() {
+    if (dismissed) return;
+    dismissed = true;
+    setP(100);
+    setTimeout(() => {
+      pl.classList.add('pl-done');
+      pl.addEventListener('transitionend', () => pl.remove(), { once: true });
+    }, 200);
+  }
+
+  // Simulated progress: fast early, slows near 88%
+  let iv = setInterval(() => {
+    const step = progress < 50 ? 7 : progress < 75 ? 4 : progress < 88 ? 1.5 : 0;
+    setP(progress + step * (Math.random() * .7 + .5));
+    if (progress >= 88) clearInterval(iv);
+  }, 110);
+
+  if (heroVid) {
+    heroVid.addEventListener('canplay', dismiss);
+    heroVid.addEventListener('canplaythrough', dismiss);
+  }
+  setTimeout(dismiss, 4000); // hard cap — never wait longer than 4s
+})();
+
 const DEMOREEL_ID = '1186376055';
 
   const projects = [
