@@ -270,7 +270,7 @@
     #detail.open { transform: translateY(0); }
     #detail-inner {
       position: absolute; inset: 0;
-      overflow-y: scroll; overflow-x: hidden;
+      overflow-y: auto; overflow-x: hidden;
       overscroll-behavior: contain;
       -webkit-overflow-scrolling: touch;
     }
@@ -1441,12 +1441,6 @@ const DEMOREEL_ID = '1186376055';
     window._detailTransTimer = setTimeout(() => {
       detail.style.transform = 'none';
     }, 700);
-    // Lock body scroll so Safari routes wheel/touch to #detail-inner
-    window._bodySavedScrollY = window.scrollY;
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${window._bodySavedScrollY}px`;
-    document.body.style.left = '0';
-    document.body.style.right = '0';
     document.body.style.overflow = 'hidden';
 
     const chairStrip = document.getElementById('chair-strip');
@@ -1462,13 +1456,7 @@ const DEMOREEL_ID = '1186376055';
 
   function closeDetail(e) {
     e && e.preventDefault();
-    // Unlock body scroll and restore position
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.left = '';
-    document.body.style.right = '';
     document.body.style.overflow = '';
-    window.scrollTo(0, window._bodySavedScrollY || 0);
     clearTimeout(window._detailTransTimer);
     const detail = document.getElementById('detail');
     detail.style.transform = '';
