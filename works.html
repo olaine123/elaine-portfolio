@@ -111,6 +111,8 @@
     }
     .work-card:hover .work-card-overlay { background: rgba(8,8,8,.78); }
     .work-card:hover .work-thumb { transform: scale(1.04); }
+    .work-thumb--zoom { transform: scale(1.2); transform-origin: center 65%; }
+    .work-card:hover .work-thumb--zoom { transform: scale(1.24); transform-origin: center 65%; }
     .work-meta { transform: translateY(12px); opacity: 0; transition: transform .4s ease, opacity .35s ease; }
     .work-card:hover .work-meta { transform: translateY(0); opacity: 1; }
     .work-num { font-size: .58rem; letter-spacing: .22em; color: var(--red); margin-bottom: 5px; }
@@ -126,7 +128,7 @@
     .work-card:hover::after { width: 60px; }
 
     /* ─── More Projects Nav ─── */
-    .detail-more-projects { padding: 40px 52px 0; border-top: 1px solid var(--line); margin-top: 60px; }
+    .detail-more-projects { padding: 40px 52px 60px; border-top: 1px solid var(--line); margin-top: 60px; }
     .dmp-label { font-size: .62rem; letter-spacing: .3em; text-transform: uppercase; color: var(--red); margin-bottom: 28px; text-align: center; }
     .dmp-nav { display: grid; grid-template-columns: 1fr 1fr; }
     .dmp-item { padding: 20px 0; cursor: none; position: relative; border-top: 1px solid var(--line); }
@@ -450,9 +452,25 @@
       .nav-links { gap: 24px; }
       footer, .detail-footer { padding: 60px 24px 32px; }
       .foot-main { grid-template-columns: 1fr; gap: 48px; }
-      .detail-more-projects { padding: 60px 24px 0; }
+      .detail-more-projects { padding: 60px 24px 60px; }
+      .detail-illustration img { max-width: 180px; width: 15%; }
       .dmp-item:first-child { padding-right: 24px; }
       .dmp-item:last-child { padding-left: 24px; }
+      .process-two-col { grid-template-columns: 1fr !important; }
+      .process-two-col-right { padding-left: 0; }
+      .process-section-grid:not([style*="repeat(1,"]) { grid-template-columns: repeat(2, 1fr) !important; }
+      .process-section-grid { max-width: 100% !important; }
+      #lb-stage { padding: 56px 12px 8px; }
+      #lb-footer { padding: 8px 16px 20px; }
+      .detail-loop-videos { grid-template-columns: 1fr; }
+      .detail-loop-videos--many { grid-template-columns: repeat(2, 1fr); }
+      .playground-grid { grid-template-columns: repeat(2, 1fr); }
+      .playground-section-label { padding: 48px 24px 20px; }
+    }
+    @media (pointer: coarse) {
+      #cur, #cur-ring { display: none; }
+      body { cursor: auto !important; }
+      #chair-strip { display: none !important; }
     }
   </style>
 </head>
@@ -707,6 +725,7 @@
         { k: 'Location', v: 'Taiwan' },
       ],
       thumb: 'Project file/THE GOOD, THE BAD, and THE UGLY/thumbnail.webp',
+      thumbZoom: true,
       deco: 'Project file/THE GOOD, THE BAD, and THE UGLY/Deco.png',
       processGroups: [
         {
@@ -987,7 +1006,7 @@
     const makeCard = ({ p, i }) => {
       const vimeoSrc = p.vimeoId || (p.vimeoIds && p.vimeoIds[0]) || '';
       const thumb = p.thumb
-        ? `<img class="work-thumb" src="${p.thumb}" alt="${p.title}" loading="lazy">`
+        ? `<img class="work-thumb${p.thumbZoom ? ' work-thumb--zoom' : ''}" src="${p.thumb}" alt="${p.title}" loading="lazy">`
         : `<div class="work-placeholder" data-vimeo="${vimeoSrc}" data-title="${p.title}"></div>`;
       return `<div class="work-card" onclick="openProject(${i})">
         ${thumb}
@@ -1200,7 +1219,7 @@
     if (p.loopVideos && p.loopVideos.length) {
       loopEl.className = '';
       loopEl.innerHTML = `<div class="process-section-label" style="margin-bottom:20px">Final clips</div>
-        <div class="detail-loop-videos">${p.loopVideos.map(src =>
+        <div class="detail-loop-videos${p.loopVideos.length > 3 ? ' detail-loop-videos--many' : ''}">${p.loopVideos.map(src =>
           `<video src="${src}" autoplay muted loop playsinline></video>`
         ).join('')}</div>`;
     } else {
