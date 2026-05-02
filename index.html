@@ -264,7 +264,8 @@
     #detail {
       position: fixed; inset: 0; z-index: 300;
       background: var(--black);
-      overflow-y: scroll; overflow-x: hidden;
+      overflow-y: auto; overflow-x: hidden;
+      width: 100%;
       overscroll-behavior: contain;
       -webkit-overflow-scrolling: touch;
       transform: translateY(100%);
@@ -1431,8 +1432,8 @@ const DEMOREEL_ID = '1186376055';
 
     const detail = document.getElementById('detail');
     detail.classList.add('open');
-    detail.scrollTop = 0;
     document.body.style.overflow = 'hidden';
+    detail.scrollTop = 0;
 
     const chairStrip = document.getElementById('chair-strip');
     const chairFrameImg = document.getElementById('chair-frame-img');
