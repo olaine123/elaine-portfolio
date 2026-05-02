@@ -263,8 +263,8 @@
     /* ─── Project Detail Overlay ─────────────────────── */
     #detail {
       position: fixed; inset: 0; z-index: 300;
-      background: var(--black); overflow-y: scroll;
-      overscroll-behavior: contain; touch-action: pan-y;
+      background: var(--black); overflow-y: auto;
+      overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
       transform: translateY(100%);
       transition: transform .65s cubic-bezier(.76,0,.24,1);
     }
@@ -1005,7 +1005,7 @@ const DEMOREEL_ID = '1186376055';
       vimeoId: '1183195558',
       desc: '"Bridging Rationality and Form"\n\nThis motion piece is a visual exploration of Adelphi, capturing its essence of mathematical precision and British modernism. By integrating Bauhaus-inspired aesthetics with contemporary motion design, I\'ve transformed static letterforms into a choreography of engineering.\nThe animation highlights the subtle tension between elementary geometry and functional pragmatism, celebrating the \'scientific\' soul behind this redefined sans-serif.',
       specs: [
-        { k: 'Year', v: '2026' }, { k: 'Type', v: 'Motion Graphic' },
+        { k: 'Year', v: '2026' }, { k: 'Type', v: 'Motion Graphic' }, { k: 'Location', v: 'USA' },
       ],
       thumb: 'Project file/The Geometry of Logic - Adelphi/Adelphi kinetic specimen.png',
       processGroups: [
@@ -1172,6 +1172,20 @@ const DEMOREEL_ID = '1186376055';
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
   /* ── Project Detail ─────────────────────────── */
+  let _savedScrollY = 0;
+  function lockBody() {
+    _savedScrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${_savedScrollY}px`;
+    document.body.style.width = '100%';
+  }
+  function unlockBody() {
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, _savedScrollY);
+  }
+
   function openProject(i) {
     const p = projects[i];
     document.getElementById('d-counter').textContent = `${p.num}`;
@@ -1267,6 +1281,7 @@ const DEMOREEL_ID = '1186376055';
       </div>`;
     }
 
+    lockBody();
     const detail = document.getElementById('detail');
     detail.classList.add('open');
     detail.scrollTop = 0;
@@ -1274,6 +1289,7 @@ const DEMOREEL_ID = '1186376055';
 
   function closeDetail(e) {
     e && e.preventDefault();
+    unlockBody();
     document.getElementById('detail').classList.remove('open');
     document.getElementById('d-video').src = '';
     const heroEl = document.getElementById('d-hero-images');
