@@ -263,13 +263,27 @@
     /* ─── Project Detail Overlay ─────────────────────── */
     #detail {
       position: fixed; inset: 0; z-index: 300;
-      background: var(--black); overflow-y: auto;
-      overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
-      touch-action: pan-y;
+      background: var(--black); overflow: hidden;
       transform: translateY(100%);
       transition: transform .65s cubic-bezier(.76,0,.24,1);
     }
     #detail.open { transform: translateY(0); }
+    #detail-inner {
+      position: absolute; inset: 0;
+      overflow-y: scroll; overflow-x: hidden;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+    }
+    #detail-main { position: relative; }
+    #chair-scatter { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+    #chair-scatter img { position: absolute; pointer-events: none; display: block; }
+    #chair-strip {
+      position: fixed; left: 20px; top: 160px; width: 240px;
+      z-index: 350; pointer-events: none;
+      opacity: 0; transition: opacity .5s ease;
+    }
+    #chair-strip.visible { opacity: 1; }
+    #chair-frame-img { width: 100%; display: block; }
     .detail-topbar {
       position: sticky; top: 0; z-index: 10;
       padding: 22px 52px;
@@ -311,8 +325,53 @@
       position: relative; width: 100%; padding-bottom: 56.25%;
       background: var(--card); margin-bottom: 60px;
     }
-    .detail-video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-    .detail-video-wrap.vid-active iframe { pointer-events: auto; }
+    .detail-video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; }
+    .detail-stacked-video { margin-bottom: 60px; }
+    .video-stack { position: relative; padding-bottom: 56.25%; height: 0; margin-bottom: 32px; }
+    .stack-card {
+      position: absolute; inset: 0;
+      transition: transform .5s cubic-bezier(.25,.46,.45,.94), box-shadow .4s ease, opacity .4s ease;
+      cursor: pointer; background: var(--card); border: 1px solid rgba(255,255,255,.04);
+    }
+    .stack-card[data-pos="0"] { z-index: 3; transform: translateY(0) scale(1); cursor: default; box-shadow: 0 16px 48px rgba(0,0,0,.6); }
+    .stack-card[data-pos="1"] { z-index: 2; transform: translateY(14px) scale(0.97); opacity: .82; }
+    .stack-card[data-pos="2"] { z-index: 1; transform: translateY(26px) scale(0.94); opacity: .64; }
+    .stack-card iframe { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+    .stack-card:not([data-pos="0"]) iframe { pointer-events: none; }
+    .stack-tabs { display: flex; gap: 8px; margin-top: 20px; }
+    .stack-tab {
+      font-family: 'IBM Plex Mono', monospace; font-size: .7rem;
+      letter-spacing: .2em; text-transform: uppercase;
+      padding: 8px 20px; border: 1px solid var(--line);
+      background: transparent; color: var(--muted); cursor: pointer;
+      transition: border-color .25s ease, color .25s ease;
+    }
+    .stack-tab.active { border-color: var(--red); color: var(--red); }
+    .stack-tab:hover:not(.active) { border-color: var(--white); color: var(--white); }
+    .detail-loop-videos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; margin-bottom: 60px; }
+    .detail-loop-videos video { width: 100%; display: block; aspect-ratio: 16/9; object-fit: cover; pointer-events: none; }
+    .detail-more-projects { padding: 40px 52px 60px; border-top: 1px solid var(--line); margin-top: 60px; }
+    .dmp-label { font-size: .62rem; letter-spacing: .3em; text-transform: uppercase; color: var(--red); margin-bottom: 28px; text-align: center; }
+    .dmp-nav { display: grid; grid-template-columns: 1fr 1fr; }
+    .dmp-item { padding: 20px 0; cursor: none; position: relative; border-top: 1px solid var(--line); }
+    .dmp-item:first-child { padding-right: 52px; border-right: 1px solid var(--line); }
+    .dmp-item:last-child { padding-left: 52px; text-align: right; }
+    .dmp-title { font-family: 'Anton', sans-serif; font-size: clamp(1.5rem, 2.5vw, 2.6rem); text-transform: uppercase; letter-spacing: -.01em; line-height: 1; color: var(--white); transition: color .25s ease; }
+    .dmp-title-wrap { display: flex; align-items: flex-start; gap: 12px; }
+    .dmp-title-wrap--right { justify-content: flex-end; }
+    .dmp-arrow { flex-shrink: 0; font-family: 'Anton', sans-serif; font-size: clamp(1.5rem, 2.5vw, 2.6rem); line-height: 1; color: var(--white); transition: color .25s ease; }
+    .dmp-item:hover .dmp-arrow, .dmp-item:hover .dmp-title { color: var(--red); }
+    .dmp-type { font-size: .68rem; letter-spacing: .1em; color: var(--muted); margin-top: 10px; }
+    .dmp-thumb {
+      position: absolute; bottom: calc(100% + 16px); left: 0;
+      width: 280px; aspect-ratio: 16/9; overflow: hidden; background: var(--card);
+      opacity: 0; transform: translateY(10px);
+      transition: opacity .3s ease, transform .3s ease;
+      pointer-events: none; border: 1px solid rgba(255,255,255,.08); z-index: 10;
+    }
+    .dmp-item:last-child .dmp-thumb { left: auto; right: 0; }
+    .dmp-item:hover .dmp-thumb { opacity: 1; transform: translateY(0); }
+    .dmp-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .detail-hero-images {
       display: none; grid-template-columns: repeat(3, 1fr);
       gap: 4px; margin-bottom: 60px;
@@ -384,6 +443,10 @@
       transition: opacity .4s ease, transform .4s cubic-bezier(.16,1,.3,1);
     }
     #lb-img.lb-vis { opacity: 1; transform: scale(1); }
+    #lb-video {
+      max-width: 100%; max-height: 100%; object-fit: contain;
+      display: none; outline: none; background: var(--black);
+    }
     #lb-close {
       position: absolute; top: 24px; right: 36px;
       width: 40px; height: 40px;
@@ -508,6 +571,12 @@
       .process-section-grid { max-width: 100% !important; }
       #lb-stage { padding: 56px 12px 8px; }
       #lb-footer { padding: 8px 16px 20px; }
+      .detail-more-projects { padding: 60px 24px 60px; }
+      .dmp-item:first-child { padding-right: 24px; }
+      .dmp-item:last-child { padding-left: 24px; }
+      .detail-loop-videos { grid-template-columns: 1fr; }
+      .detail-loop-videos--many { grid-template-columns: repeat(2, 1fr); }
+      #chair-strip { display: none !important; }
     }
 
     /* ─── Preloader ─── */
@@ -706,16 +775,24 @@
   </div>
 </footer>
 
+<!-- ── Chair Flipbook Strip ── -->
+<div id="chair-strip">
+  <img id="chair-frame-img" src="" alt="">
+</div>
+
 <!-- ── Project Detail Overlay ──────────────────── -->
 <div id="detail">
+  <div id="detail-inner">
   <div class="detail-topbar">
     <a href="#" class="detail-back" id="btn-close">
       <div class="back-line"></div>
       <span>Back to Works</span>
     </a>
-    <span class="detail-counter" id="d-counter">01 / 06</span>
+    <span class="detail-counter" id="d-counter">01 / 07</span>
   </div>
 
+  <div id="detail-main">
+  <div id="chair-scatter"></div>
   <div class="detail-body">
     <p class="detail-label" id="d-label">Motion Graphics</p>
     <h2 class="detail-title" id="d-title">PROJECT TITLE</h2>
@@ -734,13 +811,15 @@
     <div id="d-illustration"></div>
     <div id="d-deco"></div>
     <div id="d-process"></div>
+    <div id="d-loop-videos"></div>
+    <div id="d-more-projects"></div>
   </div>
 
   <footer class="detail-footer">
     <div class="foot-main">
       <div class="foot-nav">
         <a href="works.html">Works</a>
-        <a href="index.html">Reel</a>
+        <a href="reel.html">Reel</a>
         <a href="about.html">About</a>
       </div>
       <div class="foot-info">
@@ -760,9 +839,11 @@
     </div>
     <div class="foot-bottom">
       <span class="foot-copy">© 2026 Elaine Chen. All rights reserved.</span>
-      <a href="#" class="foot-top" onclick="document.getElementById('detail').scrollTo({top:0,behavior:'smooth'}); return false;">Back to Top ↑</a>
+      <a href="#" class="foot-top" onclick="document.getElementById('detail-inner').scrollTo({top:0,behavior:'smooth'}); return false;">Back to Top ↑</a>
     </div>
   </footer>
+  </div><!-- /detail-main -->
+  </div><!-- /detail-inner -->
 </div>
 
 <!-- ── Reel Modal ── -->
@@ -780,6 +861,7 @@
   <button id="lb-close" aria-label="Close"></button>
   <div id="lb-stage">
     <img id="lb-img" src="" alt="">
+    <video id="lb-video" controls autoplay playsinline></video>
   </div>
   <div id="lb-footer">
     <button id="lb-prev" aria-label="Previous">
@@ -1173,9 +1255,57 @@ const DEMOREEL_ID = '1186376055';
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
   /* ── Project Detail ─────────────────────────── */
+  function stackSelect(idx) {
+    const cards = document.querySelectorAll('#d-multi-video .stack-card');
+    const tabs  = document.querySelectorAll('#d-multi-video .stack-tab');
+    const n = cards.length;
+    cards.forEach((card, i) => { card.dataset.pos = (i - idx + n) % n; });
+    tabs.forEach((tab, i) => tab.classList.toggle('active', i === idx));
+  }
+
+  function updateMoreProjects(currentIdx) {
+    const n = projects.length;
+    const prevIdx = (currentIdx - 1 + n) % n;
+    const nextIdx = (currentIdx + 1) % n;
+    const prev = projects[prevIdx], next = projects[nextIdx];
+    const thumbHtml = (p) => {
+      if (p.thumb) return `<img src="${p.thumb}" alt="${p.title}" loading="lazy">`;
+      const vid = p.vimeoId || (p.vimeoIds && p.vimeoIds[0]) || '';
+      return vid ? `<span class="dmp-vimeo-ph" data-vimeo="${vid}" style="display:block;width:100%;height:100%"></span>` : '';
+    };
+    const el = document.getElementById('d-more-projects');
+    el.className = 'detail-more-projects';
+    el.innerHTML = `
+      <p class="dmp-label">More Projects /</p>
+      <div class="dmp-nav">
+        <div class="dmp-item" onclick="openProject(${prevIdx})">
+          <div class="dmp-thumb">${thumbHtml(prev)}</div>
+          <div class="dmp-title-wrap"><span class="dmp-arrow">←</span><span class="dmp-title">${prev.title}</span></div>
+        </div>
+        <div class="dmp-item" onclick="openProject(${nextIdx})">
+          <div class="dmp-thumb">${thumbHtml(next)}</div>
+          <div class="dmp-title-wrap dmp-title-wrap--right"><span class="dmp-title">${next.title}</span><span class="dmp-arrow">→</span></div>
+        </div>
+      </div>`;
+    el.querySelectorAll('.dmp-vimeo-ph').forEach(ph => {
+      fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${ph.dataset.vimeo}&width=600`)
+        .then(r => r.json())
+        .then(d => {
+          const img = document.createElement('img');
+          img.src = d.thumbnail_url; img.loading = 'lazy';
+          img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
+          ph.replaceWith(img);
+        }).catch(() => {});
+    });
+    el.querySelectorAll('.dmp-item').forEach(item => {
+      item.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+      item.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+    });
+  }
+
   function openProject(i) {
     const p = projects[i];
-    document.getElementById('d-counter').textContent = `${p.num}`;
+    document.getElementById('d-counter').textContent = `${p.num} / 07`;
     document.getElementById('d-label').textContent   = p.label;
     const _titleEl = document.getElementById('d-title');
     _titleEl.textContent = p.title;
@@ -1191,7 +1321,33 @@ const DEMOREEL_ID = '1186376055';
       videoWrap.style.display = 'none';
       heroEl.classList.remove('show');
       heroEl.innerHTML = '';
+    } else if (p.vimeoIds) {
+      videoWrap.style.display = 'none';
+      heroEl.classList.remove('show');
+      heroEl.innerHTML = '';
+      const existing = document.getElementById('d-multi-video');
+      if (existing) existing.remove();
+      const multi = document.createElement('div');
+      multi.id = 'd-multi-video';
+      multi.className = 'detail-stacked-video';
+      multi.innerHTML = `
+        <div class="video-stack">
+          ${p.vimeoIds.map((id, idx) => `
+            <div class="stack-card" data-pos="${idx}" onclick="stackSelect(${idx})">
+              <iframe src="https://player.vimeo.com/video/${id}?autoplay=0&color=e33e3e&title=0&byline=0"
+                frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+            </div>`).join('')}
+        </div>
+        <div class="stack-tabs">
+          ${p.vimeoIds.map((_, idx) => `
+            <button class="stack-tab${idx === 0 ? ' active' : ''}" onclick="stackSelect(${idx})">
+              ${String(idx + 1).padStart(2, '0')}
+            </button>`).join('')}
+        </div>`;
+      videoWrap.parentNode.insertBefore(multi, videoWrap.nextSibling);
     } else {
+      const existing = document.getElementById('d-multi-video');
+      if (existing) existing.remove();
       videoWrap.style.display = '';
       heroEl.classList.remove('show');
       heroEl.innerHTML = '';
@@ -1199,11 +1355,18 @@ const DEMOREEL_ID = '1186376055';
         `https://player.vimeo.com/video/${p.vimeoId}?autoplay=0&color=e33e3e&title=0&byline=0`;
     }
 
+    const loopEl = document.getElementById('d-loop-videos');
+    if (p.loopVideos && p.loopVideos.length) {
+      loopEl.innerHTML = `<div class="process-section-label" style="margin-bottom:20px">Final clips</div>
+        <div class="detail-loop-videos${p.loopVideos.length > 3 ? ' detail-loop-videos--many' : ''}">${p.loopVideos.map(src =>
+          `<video src="${src}" autoplay muted loop playsinline></video>`
+        ).join('')}</div>`;
+    } else {
+      loopEl.innerHTML = '';
+    }
+
     document.getElementById('d-specs').innerHTML = p.specs.map(s =>
-      `<div class="spec-row">
-         <div class="spec-label">${s.k}</div>
-         <div class="spec-val">${s.v}</div>
-       </div>`).join('');
+      `<div class="spec-row"><div class="spec-label">${s.k}</div><div class="spec-val">${s.v}</div></div>`).join('');
 
     const illEl = document.getElementById('d-illustration');
     illEl.innerHTML = p.illustration
@@ -1241,7 +1404,7 @@ const DEMOREEL_ID = '1186376055';
           </div>`;
         }
         const grpIdx = window._lbGroups.length;
-        window._lbGroups.push({ label: g.group, srcs: g.items.map(i => i.src) });
+        window._lbGroups.push({ label: g.group, srcs: g.items.map(it => it.src) });
         const n = g.cols || (g.items.length === 1 ? 1 : g.items.length === 2 ? 2 : 3);
         const st = [`grid-template-columns:repeat(${n},1fr)`, g.maxWidth ? `max-width:${g.maxWidth};margin:0 auto` : ''].filter(Boolean).join(';');
         return `<div class="process-section">
@@ -1253,71 +1416,115 @@ const DEMOREEL_ID = '1186376055';
       procEl.innerHTML = p.processGroups.map(g => {
         if (g.layout === 'two-col') {
           const ratio = g.ratio || '1fr 2fr';
+          const rightStyle = g.rightStyle || '';
           return `<div class="process-two-col" style="grid-template-columns:${ratio}">
             <div class="process-two-col-left">${renderGroup(g.left)}</div>
-            <div class="process-two-col-right">${g.right.map(renderGroup).join('')}</div>
+            <div class="process-two-col-right" style="${rightStyle}">${g.right.map(renderGroup).join('')}</div>
           </div>`;
         }
         return renderGroup(g);
       }).join('');
     } else if (p.process) {
-      procEl.innerHTML = `<div class="process-section-grid cols-3">
+      procEl.innerHTML = `<div class="process-section-grid" style="grid-template-columns:repeat(3,1fr)">
         ${p.process.map(img =>
           `<div><img src="${img.src}" alt="${img.cap}" loading="lazy">
            <div class="process-cap">${img.cap}</div></div>`).join('')}
       </div>`;
     }
 
+    updateMoreProjects(i);
+
     const detail = document.getElementById('detail');
     detail.classList.add('open');
-    detail.scrollTop = 0;
+    document.getElementById('detail-inner').scrollTop = 0;
+    clearTimeout(window._detailTransTimer);
+    window._detailTransTimer = setTimeout(() => {
+      detail.style.transform = 'none';
+    }, 700);
+    // Lock body scroll so Safari routes wheel/touch to #detail-inner
+    window._bodySavedScrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${window._bodySavedScrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.overflow = 'hidden';
+
+    const chairStrip = document.getElementById('chair-strip');
+    const chairFrameImg = document.getElementById('chair-frame-img');
+    window._chairFrames = p.chairFrames || [];
+    if (window._chairFrames.length) {
+      chairFrameImg.src = window._chairFrames[0];
+      chairStrip.classList.add('visible');
+    } else {
+      chairStrip.classList.remove('visible');
+    }
   }
 
   function closeDetail(e) {
     e && e.preventDefault();
-    document.getElementById('detail').classList.remove('open');
+    // Unlock body scroll and restore position
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.overflow = '';
+    window.scrollTo(0, window._bodySavedScrollY || 0);
+    clearTimeout(window._detailTransTimer);
+    const detail = document.getElementById('detail');
+    detail.style.transform = '';
+    detail.classList.remove('open');
     document.getElementById('d-video').src = '';
     const heroEl = document.getElementById('d-hero-images');
     heroEl.classList.remove('show');
     heroEl.innerHTML = '';
-    const wrap = document.getElementById('d-video-wrap');
-    wrap.style.display = '';
-    wrap.classList.remove('vid-active');
+    document.getElementById('d-video-wrap').style.display = '';
+    document.getElementById('chair-strip').classList.remove('visible');
+    window._chairFrames = [];
   }
 
-  document.getElementById('btn-close').addEventListener('click', closeDetail);
-
-  // Click on video area to enable iframe interaction (prevents iframe from blocking scroll)
-  document.getElementById('d-video-wrap').addEventListener('click', function () {
-    this.classList.add('vid-active');
+  document.getElementById('detail-inner').addEventListener('scroll', function () {
+    const frames = window._chairFrames;
+    if (!frames || !frames.length) return;
+    const progress = this.scrollTop / Math.max(1, this.scrollHeight - this.clientHeight);
+    const idx = Math.floor(progress * frames.length * 3) % frames.length;
+    document.getElementById('chair-frame-img').src = frames[idx];
   });
+
+  document.getElementById('btn-close').addEventListener('click', closeDetail);
 
   /* ── Lightbox ──────────────────────────────── */
   window._lbGroups = [];
   let _lbGrp = 0, _lbIdx = 0;
   const lbEl    = document.getElementById('lightbox');
   const lbImg   = document.getElementById('lb-img');
+  const lbVideo = document.getElementById('lb-video');
   const lbGrpEl = document.getElementById('lb-group');
   const lbCntEl = document.getElementById('lb-counter');
   const lbPrevEl = document.getElementById('lb-prev');
   const lbNextEl = document.getElementById('lb-next');
 
+  function _lbShowMedia(src) {
+    lbVideo.style.display = 'none'; lbVideo.pause(); lbVideo.src = '';
+    lbImg.style.display = 'block';
+    lbImg.src = src;
+    requestAnimationFrame(() => requestAnimationFrame(() => lbImg.classList.add('lb-vis')));
+  }
+
   function lbOpen(grpIdx, imgIdx) {
     _lbGrp = grpIdx; _lbIdx = imgIdx;
     const grp = window._lbGroups[grpIdx];
-    lbImg.src = grp.srcs[imgIdx];
     lbGrpEl.textContent = grp.label;
     lbCntEl.textContent = `${imgIdx + 1} / ${grp.srcs.length}`;
     lbPrevEl.style.visibility = grp.srcs.length > 1 ? 'visible' : 'hidden';
     lbNextEl.style.visibility = grp.srcs.length > 1 ? 'visible' : 'hidden';
     lbEl.classList.add('lb-open');
-    requestAnimationFrame(() => requestAnimationFrame(() => lbImg.classList.add('lb-vis')));
+    _lbShowMedia(grp.srcs[imgIdx]);
   }
 
   function lbClose() {
     lbImg.classList.remove('lb-vis');
     lbEl.classList.remove('lb-open');
-    setTimeout(() => { lbImg.src = ''; }, 380);
+    setTimeout(() => { lbImg.src = ''; lbVideo.pause(); lbVideo.src = ''; lbVideo.style.display = 'none'; }, 380);
   }
 
   function lbChange(delta) {
@@ -1326,16 +1533,15 @@ const DEMOREEL_ID = '1186376055';
     lbImg.classList.remove('lb-vis');
     setTimeout(() => {
       const grp = window._lbGroups[_lbGrp];
-      lbImg.src = grp.srcs[_lbIdx];
       lbCntEl.textContent = `${_lbIdx + 1} / ${grp.srcs.length}`;
-      requestAnimationFrame(() => requestAnimationFrame(() => lbImg.classList.add('lb-vis')));
+      _lbShowMedia(grp.srcs[_lbIdx]);
     }, 200);
   }
 
   document.getElementById('lb-close').addEventListener('click', lbClose);
   lbPrevEl.addEventListener('click', () => lbChange(-1));
   lbNextEl.addEventListener('click', () => lbChange(1));
-  lbEl.addEventListener('click', e => { if (e.target === lbEl) lbClose(); });
+  lbEl.addEventListener('click', e => { if (e.target === lbEl || e.target.id === 'lb-stage') lbClose(); });
 
   document.querySelectorAll('#lb-close, #lb-prev, #lb-next').forEach(el => {
     el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
