@@ -1432,6 +1432,15 @@
     if (e.key === 'ArrowLeft'  && lbEl.classList.contains('lb-open')) lbChange(-1);
     if (e.key === 'ArrowRight' && lbEl.classList.contains('lb-open')) lbChange(1);
   });
+
+  // Auto-open project from homepage link (e.g. works.html?open=2)
+  const _autoOpen = new URLSearchParams(window.location.search).get('open');
+  if (_autoOpen !== null) {
+    const _idx = parseInt(_autoOpen, 10);
+    if (!isNaN(_idx) && _idx >= 0 && _idx < projects.length) {
+      openProject(_idx);
+    }
+  }
 </script>
 </body>
 </html>
