@@ -264,16 +264,13 @@
     #detail {
       position: fixed; inset: 0; z-index: 300;
       background: var(--black);
-      overflow-y: auto; overflow-x: hidden;
+      overflow-y: scroll; overflow-x: hidden;
       overscroll-behavior: contain;
       -webkit-overflow-scrolling: touch;
       transform: translateY(100%);
       transition: transform .65s cubic-bezier(.76,0,.24,1);
     }
     #detail.open { transform: translateY(0); }
-    #detail-inner {
-      position: relative; width: 100%; min-height: 100%;
-    }
     #detail-main { position: relative; }
     #chair-scatter { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
     #chair-scatter img { position: absolute; pointer-events: none; display: block; }
@@ -782,7 +779,6 @@
 
 <!-- ── Project Detail Overlay ──────────────────── -->
 <div id="detail">
-  <div id="detail-inner">
   <div class="detail-topbar">
     <a href="#" class="detail-back" id="btn-close">
       <div class="back-line"></div>
@@ -843,7 +839,6 @@
     </div>
   </footer>
   </div><!-- /detail-main -->
-  </div><!-- /detail-inner -->
 </div>
 
 <!-- ── Reel Modal ── -->
