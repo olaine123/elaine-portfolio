@@ -27,7 +27,7 @@
       background: var(--black);
       color: var(--white);
       font-family: 'IBM Plex Mono', monospace;
-      overflow-x: clip;
+      overflow-x: hidden;
       cursor: none;
     }
 
@@ -265,6 +265,7 @@
       position: fixed; inset: 0; z-index: 300;
       background: var(--black); overflow-y: auto;
       overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
       transform: translateY(100%);
       transition: transform .65s cubic-bezier(.76,0,.24,1);
     }
@@ -1172,16 +1173,20 @@ const DEMOREEL_ID = '1186376055';
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
   /* ── Project Detail ─────────────────────────── */
-  function _preventOuterScroll(e) {
-    if (!e.target.closest('#detail')) e.preventDefault();
-  }
+  let _scrollY = 0;
   function lockBody() {
-    document.addEventListener('wheel',     _preventOuterScroll, { passive: false });
-    document.addEventListener('touchmove', _preventOuterScroll, { passive: false });
+    _scrollY = window.scrollY;
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.top = -_scrollY + 'px';
+    document.body.style.width = '100%';
   }
   function unlockBody() {
-    document.removeEventListener('wheel',     _preventOuterScroll);
-    document.removeEventListener('touchmove', _preventOuterScroll);
+    document.body.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    window.scrollTo(0, _scrollY);
   }
 
   function openProject(i) {
