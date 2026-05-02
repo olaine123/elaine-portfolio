@@ -1172,18 +1172,16 @@ const DEMOREEL_ID = '1186376055';
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
   /* ── Project Detail ─────────────────────────── */
-  let _savedScrollY = 0;
+  function _preventOuterScroll(e) {
+    if (!e.target.closest('#detail')) e.preventDefault();
+  }
   function lockBody() {
-    _savedScrollY = window.scrollY;
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${_savedScrollY}px`;
-    document.body.style.width = '100%';
+    document.addEventListener('wheel',     _preventOuterScroll, { passive: false });
+    document.addEventListener('touchmove', _preventOuterScroll, { passive: false });
   }
   function unlockBody() {
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.width = '';
-    window.scrollTo(0, _savedScrollY);
+    document.removeEventListener('wheel',     _preventOuterScroll);
+    document.removeEventListener('touchmove', _preventOuterScroll);
   }
 
   function openProject(i) {
