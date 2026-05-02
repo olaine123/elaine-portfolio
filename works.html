@@ -215,6 +215,7 @@
     #detail {
       position: fixed; inset: 0; z-index: 300;
       background: var(--black); overflow-y: auto;
+      overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
       transform: translateY(100%);
       transition: transform .65s cubic-bezier(.76,0,.24,1);
     }
@@ -1298,7 +1299,6 @@
     const detail = document.getElementById('detail');
     detail.classList.add('open');
     detail.scrollTop = 0;
-    document.body.style.overflow = 'hidden';
 
     // Chair flipbook
     const chairStrip = document.getElementById('chair-strip');
@@ -1320,7 +1320,6 @@
     heroEl.classList.remove('show');
     heroEl.innerHTML = '';
     document.getElementById('d-video-wrap').style.display = '';
-    document.body.style.overflow = '';
     document.getElementById('chair-strip').classList.remove('visible');
     window._chairFrames = [];
   }

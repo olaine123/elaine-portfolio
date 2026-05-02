@@ -264,6 +264,7 @@
     #detail {
       position: fixed; inset: 0; z-index: 300;
       background: var(--black); overflow-y: auto;
+      overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
       transform: translateY(100%);
       transition: transform .65s cubic-bezier(.76,0,.24,1);
     }
@@ -1172,7 +1173,6 @@ const DEMOREEL_ID = '1186376055';
     const detail = document.getElementById('detail');
     detail.classList.add('open');
     detail.scrollTop = 0;
-    document.body.style.overflow = 'hidden';
   }
 
   function closeDetail(e) {
@@ -1183,7 +1183,6 @@ const DEMOREEL_ID = '1186376055';
     heroEl.classList.remove('show');
     heroEl.innerHTML = '';
     document.getElementById('d-video-wrap').style.display = '';
-    document.body.style.overflow = '';
   }
 
   document.getElementById('btn-close').addEventListener('click', closeDetail);
@@ -1260,12 +1259,10 @@ const DEMOREEL_ID = '1186376055';
   function openReel() {
     _reelModal.classList.add('open');
     document.getElementById('reel-iframe').src = 'https://player.vimeo.com/video/1186376055?autoplay=1&title=0&byline=0&portrait=0&badge=0&autopause=0&app_id=58479';
-    document.body.style.overflow = 'hidden';
   }
   function closeReel() {
     _reelModal.classList.remove('open');
     document.getElementById('reel-iframe').src = '';
-    document.body.style.overflow = '';
   }
 
   document.getElementById('reel-close').addEventListener('click', closeReel);
