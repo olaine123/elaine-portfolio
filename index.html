@@ -263,16 +263,16 @@
     /* ─── Project Detail Overlay ─────────────────────── */
     #detail {
       position: fixed; inset: 0; z-index: 300;
-      background: var(--black); overflow: hidden;
+      background: var(--black);
+      overflow-y: auto; overflow-x: hidden;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
       transform: translateY(100%);
       transition: transform .65s cubic-bezier(.76,0,.24,1);
     }
     #detail.open { transform: translateY(0); }
     #detail-inner {
-      position: absolute; inset: 0;
-      overflow-y: auto; overflow-x: hidden;
-      overscroll-behavior: contain;
-      -webkit-overflow-scrolling: touch;
+      position: relative; width: 100%; min-height: 100%;
     }
     #detail-main { position: relative; }
     #chair-scatter { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
@@ -839,7 +839,7 @@
     </div>
     <div class="foot-bottom">
       <span class="foot-copy">© 2026 Elaine Chen. All rights reserved.</span>
-      <a href="#" class="foot-top" onclick="document.getElementById('detail-inner').scrollTo({top:0,behavior:'smooth'}); return false;">Back to Top ↑</a>
+      <a href="#" class="foot-top" onclick="document.getElementById('detail').scrollTo({top:0,behavior:'smooth'}); return false;">Back to Top ↑</a>
     </div>
   </footer>
   </div><!-- /detail-main -->
@@ -1436,11 +1436,7 @@ const DEMOREEL_ID = '1186376055';
 
     const detail = document.getElementById('detail');
     detail.classList.add('open');
-    document.getElementById('detail-inner').scrollTop = 0;
-    clearTimeout(window._detailTransTimer);
-    window._detailTransTimer = setTimeout(() => {
-      detail.style.transform = 'none';
-    }, 700);
+    detail.scrollTop = 0;
     document.body.style.overflow = 'hidden';
 
     const chairStrip = document.getElementById('chair-strip');
@@ -1457,10 +1453,7 @@ const DEMOREEL_ID = '1186376055';
   function closeDetail(e) {
     e && e.preventDefault();
     document.body.style.overflow = '';
-    clearTimeout(window._detailTransTimer);
-    const detail = document.getElementById('detail');
-    detail.style.transform = '';
-    detail.classList.remove('open');
+    document.getElementById('detail').classList.remove('open');
     document.getElementById('d-video').src = '';
     const heroEl = document.getElementById('d-hero-images');
     heroEl.classList.remove('show');
@@ -1470,7 +1463,7 @@ const DEMOREEL_ID = '1186376055';
     window._chairFrames = [];
   }
 
-  document.getElementById('detail-inner').addEventListener('scroll', function () {
+  document.getElementById('detail').addEventListener('scroll', function () {
     const frames = window._chairFrames;
     if (!frames || !frames.length) return;
     const progress = this.scrollTop / Math.max(1, this.scrollHeight - this.clientHeight);
