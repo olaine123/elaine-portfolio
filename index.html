@@ -1173,20 +1173,6 @@ const DEMOREEL_ID = '1186376055';
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
   /* ── Project Detail ─────────────────────────── */
-  let _scrollY = 0;
-  function lockBody() {
-    _scrollY = window.scrollY;
-    document.body.style.position = 'fixed';
-    document.body.style.top = -_scrollY + 'px';
-    document.body.style.width = '100%';
-  }
-  function unlockBody() {
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.width = '';
-    window.scrollTo(0, _scrollY);
-  }
-
   function openProject(i) {
     const p = projects[i];
     document.getElementById('d-counter').textContent = `${p.num}`;
@@ -1282,7 +1268,6 @@ const DEMOREEL_ID = '1186376055';
       </div>`;
     }
 
-    lockBody();
     const detail = document.getElementById('detail');
     detail.classList.add('open');
     detail.scrollTop = 0;
@@ -1290,7 +1275,6 @@ const DEMOREEL_ID = '1186376055';
 
   function closeDetail(e) {
     e && e.preventDefault();
-    unlockBody();
     document.getElementById('detail').classList.remove('open');
     document.getElementById('d-video').src = '';
     const heroEl = document.getElementById('d-hero-images');
