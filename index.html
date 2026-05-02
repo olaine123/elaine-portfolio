@@ -517,11 +517,6 @@
     }
     #preloader.pl-done { transform: translateY(-100%); }
     .pl-inner { text-align: center; width: min(480px, 88vw); }
-    .pl-logo {
-      height: 52px; display: block; margin: 0 auto 52px;
-      mix-blend-mode: difference;
-      opacity: 0; animation: fadeIn .7s ease .15s forwards;
-    }
     .pl-divider {
       width: 100%; height: 1px;
       background: rgba(240,237,230,.08);
@@ -557,7 +552,6 @@
 <!-- ── Preloader ── -->
 <div id="preloader">
   <div class="pl-inner">
-    <img class="pl-logo" src="brand_assets/LOGO.png" alt="Elaine Chen">
     <div class="pl-divider"><div class="pl-line" id="pl-line"></div></div>
     <div class="pl-foot">
       <span class="pl-loading">Touchdown in progress<span class="pl-dot">.</span><span class="pl-dot">.</span><span class="pl-dot">.</span></span>
@@ -807,6 +801,13 @@
   const pctEl   = document.getElementById('pl-pct');
   const heroVid = document.querySelector('.hero-video video');
   let progress = 0, dismissed = false;
+
+  // Only show preloader on first visit per session
+  if (sessionStorage.getItem('visited')) {
+    pl.remove();
+    return;
+  }
+  sessionStorage.setItem('visited', '1');
 
   function setP(p) {
     progress = Math.min(97, p); // never reach 100 until video is ready
