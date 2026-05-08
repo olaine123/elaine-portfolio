@@ -327,6 +327,7 @@
     .process-two-col {
       display: grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-bottom: 52px;
     }
+    .yt-lyrics-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
     .process-two-col-left .process-section,
     .process-two-col-right .process-section { margin-bottom: 16px; }
     .process-two-col-right { display: flex; flex-direction: column; padding-left: 48px; }
@@ -459,6 +460,7 @@
       .dmp-item:last-child { padding-left: 24px; }
       .process-two-col { grid-template-columns: 1fr !important; }
       .process-two-col-right { padding-left: 0; }
+      .yt-lyrics-wrap { grid-template-columns: 1fr; }
       .process-section-grid:not([style*="repeat(1,"]) { grid-template-columns: repeat(2, 1fr) !important; }
       .process-section-grid { max-width: 100% !important; }
       #lb-stage { padding: 56px 12px 8px; }
@@ -876,6 +878,57 @@
       ],
     },
     {
+      num: '08', category: 'works', label: 'Motion Graphics',
+      title: 'OREO: BRIGHT IDEAS',
+      type: 'Motion Graphics · 2026',
+      vimeoId: '1190259118',
+      desc: 'This project reimagines the iconic 1983 Oreo "Bright Ideas" commercial by turning its vintage jingle into the visual star. Through expressive kinetic typography, the animation deconstructs the 80s soundtrack, allowing letters to embody the playful and nostalgic energy of "Milk\'s Favorite Cookie."',
+      specs: [
+        { k: 'Year', v: '2026' },
+        { k: 'Type', v: 'Motion Graphics' },
+        { k: 'Location', v: 'USA' },
+      ],
+      thumb: 'Project file/Oreo/Styleframe/Artboard 5.png',
+      processGroups: [
+        { type: 'youtube-lyrics', group: 'Original Commercial', youtubeId: 'k4XvShzNvX4',
+          lyricsTitle: 'Transcription',
+          lyrics: '♪ Oh oh oh, bright ideas and an Oreo cookie ♪<br>♪ It\'s a bright idea to dunk it, or to crunch it or unscrew it ♪<br>♪ Or to lick it, or to trick it, but no matter whatcha do ♪<br>♪ It\'s true, it\'s fun to munch a creamy crunchy chocolate O-R-E-O ♪<br>♪ Goes great with imagination, put the yum in your creation ♪<br>Oreo, and Oreo Double Stuf cookies' },
+        { type: 'text', group: 'Design Strategy', body: 'The visual direction bridges 1980s nostalgia with modern motion design. Souvenir Black serves as the primary typeface; its thick, rounded shape directly mirrors the silhouette of an Oreo cookie and its cream filling. This choice creates a natural harmony between the text and the product.<br><br>The brand\'s historic identity is updated with a fresh yet heritage-inspired color palette. While typography leads the 30 second spot, mixed media elements and AI-generated imagery help build a period-specific atmosphere, blending classic vibes with contemporary kinetic expression.' },
+        { group: 'Color', maxWidth: '50%', items: [{ src: 'Project file/Oreo/color.png' }] },
+        { type: 'typeface', group: 'Typeface', src: 'Project file/Oreo/souvenir-bold-font.png', specs: [
+          { k: 'Year of Popularity', v: 'Late 1970s — Early 1980s' },
+          { k: 'Visual Connection', v: 'Soft edges reflecting the cream filling and cookie silhouette.' },
+        ]},
+        { group: 'Research', maxWidth: '50%', items: [{ src: 'Project file/Oreo/Research.png' }] },
+        { group: 'Initial Design Test', cols: 4, items: [
+          { src: 'Project file/Oreo/Initial design test/test01.png' },
+          { src: 'Project file/Oreo/Initial design test/test02.png' },
+          { src: 'Project file/Oreo/Initial design test/test03.png' },
+          { src: 'Project file/Oreo/Initial design test/test04.png' },
+        ]},
+        { group: 'Styleframe', cols: 4, items: [
+          { src: 'Project file/Oreo/Styleframe/Artboard 1.jpg' },
+          { src: 'Project file/Oreo/Styleframe/Artboard 2.png' },
+          { src: 'Project file/Oreo/Styleframe/Artboard 3.png' },
+          { src: 'Project file/Oreo/Styleframe/Artboard 4.png' },
+          { src: 'Project file/Oreo/Styleframe/Artboard 5.png' },
+          { src: 'Project file/Oreo/Styleframe/Artboard 6.png' },
+          { src: 'Project file/Oreo/Styleframe/Artboard 7.png' },
+          { src: 'Project file/Oreo/Styleframe/Artboard 8.png' },
+          { src: 'Project file/Oreo/Styleframe/Artboard 9.png' },
+          { src: 'Project file/Oreo/Styleframe/Artboard 10.png' },
+          { src: 'Project file/Oreo/Styleframe/Artboard 11.png' },
+          { src: 'Project file/Oreo/Styleframe/Artboard 12.png' },
+        ]},
+        { type: 'refine-compare', group: 'Refine', pairs: [
+          { before: 'Project file/Oreo/Refine/Artboard 6.png', after: ['Project file/Oreo/Refine/Artboard 6-1.png', 'Project file/Oreo/Refine/Artboard 6-2.png'] },
+          { before: 'Project file/Oreo/Refine/Artboard 8.png', after: ['Project file/Oreo/Refine/Artboard 8-1.png'] },
+          { before: 'Project file/Oreo/Refine/Artboard 9.png', after: ['Project file/Oreo/Refine/Artboard 9-1.png'] },
+          { before: 'Project file/Oreo/Refine/Artboard 12.png', after: ['Project file/Oreo/Refine/Artboard 12-1.png'] },
+        ]},
+      ],
+    },
+    {
       num: '01', category: 'live-action', label: 'Live Action Motion',
       title: 'Christmasland in New Taipei City',
       type: 'Television Commercial · 2025',
@@ -1173,7 +1226,7 @@
 
   function openProject(i) {
     const p = projects[i];
-    document.getElementById('d-counter').textContent = `${p.num} / 07`;
+    document.getElementById('d-counter').textContent = `${p.num} / 08`;
     document.getElementById('d-label').textContent   = p.label;
     const _titleEl = document.getElementById('d-title');
     _titleEl.textContent = p.title;
@@ -1259,6 +1312,78 @@
 
     if (p.processGroups) {
       const renderGroup = g => {
+        if (g.type === 'youtube-lyrics') {
+          return `<div class="process-section">
+            ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
+            <div class="yt-lyrics-wrap">
+              <div>
+                <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;background:var(--card)">
+                  <iframe style="position:absolute;inset:0;width:100%;height:100%" src="https://www.youtube.com/embed/${g.youtubeId}" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>
+                </div>
+              </div>
+              <div>
+                ${g.lyricsTitle ? `<div class="process-section-label" style="margin-bottom:12px">${g.lyricsTitle}</div>` : ''}
+                <p class="process-body" style="font-style:italic;opacity:.82">${g.lyrics}</p>
+              </div>
+            </div>
+          </div>`;
+        }
+        if (g.type === 'youtube') {
+          return `<div class="process-section">
+            ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
+            <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;background:var(--card)">
+              <iframe style="position:absolute;inset:0;width:100%;height:100%" src="https://www.youtube.com/embed/${g.youtubeId}" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>
+            </div>
+          </div>`;
+        }
+        if (g.type === 'lyrics') {
+          return `<div class="process-section">
+            ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
+            <p class="process-body" style="font-style:italic;opacity:.82">${g.body}</p>
+          </div>`;
+        }
+        if (g.type === 'refine-compare') {
+          const grpIdx = window._lbGroups.length;
+          const allSrcs = g.pairs.flatMap(p => [p.before, ...p.after]);
+          window._lbGroups.push({ label: g.group, srcs: allSrcs });
+          const maxAfter = Math.max(...g.pairs.map(p => p.after.length));
+          const gridCols = `1fr 40px ${Array(maxAfter).fill('1fr').join(' ')}`;
+          let sIdx = 0;
+          const pairHtml = g.pairs.map(pair => {
+            const bIdx = sIdx++;
+            const aIdxs = pair.after.map(() => sIdx++);
+            const afterCells = Array.from({length: maxAfter}, (_, i) => {
+              if (i < pair.after.length) {
+                return `<img src="${pair.after[i]}" loading="lazy" onclick="lbOpen(${grpIdx},${aIdxs[i]})" style="width:100%;display:block;cursor:none;transition:transform .3s ease" onmouseenter="document.body.classList.add('hovering');this.style.transform='scale(1.02)'" onmouseleave="document.body.classList.remove('hovering');this.style.transform='scale(1)'">`;
+              }
+              return '<div></div>';
+            }).join('');
+            return `<div style="display:grid;grid-template-columns:${gridCols};gap:8px;align-items:center">
+              <img src="${pair.before}" loading="lazy" onclick="lbOpen(${grpIdx},${bIdx})" style="width:100%;display:block;cursor:none;transition:transform .3s ease" onmouseenter="document.body.classList.add('hovering');this.style.transform='scale(1.02)'" onmouseleave="document.body.classList.remove('hovering');this.style.transform='scale(1)'">
+              <div style="color:var(--red);font-family:'Anton',sans-serif;font-size:1.8rem;line-height:1;text-align:center">→</div>
+              ${afterCells}
+            </div>`;
+          }).join('');
+          return `<div class="process-section">
+            ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
+            <div style="display:flex;flex-direction:column;gap:8px">${pairHtml}</div>
+          </div>`;
+        }
+        if (g.type === 'typeface') {
+          const grpIdx = window._lbGroups.length;
+          window._lbGroups.push({ label: g.group, srcs: [g.src] });
+          return `<div class="process-section">
+            ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
+            <div style="max-width:50%;margin:0 auto;text-align:center">
+              <div class="process-section-grid" style="grid-template-columns:repeat(1,1fr)">
+                <img src="${g.src}" alt="${g.group}" loading="lazy" onclick="lbOpen(${grpIdx},0)">
+              </div>
+              <div style="margin-top:20px;display:flex;gap:48px;flex-wrap:wrap;justify-content:center">
+                ${g.specs.map(s => `<div><div class="spec-label">${s.k}</div><div style="font-size:.9rem;color:var(--muted);margin-top:4px">${s.v}</div></div>`).join('')}
+              </div>
+            </div>
+          </div>`;
+        }
         if (g.type === 'text') {
           return `<div class="process-section">
             ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
