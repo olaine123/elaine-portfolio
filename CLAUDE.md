@@ -46,6 +46,12 @@
 - **Spacing:** Use intentional, consistent spacing tokens — not random Tailwind steps.
 - **Depth:** Surfaces should have a layering system (base → elevated → floating), not all sit at the same z-plane.
 
+## Push to GitHub Workflow
+- **Always test on localhost first** — serve the project, take a screenshot, and show the user the result before any git push.
+- **Never push automatically** — always confirm with the user before running `git push`. Ask explicitly: "看起來沒問題嗎？我可以幫你 push 上去嗎？" (or similar).
+- Only push after the user has seen the localhost preview and given approval (they don't need to say the exact words "幫我 push", but must give clear confirmation).
+- **Why:** User wants to verify changes look correct on localhost before they go live on Vercel.
+
 ## Hard Rules
 - Do not add sections, features, or content not in the reference
 - Do not "improve" a reference design — match it
