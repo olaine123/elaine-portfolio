@@ -553,72 +553,6 @@
   </div>
 </footer>
 
-<!-- ── Chair Flipbook Strip ── -->
-<div id="chair-strip">
-  <img id="chair-frame-img" src="" alt="">
-</div>
-
-<!-- ── Project Detail Overlay ── -->
-<div id="detail">
-  <div class="detail-topbar">
-    <a href="#" class="detail-back" id="btn-close">
-      <div class="back-line"></div>
-      <span>Back to Works</span>
-    </a>
-    <span class="detail-counter" id="d-counter">01 / 06</span>
-  </div>
-
-  <div id="detail-main">
-  <div id="chair-scatter"></div>
-  <div class="detail-body">
-    <p class="detail-label" id="d-label">Motion Graphics</p>
-    <h2 class="detail-title" id="d-title">PROJECT TITLE</h2>
-    <div class="detail-video-wrap" id="d-video-wrap">
-      <iframe id="d-video" src="" frameborder="0"
-        allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-    </div>
-    <div id="d-hero-images" class="detail-hero-images"></div>
-    <div class="detail-info">
-      <p class="detail-desc" id="d-desc"></p>
-      <div class="detail-specs" id="d-specs"></div>
-    </div>
-    <div id="d-illustration"></div>
-    <div id="d-deco"></div>
-    <div id="d-process"></div>
-    <div id="d-loop-videos"></div>
-    <div id="d-more-projects"></div>
-  </div>
-
-  <footer class="detail-footer">
-    <div class="foot-main">
-      <div class="foot-nav">
-        <a href="works.html">Works</a>
-        <a href="reel.html">Reel</a>
-        <a href="about.html">About</a>
-      </div>
-      <div class="foot-info">
-        <div class="foot-contact-item">
-          <span class="foot-contact-label">Email</span>
-          <a href="mailto:olaine123456@gmail.com" class="foot-contact-row">olaine123456@gmail.com</a>
-        </div>
-        <div class="foot-contact-item">
-          <span class="foot-contact-label">Location</span>
-          <div class="foot-contact-row">Savannah, GA · USA</div>
-        </div>
-        <div class="foot-contact-item">
-          <span class="foot-contact-label">LinkedIn</span>
-          <a href="https://www.linkedin.com/in/elainechen-motion" target="_blank" rel="noopener" class="foot-contact-row">linkedin.com/in/elainechen-motion ↗</a>
-        </div>
-      </div>
-    </div>
-    <div class="foot-bottom">
-      <span class="foot-copy">© 2026 Elaine Chen. All rights reserved.</span>
-      <a href="#" class="foot-top" onclick="document.getElementById('detail').scrollTo({top:0,behavior:'smooth'}); return false;">Back to Top ↑</a>
-    </div>
-  </footer>
-  </div><!-- /detail-main -->
-</div>
-
 <!-- ── Lightbox ── -->
 <div id="lightbox">
   <button id="lb-close" aria-label="Close"></button>
@@ -1040,6 +974,22 @@
     },
   ];
 
+  const PROJECT_PAGES = [
+    'work-new-york-pulse.html',
+    'work-milky-way-home.html',
+    'work-good-bad-ugly.html',
+    'work-adelphi.html',
+    'work-oreo.html',
+    'work-nike.html',
+    'work-7-kinds-of-rest.html',
+    'work-world-athletics.html',
+    'work-christmasland.html',
+    'work-taoyuan.html',
+    'work-love-on-shoestring.html',
+    'work-taipei-esports.html',
+    'work-whos-the-boss.html',
+  ];
+
   const playgroundItems = [
     { type: 'image', title: 'Sushiro', src: 'Project file/Playground/sushiro.png' },
     { type: 'video', title: 'Memory', src: 'Project file/Playground/memory.mp4' },
@@ -1081,7 +1031,7 @@
       const thumb = p.thumb
         ? `<img class="work-thumb${p.thumbZoom ? ' work-thumb--zoom' : ''}" src="${p.thumb}" alt="${p.title}" loading="lazy">`
         : `<div class="work-placeholder" data-vimeo="${vimeoSrc}" data-title="${p.title}"></div>`;
-      return `<div class="work-card" onclick="openProject(${i})">
+      return `<div class="work-card" onclick="location.href=PROJECT_PAGES[${i}]">
         ${thumb}
         <div class="work-card-overlay"><div class="work-meta">
           <div class="work-num">${p.num}</div>
@@ -1187,303 +1137,8 @@
   }, { threshold: .12 });
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-  function updateMoreProjects(currentIdx) {
-    const n = projects.length;
-    const prevIdx = (currentIdx - 1 + n) % n;
-    const nextIdx = (currentIdx + 1) % n;
-    const prev = projects[prevIdx], next = projects[nextIdx];
-    const thumbHtml = (p) => {
-      if (p.thumb) return `<img src="${p.thumb}" alt="${p.title}" loading="lazy">`;
-      const vid = p.vimeoId || (p.vimeoIds && p.vimeoIds[0]) || '';
-      return vid ? `<span class="dmp-vimeo-ph" data-vimeo="${vid}" style="display:block;width:100%;height:100%"></span>` : '';
-    };
-    const el = document.getElementById('d-more-projects');
-    el.className = 'detail-more-projects';
-    el.innerHTML = `
-      <p class="dmp-label">More Projects /</p>
-      <div class="dmp-nav">
-        <div class="dmp-item" onclick="openProject(${prevIdx})">
-          <div class="dmp-thumb">${thumbHtml(prev)}</div>
-          <div class="dmp-title-wrap"><span class="dmp-arrow">←</span><span class="dmp-title">${prev.title}</span></div>
-        </div>
-        <div class="dmp-item" onclick="openProject(${nextIdx})">
-          <div class="dmp-thumb">${thumbHtml(next)}</div>
-          <div class="dmp-title-wrap dmp-title-wrap--right"><span class="dmp-title">${next.title}</span><span class="dmp-arrow">→</span></div>
-        </div>
-      </div>`;
-    el.querySelectorAll('.dmp-vimeo-ph').forEach(ph => {
-      fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${ph.dataset.vimeo}&width=600`)
-        .then(r => r.json())
-        .then(d => {
-          const img = document.createElement('img');
-          img.src = d.thumbnail_url; img.loading = 'lazy';
-          img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block';
-          ph.replaceWith(img);
-        }).catch(() => {});
-    });
-    el.querySelectorAll('.dmp-item').forEach(item => {
-      item.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
-      item.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
-    });
-  }
-
-  function stackSelect(idx) {
-    const cards = document.querySelectorAll('#d-multi-video .stack-card');
-    const tabs  = document.querySelectorAll('#d-multi-video .stack-tab');
-    const n = cards.length;
-    cards.forEach((card, i) => { card.dataset.pos = (i - idx + n) % n; });
-    tabs.forEach((tab, i) => tab.classList.toggle('active', i === idx));
-  }
-
-  function openProject(i) {
-    const p = projects[i];
-    document.getElementById('d-counter').textContent = `${p.num} / 08`;
-    document.getElementById('d-label').textContent   = p.label;
-    const _titleEl = document.getElementById('d-title');
-    _titleEl.textContent = p.title;
-    _titleEl.style.fontSize = p.title.length > 20 ? 'clamp(2rem, 5vw, 5rem)' : '';
-    document.getElementById('d-desc').textContent    = p.desc;
-
-    const videoWrap = document.getElementById('d-video-wrap');
-    const heroEl = document.getElementById('d-hero-images');
-    if (p.heroImages) {
-      videoWrap.style.display = 'none';
-      heroEl.classList.add('show');
-    } else if (p.noVideo) {
-      videoWrap.style.display = 'none';
-      heroEl.classList.remove('show');
-      heroEl.innerHTML = '';
-    } else if (p.vimeoIds) {
-      videoWrap.style.display = 'none';
-      heroEl.classList.remove('show');
-      heroEl.innerHTML = '';
-      const existing = document.getElementById('d-multi-video');
-      if (existing) existing.remove();
-      const multi = document.createElement('div');
-      multi.id = 'd-multi-video';
-      multi.className = 'detail-stacked-video';
-      multi.innerHTML = `
-        <div class="video-stack">
-          ${p.vimeoIds.map((id, i) => `
-            <div class="stack-card" data-pos="${i}" onclick="stackSelect(${i})">
-              <iframe src="https://player.vimeo.com/video/${id}?autoplay=0&color=e33e3e&title=0&byline=0"
-                frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-            </div>`).join('')}
-        </div>
-        <div class="stack-tabs">
-          ${p.vimeoIds.map((_, i) => `
-            <button class="stack-tab${i === 0 ? ' active' : ''}" onclick="stackSelect(${i})">
-              ${String(i + 1).padStart(2, '0')}
-            </button>`).join('')}
-        </div>`;
-      videoWrap.parentNode.insertBefore(multi, videoWrap.nextSibling);
-    } else {
-      const existing = document.getElementById('d-multi-video');
-      if (existing) existing.remove();
-      videoWrap.style.display = '';
-      heroEl.classList.remove('show');
-      heroEl.innerHTML = '';
-      document.getElementById('d-video').src =
-        `https://player.vimeo.com/video/${p.vimeoId}?autoplay=0&color=e33e3e&title=0&byline=0`;
-    }
-
-    // ── Loop videos (after description)
-    const loopEl = document.getElementById('d-loop-videos');
-    if (p.loopVideos && p.loopVideos.length) {
-      loopEl.className = '';
-      loopEl.innerHTML = `<div class="process-section-label" style="margin-bottom:20px">Final clips</div>
-        <div class="detail-loop-videos${p.loopVideos.length > 3 ? ' detail-loop-videos--many' : ''}">${p.loopVideos.map(src =>
-          `<video src="${src}" autoplay muted loop playsinline></video>`
-        ).join('')}</div>`;
-    } else {
-      loopEl.innerHTML = '';
-    }
-
-    document.getElementById('d-specs').innerHTML = p.specs.map(s =>
-      `<div class="spec-row"><div class="spec-label">${s.k}</div><div class="spec-val">${s.v}</div></div>`).join('');
-
-    const illEl = document.getElementById('d-illustration');
-    illEl.innerHTML = p.illustration
-      ? `<div class="detail-illustration"><img src="${p.illustration}" alt="Illustration"></div>` : '';
-
-    const decoEl = document.getElementById('d-deco');
-    decoEl.innerHTML = p.deco
-      ? `<div class="detail-deco"><img src="${p.deco}" alt="Deco"></div>` : '';
-
-    const procEl = document.getElementById('d-process');
-    window._lbGroups = [];
-
-    if (p.heroImages) {
-      const lbIdx = window._lbGroups.length;
-      window._lbGroups.push({ label: 'Styleframe', srcs: p.heroImages });
-      heroEl.innerHTML = p.heroImages.map((src, idx) =>
-        `<img src="${src}" alt="${p.title}" loading="lazy" onclick="lbOpen(${lbIdx},${idx})">`
-      ).join('');
-    }
-
-    if (p.processGroups) {
-      const renderGroup = g => {
-        if (g.type === 'youtube-lyrics') {
-          return `<div class="process-section">
-            ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
-            <div class="yt-lyrics-wrap">
-              <div>
-                <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;background:var(--card)">
-                  <iframe style="position:absolute;inset:0;width:100%;height:100%" src="https://www.youtube.com/embed/${g.youtubeId}" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>
-                </div>
-              </div>
-              <div>
-                ${g.lyricsTitle ? `<div class="process-section-label" style="margin-bottom:12px">${g.lyricsTitle}</div>` : ''}
-                <p class="process-body" style="font-style:italic;opacity:.82">${g.lyrics}</p>
-              </div>
-            </div>
-          </div>`;
-        }
-        if (g.type === 'youtube') {
-          return `<div class="process-section">
-            ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
-            <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;background:var(--card)">
-              <iframe style="position:absolute;inset:0;width:100%;height:100%" src="https://www.youtube.com/embed/${g.youtubeId}" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>
-            </div>
-          </div>`;
-        }
-        if (g.type === 'lyrics') {
-          return `<div class="process-section">
-            ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
-            <p class="process-body" style="font-style:italic;opacity:.82">${g.body}</p>
-          </div>`;
-        }
-        if (g.type === 'refine-compare') {
-          const grpIdx = window._lbGroups.length;
-          const allSrcs = g.pairs.flatMap(p => [p.before, ...p.after]);
-          window._lbGroups.push({ label: g.group, srcs: allSrcs });
-          const maxAfter = Math.max(...g.pairs.map(p => p.after.length));
-          const gridCols = `1fr 40px ${Array(maxAfter).fill('1fr').join(' ')}`;
-          let sIdx = 0;
-          const pairHtml = g.pairs.map(pair => {
-            const bIdx = sIdx++;
-            const aIdxs = pair.after.map(() => sIdx++);
-            const afterCells = Array.from({length: maxAfter}, (_, i) => {
-              if (i < pair.after.length) {
-                return `<img src="${pair.after[i]}" loading="lazy" onclick="lbOpen(${grpIdx},${aIdxs[i]})" style="width:100%;display:block;cursor:none;transition:transform .3s ease" onmouseenter="document.body.classList.add('hovering');this.style.transform='scale(1.02)'" onmouseleave="document.body.classList.remove('hovering');this.style.transform='scale(1)'">`;
-              }
-              return '<div></div>';
-            }).join('');
-            return `<div style="display:grid;grid-template-columns:${gridCols};gap:8px;align-items:center">
-              <img src="${pair.before}" loading="lazy" onclick="lbOpen(${grpIdx},${bIdx})" style="width:100%;display:block;cursor:none;transition:transform .3s ease" onmouseenter="document.body.classList.add('hovering');this.style.transform='scale(1.02)'" onmouseleave="document.body.classList.remove('hovering');this.style.transform='scale(1)'">
-              <div style="color:var(--red);font-family:'Anton',sans-serif;font-size:1.8rem;line-height:1;text-align:center">→</div>
-              ${afterCells}
-            </div>`;
-          }).join('');
-          return `<div class="process-section">
-            ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
-            <div style="display:flex;flex-direction:column;gap:8px">${pairHtml}</div>
-          </div>`;
-        }
-        if (g.type === 'typeface') {
-          const grpIdx = window._lbGroups.length;
-          window._lbGroups.push({ label: g.group, srcs: [g.src] });
-          return `<div class="process-section">
-            ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
-            <div style="max-width:50%;margin:0 auto;text-align:center">
-              <div class="process-section-grid" style="grid-template-columns:repeat(1,1fr)">
-                <img src="${g.src}" alt="${g.group}" loading="lazy" onclick="lbOpen(${grpIdx},0)">
-              </div>
-              <div style="margin-top:20px;display:flex;gap:48px;flex-wrap:wrap;justify-content:center">
-                ${g.specs.map(s => `<div><div class="spec-label">${s.k}</div><div style="font-size:.9rem;color:var(--muted);margin-top:4px">${s.v}</div></div>`).join('')}
-              </div>
-            </div>
-          </div>`;
-        }
-        if (g.type === 'text') {
-          return `<div class="process-section">
-            ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
-            <p class="process-body">${g.body}</p>
-          </div>`;
-        }
-        if (g.type === 'transcripts') {
-          return `<div class="process-section">
-            ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
-            <div class="transcripts-grid">
-              ${g.entries.map(e => `<div class="transcript-entry"><div class="transcript-label">${e.label}</div><p class="transcript-body">${e.body}</p></div>`).join('')}
-            </div>
-          </div>`;
-        }
-        const grpIdx = window._lbGroups.length;
-        window._lbGroups.push({ label: g.group, srcs: g.items.map(i => i.src) });
-        const n = g.cols || (g.items.length === 1 ? 1 : g.items.length === 2 ? 2 : 3);
-        const st = [`grid-template-columns:repeat(${n},1fr)`, g.maxWidth ? `max-width:${g.maxWidth};margin:0 auto` : ''].filter(Boolean).join(';');
-        return `<div class="process-section">
-          ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
-          <div class="process-section-grid" style="${st}">
-            ${g.items.map((img, idx) => `<img src="${img.src}" alt="${g.group}" loading="lazy" onclick="lbOpen(${grpIdx},${idx})">`).join('')}
-          </div></div>`;
-      };
-      procEl.innerHTML = p.processGroups.map(g => {
-        if (g.layout === 'two-col') {
-          const ratio = g.ratio || '1fr 2fr';
-          const rightStyle = g.rightStyle || '';
-          return `<div class="process-two-col" style="grid-template-columns:${ratio}">
-            <div class="process-two-col-left">${renderGroup(g.left)}</div>
-            <div class="process-two-col-right" style="${rightStyle}">${g.right.map(renderGroup).join('')}</div>
-          </div>`;
-        }
-        return renderGroup(g);
-      }).join('');
-    } else if (p.process) {
-      procEl.innerHTML = `<div class="process-section-grid" style="grid-template-columns:repeat(3,1fr)">
-        ${p.process.map(img =>
-          `<div><img src="${img.src}" alt="${img.cap}" loading="lazy">
-           <div class="process-cap">${img.cap}</div></div>`).join('')}
-      </div>`;
-    }
-
-    updateMoreProjects(i);
-
-    const detail = document.getElementById('detail');
-    detail.classList.add('open');
-    detail.scrollTop = 0;
-
-    // Chair flipbook
-    const chairStrip = document.getElementById('chair-strip');
-    const chairFrameImg = document.getElementById('chair-frame-img');
-    window._chairFrames = p.chairFrames || [];
-    if (window._chairFrames.length) {
-      chairFrameImg.src = window._chairFrames[0];
-      chairStrip.classList.add('visible');
-    } else {
-      chairStrip.classList.remove('visible');
-    }
-  }
-
-  function closeDetail(e) {
-    e && e.preventDefault();
-    document.getElementById('detail').classList.remove('open');
-    document.getElementById('d-video').src = '';
-    const heroEl = document.getElementById('d-hero-images');
-    heroEl.classList.remove('show');
-    heroEl.innerHTML = '';
-    document.getElementById('d-video-wrap').style.display = '';
-    document.getElementById('chair-strip').classList.remove('visible');
-    window._chairFrames = [];
-  }
-
-  // Chair scroll listener
-  document.getElementById('detail').addEventListener('scroll', function() {
-    const frames = window._chairFrames;
-    if (!frames || !frames.length) return;
-    const el = this;
-    const progress = el.scrollTop / Math.max(1, el.scrollHeight - el.clientHeight);
-    const loops = 3;
-    const idx = Math.floor(progress * frames.length * loops) % frames.length;
-    document.getElementById('chair-frame-img').src = frames[idx];
-  });
-
-  document.getElementById('btn-close').addEventListener('click', closeDetail);
-
-  /* ── Lightbox ──────────────────────────────── */
-  window._lbGroups = [];
-  let _lbGrp = 0, _lbIdx = 0;
+  // ── Playground Lightbox ──
+  let _pgIdx = 0;
   const lbEl    = document.getElementById('lightbox');
   const lbImg   = document.getElementById('lb-img');
   const lbVideo = document.getElementById('lb-video');
@@ -1499,59 +1154,33 @@
       lbVideo.src = src; lbVideo.load(); lbVideo.play().catch(() => {});
     } else {
       lbVideo.style.display = 'none'; lbVideo.pause(); lbVideo.src = '';
-      lbImg.style.display = 'block';
-      lbImg.src = src;
+      lbImg.style.display = 'block'; lbImg.src = src;
       requestAnimationFrame(() => requestAnimationFrame(() => lbImg.classList.add('lb-vis')));
     }
   }
 
-  function lbOpen(grpIdx, imgIdx) {
-    _lbGrp = grpIdx; _lbIdx = imgIdx;
-    const grp = window._lbGroups[grpIdx];
-    lbGrpEl.textContent = grp.label;
-    lbCntEl.textContent = `${imgIdx + 1} / ${grp.srcs.length}`;
-    lbPrevEl.style.visibility = grp.srcs.length > 1 ? 'visible' : 'hidden';
-    lbNextEl.style.visibility = grp.srcs.length > 1 ? 'visible' : 'hidden';
-    lbEl.classList.add('lb-open');
-    _lbShowMedia(grp.srcs[imgIdx], 'image');
-  }
-
   function playgroundLbOpen(idx) {
-    _lbGrp = -1; _lbIdx = idx;
+    _pgIdx = idx;
     const item = playgroundItems[idx];
     lbGrpEl.textContent = 'Playground';
     lbCntEl.textContent = `${idx + 1} / ${playgroundItems.length}`;
-    lbPrevEl.style.visibility = playgroundItems.length > 1 ? 'visible' : 'hidden';
-    lbNextEl.style.visibility = playgroundItems.length > 1 ? 'visible' : 'hidden';
+    lbPrevEl.style.visibility = 'visible'; lbNextEl.style.visibility = 'visible';
     lbEl.classList.add('lb-open');
     _lbShowMedia(item.src, item.type);
   }
 
   function lbClose() {
-    lbImg.classList.remove('lb-vis');
-    lbEl.classList.remove('lb-open');
+    lbImg.classList.remove('lb-vis'); lbEl.classList.remove('lb-open');
     setTimeout(() => { lbImg.src = ''; lbVideo.pause(); lbVideo.src = ''; lbVideo.style.display = 'none'; }, 380);
   }
 
   function lbChange(delta) {
-    if (_lbGrp === -1) {
-      _lbIdx = (_lbIdx + delta + playgroundItems.length) % playgroundItems.length;
-      lbImg.classList.remove('lb-vis'); lbVideo.pause();
-      setTimeout(() => {
-        const item = playgroundItems[_lbIdx];
-        lbCntEl.textContent = `${_lbIdx + 1} / ${playgroundItems.length}`;
-        _lbShowMedia(item.src, item.type);
-      }, 200);
-      return;
-    }
-    const len = window._lbGroups[_lbGrp].srcs.length;
-    _lbIdx = (_lbIdx + delta + len) % len;
-    lbImg.classList.remove('lb-vis');
+    _pgIdx = (_pgIdx + delta + playgroundItems.length) % playgroundItems.length;
+    lbImg.classList.remove('lb-vis'); lbVideo.pause();
     setTimeout(() => {
-      const grp = window._lbGroups[_lbGrp];
-      lbImg.src = grp.srcs[_lbIdx];
-      lbCntEl.textContent = `${_lbIdx + 1} / ${grp.srcs.length}`;
-      requestAnimationFrame(() => requestAnimationFrame(() => lbImg.classList.add('lb-vis')));
+      const item = playgroundItems[_pgIdx];
+      lbCntEl.textContent = `${_pgIdx + 1} / ${playgroundItems.length}`;
+      _lbShowMedia(item.src, item.type);
     }, 200);
   }
 
@@ -1559,32 +1188,25 @@
   lbPrevEl.addEventListener('click', () => lbChange(-1));
   lbNextEl.addEventListener('click', () => lbChange(1));
   lbEl.addEventListener('click', e => { if (e.target === lbEl || e.target.id === 'lb-stage') lbClose(); });
-
   document.querySelectorAll('#lb-close, #lb-prev, #lb-next').forEach(el => {
     el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
     el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
   });
-  document.getElementById('detail').addEventListener('mouseover', e => {
-    if (e.target.matches('.process-section-grid img')) document.body.classList.add('hovering');
-  });
-  document.getElementById('detail').addEventListener('mouseout', e => {
-    if (e.target.matches('.process-section-grid img')) document.body.classList.remove('hovering');
-  });
-
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape')    { lbEl.classList.contains('lb-open') ? lbClose() : closeDetail(); }
+    if (e.key === 'Escape' && lbEl.classList.contains('lb-open')) lbClose();
     if (e.key === 'ArrowLeft'  && lbEl.classList.contains('lb-open')) lbChange(-1);
     if (e.key === 'ArrowRight' && lbEl.classList.contains('lb-open')) lbChange(1);
   });
 
-  // Auto-open project from homepage link (e.g. works.html?open=2)
+  // ── Redirect legacy ?open=N links to individual project pages ──
   const _autoOpen = new URLSearchParams(window.location.search).get('open');
   if (_autoOpen !== null) {
     const _idx = parseInt(_autoOpen, 10);
-    if (!isNaN(_idx) && _idx >= 0 && _idx < projects.length) {
-      openProject(_idx);
+    if (!isNaN(_idx) && _idx >= 0 && _idx < PROJECT_PAGES.length) {
+      window.location.replace(PROJECT_PAGES[_idx]);
     }
   }
+
 </script>
 </body>
 </html>
