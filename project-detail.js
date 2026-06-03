@@ -264,6 +264,27 @@ const projects = [
     page: 'work-world-athletics.html',
   },
   {
+    num: '09', category: 'works', label: 'Projection',
+    title: 'CARNIVAL BITES', type: 'Projection · 2026', vimeoId: '1197953604',
+    desc: 'Animation created for the walls of Carnival, capturing the pure joy of savoring a delicious meal. Through organic brushstrokes, the visual brings to life the satisfying moment of enjoying a classic burger. This piece projects the lively, flavorful atmosphere of Carnival to Montgomery Hall, inviting everyone to step inside and join the feast.',
+    specs: [
+      { k: 'Year', v: '2026' },
+      { k: 'Type', v: 'Projection' },
+      { k: 'Location', v: 'USA' },
+      { k: 'Venue', v: 'SCAD Montgomery Hall' },
+    ],
+    thumb: '',
+    processGroups: [
+      { group: 'Process', cols: 2, items: [
+        { src: 'Project file/Carnical Bites/IMG_1558.jpg' },
+        { src: 'Project file/Carnical Bites/IMG_7889.jpeg' },
+        { src: 'Project file/Carnical Bites/IMG_7892.jpeg' },
+        { src: 'Project file/Carnical Bites/IMG_7907.jpeg' },
+      ]},
+    ],
+    page: 'work-carnical-bites.html',
+  },
+  {
     num: '01', category: 'live-action', label: 'Live Action Motion',
     title: 'Christmas­land in New Taipei City', type: 'Television Commercial · 2025', vimeoId: '1187493872',
     desc: 'The Magic of Christmas\n\nThere\'s something special about the way light brings the holidays to life. For this project, I used glowing lines to unveil the festive energy of the city\'s Christmas event, leading the audience through a wonderland of festive decorations.\n\nTo keep the vibe warm and joyful, I used the animation with charming, childlike illustrations. It\'s a mix of that pure, innocent Christmas spirit we all love.',
