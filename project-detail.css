@@ -13,6 +13,8 @@ body {
   background: var(--black); color: var(--white);
   font-family: 'IBM Plex Mono', monospace;
   overflow-x: hidden; cursor: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ─── Cursor ─── */
@@ -20,7 +22,6 @@ body {
   position: fixed; z-index: 9999; width: 10px; height: 10px;
   background: var(--red); border-radius: 50%; pointer-events: none;
   transform: translate(-50%,-50%); transition: width .15s, height .15s;
-  mix-blend-mode: difference;
 }
 #cur-ring {
   position: fixed; z-index: 9998; width: 38px; height: 38px;
@@ -36,7 +37,6 @@ nav {
   position: fixed; inset: 0 0 auto 0; z-index: 200;
   padding: 28px 52px;
   display: flex; justify-content: space-between; align-items: center;
-  mix-blend-mode: difference;
 }
 .nav-logo { display: flex; align-items: center; text-decoration: none; }
 .nav-logo img { height: 24px; display: block; }
@@ -87,8 +87,9 @@ nav {
   color: var(--red); margin-bottom: 14px;
 }
 .detail-title {
-  font-family: 'Anton', sans-serif; font-size: clamp(2rem, 4.5vw, 5.5rem);
-  text-transform: uppercase; line-height: .92; letter-spacing: -.01em; margin-bottom: 48px;
+  font-family: 'Anton', sans-serif; font-size: clamp(2.5rem, 5vw, 6rem);
+  text-transform: uppercase; line-height: 1; letter-spacing: .01em; margin-bottom: 48px;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
 }
 .detail-video-wrap {
   position: relative; width: 100%; padding-bottom: 56.25%;

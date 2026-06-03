@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Elaine Chen — Motion Designer</title>
-  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KENVXXSRHL"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -14,7 +13,7 @@
   </script>
   <link rel="icon" href="brand_assets/favicon.svg" type="image/svg+xml">
   <script src="https://cdn.tailwindcss.com"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Elms+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <style>
@@ -39,7 +38,7 @@
       cursor: none;
     }
 
-    /* ─── Cursor ─────────────────────────────────────── */
+    /* ─── Cursor ─── */
     #cur {
       position: fixed; z-index: 9999;
       width: 10px; height: 10px;
@@ -60,31 +59,27 @@
     body.hovering #cur      { width: 18px; height: 18px; }
     body.hovering #cur-ring { width: 58px; height: 58px; }
 
-    /* ─── Nav ────────────────────────────────────────── */
+    /* ─── Nav ─── */
     nav {
       position: fixed; inset: 0 0 auto 0; z-index: 200;
       padding: 28px 52px;
       display: flex; justify-content: space-between; align-items: center;
       mix-blend-mode: difference;
     }
-    .nav-logo {
-      display: flex; align-items: center; text-decoration: none;
-    }
+    .nav-logo { display: flex; align-items: center; text-decoration: none; }
     .nav-logo img { height: 24px; display: block; }
     .nav-links { display: flex; gap: 40px; }
     .nav-links a {
       font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
-      color: var(--white); text-decoration: none;
-      position: relative;
+      color: var(--white); text-decoration: none; position: relative;
     }
     .nav-links a::after {
       content: ''; position: absolute; bottom: -2px; left: 0;
-      width: 0; height: 1px; background: var(--red);
-      transition: width .3s ease;
+      width: 0; height: 1px; background: var(--red); transition: width .3s ease;
     }
     .nav-links a:hover::after { width: 100%; }
 
-    /* ─── Hero ───────────────────────────────────────── */
+    /* ─── Hero ─── */
     #hero {
       position: relative; width: 100%; height: 100vh;
       overflow: hidden; background: var(--black);
@@ -99,7 +94,7 @@
     }
     @keyframes bgPulse { 0% { opacity: .8; } 100% { opacity: 1; } }
     .hero-video { position: absolute; inset: 0; pointer-events: none; }
-    .hero-video iframe, .hero-video video {
+    .hero-video video {
       position: absolute; top: 50%; left: 50%;
       transform: translate(-50%,-50%);
       width: 177.78vh; height: 56.25vw;
@@ -155,8 +150,13 @@
     @keyframes fadeUp { from { opacity: 0; transform: translateY(32px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-    /* ─── Section ────────────────────────────────────── */
-    .section { padding: 120px 52px; }
+    /* ─── Works Section ─── */
+    #works { background: var(--black); padding: 120px 52px; }
+
+    .works-head {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 40px;
+    }
     .s-label {
       font-size: .62rem; letter-spacing: .3em; text-transform: uppercase;
       color: var(--red); margin-bottom: 14px;
@@ -166,26 +166,46 @@
       font-size: clamp(3.5rem, 9vw, 9rem);
       line-height: .88; letter-spacing: -.02em; text-transform: uppercase;
     }
+    .works-head-right {
+      display: flex; flex-direction: column; align-items: flex-end; gap: 10px;
+      padding-bottom: 8px;
+    }
+    .works-count {
+      font-size: .65rem; letter-spacing: .15em; color: var(--line);
+    }
 
-    /* ─── Works ──────────────────────────────────────── */
-    #works { background: var(--black); }
-    .works-head {
-      display: flex; justify-content: space-between; align-items: flex-end;
-      margin-bottom: 56px;
+    /* ─── Filter Tabs ─── */
+    .filter-tabs { display: flex; gap: 24px; }
+    .ftab {
+      background: none; border: none; cursor: none;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: .62rem; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--muted); position: relative; padding-bottom: 4px;
+      transition: color .2s ease;
     }
-    .works-sub {
-      font-size: .65rem; letter-spacing: .15em; color: var(--line); padding-bottom: 4px;
+    .ftab::after {
+      content: ''; position: absolute; bottom: 0; left: 0;
+      width: 0; height: 1px; background: var(--red); transition: width .3s ease;
     }
-    .works-grid {
+    .ftab.active { color: var(--red); }
+    .ftab.active::after { width: 100%; }
+    .ftab:hover:not(.active) { color: var(--white); }
+
+    /* ─── Grid ─── */
+    .w2-grid {
       display: grid; grid-template-columns: 1fr 1fr; gap: 3px;
       margin-left: -52px; margin-right: -52px;
     }
-    .works-grid .work-card { aspect-ratio: 16/9; }
+    .w2-grid .work-card { aspect-ratio: 16/9; }
+
     .work-card { position: relative; overflow: hidden; background: var(--card); cursor: none; }
     .work-thumb {
       position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
       filter: grayscale(15%); transition: transform .65s ease, filter .5s ease;
     }
+    .work-card:hover .work-thumb { transform: scale(1.04); filter: grayscale(0%); }
+    .work-thumb--zoom { transform: scale(1.2); transform-origin: center 65%; }
+    .work-card:hover .work-thumb--zoom { transform: scale(1.24); transform-origin: center 65%; }
     .work-placeholder {
       position: absolute; inset: 0;
       display: flex; align-items: center; justify-content: center;
@@ -197,9 +217,6 @@
       transition: background .4s ease;
     }
     .work-card:hover .work-card-overlay { background: rgba(8,8,8,.78); }
-    .work-card:hover .work-thumb { transform: scale(1.04); filter: grayscale(0%); }
-    .work-thumb--zoom { transform: scale(1.2); transform-origin: center 65%; }
-    .work-card:hover .work-thumb--zoom { transform: scale(1.24); filter: grayscale(0%); transform-origin: center 65%; }
     .work-meta { transform: translateY(12px); opacity: 0; transition: transform .4s ease, opacity .35s ease; }
     .work-card:hover .work-meta { transform: translateY(0); opacity: 1; }
     .work-num { font-size: .58rem; letter-spacing: .22em; color: var(--red); margin-bottom: 5px; }
@@ -214,19 +231,20 @@
     }
     .work-card:hover::after { width: 60px; }
 
-    /* View All CTA */
-    .works-cta { margin-top: 52px; text-align: center; }
-    .view-all-btn {
-      display: inline-flex; align-items: center; gap: 14px;
-      font-size: .72rem; letter-spacing: .22em; text-transform: uppercase;
-      color: var(--muted); text-decoration: none;
-      border: 1px solid var(--line); padding: 18px 44px;
-      transition: border-color .25s ease, color .25s ease;
+    /* Playground */
+    .playground-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; margin-left: -52px; margin-right: -52px; }
+    .playground-grid .work-card { aspect-ratio: 1/1; }
+    .section-label {
+      padding: 48px 0 20px;
+      font-size: .62rem; letter-spacing: .3em; text-transform: uppercase;
+      color: var(--red); border-top: 1px solid var(--line); margin-top: 3px;
     }
-    .view-all-btn:hover { border-color: var(--red); color: var(--white); }
-    .view-all-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .section-label:first-child { border-top: none; }
 
-    /* ─── Footer ─────────────────────────────────────── */
+    @keyframes gridFadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .grid-fade { animation: gridFadeIn .4s ease forwards; }
+
+    /* ─── Footer ─── */
     footer {
       border-top: 1px solid var(--line);
       padding: 80px 52px 40px;
@@ -248,8 +266,7 @@
     .foot-info { display: flex; flex-direction: column; gap: 20px; padding-top: 12px; }
     .foot-contact-item { display: flex; flex-direction: column; gap: 3px; }
     .foot-contact-label {
-      font-size: .6rem; letter-spacing: .28em; text-transform: uppercase;
-      color: var(--red);
+      font-size: .6rem; letter-spacing: .28em; text-transform: uppercase; color: var(--red);
     }
     .foot-contact-row {
       font-family: "Elms Sans", sans-serif;
@@ -276,9 +293,7 @@
       transition: opacity .4s ease;
     }
     #reel-modal.open { opacity: 1; pointer-events: all; }
-    #reel-modal-video {
-      width: 100%; height: 100%; object-fit: contain; display: block;
-    }
+    #reel-iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: none; }
     #reel-close {
       position: absolute; top: 24px; right: 36px;
       width: 44px; height: 44px; border-radius: 50%;
@@ -288,62 +303,97 @@
       transition: border-color .2s ease, background .2s ease;
     }
     #reel-close:hover { border-color: var(--red); background: rgba(227,62,62,.1); }
-    #reel-ctrl-zone {
-      position: absolute; bottom: 0; left: 0; right: 0; height: 130px;
+
+    /* ─── Lightbox (playground) ─── */
+    #lightbox {
+      position: fixed; inset: 0; z-index: 500;
+      background: rgba(5,5,5,.96);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity .35s ease;
     }
-    #reel-controls {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      padding: 52px 48px 30px;
-      background: linear-gradient(transparent, rgba(0,0,0,.82));
-      display: flex; align-items: center; gap: 18px;
-      opacity: 0; pointer-events: none;
-      transition: opacity .3s ease;
+    #lightbox::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: var(--red);
     }
-    #reel-ctrl-zone:hover #reel-controls { opacity: 1; pointer-events: all; }
-    .rc-btn {
-      background: none; border: none; color: var(--white); cursor: none;
-      width: 32px; height: 32px; flex-shrink: 0;
+    #lightbox.lb-open { opacity: 1; pointer-events: all; }
+    #lb-stage {
+      flex: 1; width: 100%; display: flex; align-items: center; justify-content: center;
+      padding: 72px 80px 20px; min-height: 0;
+    }
+    #lb-img {
+      max-width: 100%; max-height: 100%; object-fit: contain;
+      opacity: 0; transform: scale(.97);
+      transition: opacity .4s ease, transform .4s cubic-bezier(.16,1,.3,1);
+    }
+    #lb-img.lb-vis { opacity: 1; transform: scale(1); }
+    #lb-video {
+      max-width: 100%; max-height: 100%; object-fit: contain;
+      display: none; outline: none; background: var(--black);
+    }
+    #lb-close {
+      position: absolute; top: 24px; right: 36px;
+      width: 40px; height: 40px;
+      background: transparent; border: 1px solid rgba(240,237,230,.2); border-radius: 50%;
+      cursor: none; display: flex; align-items: center; justify-content: center;
+      transition: border-color .2s, background .2s;
+    }
+    #lb-close::before, #lb-close::after {
+      content: ''; position: absolute; width: 14px; height: 1px;
+      background: var(--white); border-radius: 1px;
+    }
+    #lb-close::before { transform: rotate(45deg); }
+    #lb-close::after  { transform: rotate(-45deg); }
+    #lb-close:hover   { border-color: var(--red); background: rgba(227,62,62,.12); }
+    #lb-footer {
+      width: 100%; padding: 16px 80px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0; position: relative;
+    }
+    #lb-info {
+      position: absolute; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      pointer-events: none; text-align: center;
+    }
+    #lb-group   { font-size: .58rem; letter-spacing: .32em; text-transform: uppercase; color: var(--red); }
+    #lb-counter { font-size: .72rem; letter-spacing: .16em; color: var(--muted); }
+    #lb-prev, #lb-next {
+      background: transparent; border: 1px solid rgba(240,237,230,.2);
+      width: 40px; height: 40px; border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
-      transition: color .2s ease;
+      cursor: none; transition: border-color .2s, background .2s; flex-shrink: 0;
     }
-    .rc-btn:hover { color: var(--red); }
-    .rc-btn svg { width: 20px; height: 20px; }
-    #rc-progress {
-      flex: 1; height: 3px; background: rgba(240,237,230,.2);
-      border-radius: 2px; position: relative; cursor: none;
-    }
-    #rc-progress:hover { height: 5px; }
-    #rc-fill { height: 100%; background: var(--red); border-radius: 2px; width: 0%; }
-    #rc-time {
-      font-size: .65rem; letter-spacing: .1em; white-space: nowrap;
-      color: rgba(240,237,230,.55);
+    #lb-prev:hover, #lb-next:hover { border-color: var(--red); background: rgba(227,62,62,.12); }
+    #lb-prev svg, #lb-next svg {
+      width: 14px; height: 14px; stroke: var(--white); stroke-width: 1.5;
+      fill: none; stroke-linecap: round; stroke-linejoin: round; pointer-events: none;
     }
 
-    /* ─── Scroll Reveal ──────────────────────────────── */
+    /* ─── Play Reel Cursor ─── */
+    #play-cursor {
+      position: fixed; z-index: 9997; pointer-events: none;
+      width: 110px; height: 110px;
+      border: 1px solid rgba(240,237,230,.7); border-radius: 50%;
+      background: rgba(8,8,8,.35); backdrop-filter: blur(6px);
+      display: flex; align-items: center; justify-content: center;
+      transform: translate(-50%,-50%) scale(0);
+      transition: transform .4s cubic-bezier(.16,1,.3,1), opacity .3s ease;
+      opacity: 0;
+    }
+    #play-cursor.show {
+      transform: translate(-50%,-50%) scale(1);
+      opacity: 1;
+    }
+    #play-cursor span {
+      font-family: 'Anton', sans-serif;
+      font-size: .85rem; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--white); text-align: center; line-height: 1.5;
+      pointer-events: none;
+    }
+    #hero { cursor: none; }
+
+    /* ─── Scroll Reveal ─── */
     .reveal { opacity: 0; transform: translateY(36px); transition: opacity .8s ease, transform .8s ease; }
     .reveal.vis { opacity: 1; transform: translateY(0); }
-
-/* ─── Responsive ─────────────────────────────────── */
-    @media (max-width: 900px) {
-      nav { padding: 20px 24px; }
-      .section { padding: 80px 24px; }
-      .hero-content { padding: 0 24px; }
-      .hero-scroll { right: 24px; }
-      .works-grid { grid-template-columns: 1fr; margin-left: -24px; margin-right: -24px; }
-      .nav-links { gap: 24px; }
-      footer { padding: 60px 24px 32px; }
-      .foot-main { grid-template-columns: 1fr; gap: 48px; }
-      .process-two-col { grid-template-columns: 1fr !important; }
-    }
-    @media (pointer: coarse) {
-      #cur, #cur-ring { display: none; }
-      body { cursor: auto !important; }
-    }
-    @media (max-width: 900px) {
-      .process-two-col-right { padding-left: 0; }
-      .process-section-grid:not([style*="repeat(1,"]) { grid-template-columns: repeat(2, 1fr) !important; }
-      .process-section-grid { max-width: 100% !important; }
-    }
 
     /* ─── Preloader ─── */
     #preloader {
@@ -354,11 +404,7 @@
     }
     #preloader.pl-done { transform: translateY(-100%); }
     .pl-inner { text-align: center; width: min(480px, 88vw); }
-    .pl-divider {
-      width: 100%; height: 1px;
-      background: rgba(240,237,230,.08);
-      margin-bottom: 0; position: relative;
-    }
+    .pl-divider { width: 100%; height: 1px; background: rgba(240,237,230,.08); position: relative; }
     .pl-line {
       position: absolute; inset: 0;
       background: var(--red); transform-origin: left;
@@ -369,24 +415,38 @@
       padding-top: 14px;
       opacity: 0; animation: fadeIn .5s ease .55s forwards;
     }
-    .pl-loading {
-      font-size: .58rem; letter-spacing: .2em; text-transform: uppercase;
-      color: var(--muted);
-    }
+    .pl-loading { font-size: .58rem; letter-spacing: .2em; text-transform: uppercase; color: var(--muted); }
     .pl-dot { opacity: 0; }
     .pl-dot:nth-child(1) { animation: plDot 1.2s .1s infinite; }
     .pl-dot:nth-child(2) { animation: plDot 1.2s .3s infinite; }
     .pl-dot:nth-child(3) { animation: plDot 1.2s .5s infinite; }
     @keyframes plDot { 0%,80%,100%{opacity:0} 40%{opacity:1} }
-    #pl-pct {
-      font-size: .58rem; letter-spacing: .15em; color: var(--red);
-      font-variant-numeric: tabular-nums;
+    #pl-pct { font-size: .58rem; letter-spacing: .15em; color: var(--red); font-variant-numeric: tabular-nums; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 900px) {
+      nav { padding: 20px 24px; }
+      #works { padding: 80px 24px; }
+      .w2-grid { grid-template-columns: 1fr; margin-left: -24px; margin-right: -24px; }
+      .playground-grid { grid-template-columns: repeat(2,1fr); margin-left: -24px; margin-right: -24px; }
+      .nav-links { gap: 24px; }
+      .hero-content { padding: 0 24px; }
+      .hero-scroll { right: 24px; }
+      footer { padding: 60px 24px 32px; }
+      .foot-main { grid-template-columns: 1fr; gap: 48px; }
+      .filter-tabs { flex-wrap: wrap; gap: 12px 20px; }
+      #lb-stage { padding: 56px 12px 8px; }
+      #lb-footer { padding: 8px 16px 20px; }
+    }
+    @media (pointer: coarse) {
+      #cur, #cur-ring { display: none; }
+      body { cursor: auto !important; }
     }
   </style>
 </head>
 <body>
 
-<!-- ── Preloader ── -->
+<!-- Preloader -->
 <div id="preloader">
   <div class="pl-inner">
     <div class="pl-divider"><div class="pl-line" id="pl-line"></div></div>
@@ -399,21 +459,21 @@
 
 <div id="cur"></div>
 <div id="cur-ring"></div>
+<div id="play-cursor"><span>PLAY<br>REEL</span></div>
 
-<!-- ── Nav ──────────────────────────────────────── -->
+<!-- Nav -->
 <nav>
   <a href="index.html" class="nav-logo"><img src="brand_assets/LOGO.png" alt="Elaine Chen"></a>
   <div class="nav-links">
-    <a href="works.html">Works</a>
     <a href="reel.html">Reel</a>
     <a href="about.html">About</a>
   </div>
 </nav>
 
-<!-- ── Hero ─────────────────────────────────────── -->
+<!-- Hero -->
 <section id="hero">
   <div class="hero-bg"></div>
-  <div class="hero-video" id="hero-video">
+  <div class="hero-video">
     <video autoplay muted loop playsinline>
       <source src="Project file/Demoreel no opening_1.mp4" type="video/mp4">
     </video>
@@ -433,98 +493,32 @@
   </div>
 </section>
 
-<!-- ── Featured Works ────────────────────────────── -->
-<section id="works" class="section">
+<!-- Works -->
+<section id="works">
   <div class="works-head reveal">
     <div>
       <p class="s-label">Selected Works</p>
       <h2 class="s-title">WORKS</h2>
     </div>
-    <span class="works-sub">08 Projects</span>
-  </div>
-
-  <div class="works-grid">
-    <div class="work-card reveal" onclick="window.location.href='work-new-york-pulse.html'">
-      <div class="work-placeholder" id="thumb-0">…</div>
-      <div class="work-card-overlay"><div class="work-meta">
-        <div class="work-num">01</div>
-        <div class="work-title" id="wtitle-0">NEW YORK PULSE</div>
-        <div class="work-type" id="wtype-0">Motion Graphics · 2026</div>
-      </div></div>
-    </div>
-    <div class="work-card reveal" onclick="window.location.href='work-milky-way-home.html'">
-      <div class="work-placeholder" id="thumb-1">…</div>
-      <div class="work-card-overlay"><div class="work-meta">
-        <div class="work-num">02</div>
-        <div class="work-title" id="wtitle-1">THE MILKY WAY HOME</div>
-        <div class="work-type" id="wtype-1">Motion Graphics · 2026</div>
-      </div></div>
-    </div>
-    <div class="work-card reveal" onclick="window.location.href='work-good-bad-ugly.html'">
-      <div class="work-placeholder" id="thumb-2">…</div>
-      <div class="work-card-overlay"><div class="work-meta">
-        <div class="work-num">03</div>
-        <div class="work-title" id="wtitle-2">THE GOOD, THE BAD, and THE UGLY</div>
-        <div class="work-type" id="wtype-2">Ending Title Sequence · 2025</div>
-      </div></div>
-    </div>
-    <div class="work-card reveal" onclick="window.location.href='work-adelphi.html'">
-      <div class="work-placeholder" id="thumb-3">…</div>
-      <div class="work-card-overlay"><div class="work-meta">
-        <div class="work-num">04</div>
-        <div class="work-title" id="wtitle-3">The Geometry of Logic - Adelphi</div>
-        <div class="work-type" id="wtype-3">Motion Graphic · 2026</div>
-      </div></div>
-    </div>
-    <div class="work-card reveal" onclick="window.location.href='work-nike.html'">
-      <div class="work-placeholder" id="thumb-4">…</div>
-      <div class="work-card-overlay"><div class="work-meta">
-        <div class="work-num">05</div>
-        <div class="work-title" id="wtitle-4">NIKE SNEAKER PROJECTION</div>
-        <div class="work-type" id="wtype-4">Projection · 2026</div>
-      </div></div>
-    </div>
-    <div class="work-card reveal" onclick="window.location.href='work-7-kinds-of-rest.html'">
-      <div class="work-placeholder" id="thumb-5">…</div>
-      <div class="work-card-overlay"><div class="work-meta">
-        <div class="work-num">06</div>
-        <div class="work-title" id="wtitle-5">7 KINDS OF REST</div>
-        <div class="work-type" id="wtype-5">Styleframe Design · 2026</div>
-      </div></div>
-    </div>
-    <div class="work-card reveal" onclick="window.location.href='work-world-athletics.html'">
-      <div class="work-placeholder" id="thumb-6">…</div>
-      <div class="work-card-overlay"><div class="work-meta">
-        <div class="work-num">07</div>
-        <div class="work-title" id="wtitle-6">WORLD ATHLETICS</div>
-        <div class="work-type" id="wtype-6">Styleframe Design · 2026</div>
-      </div></div>
-    </div>
-    <div class="work-card reveal" onclick="window.location.href='work-christmasland.html'">
-      <div class="work-placeholder" id="thumb-7">…</div>
-      <div class="work-card-overlay"><div class="work-meta">
-        <div class="work-num">08</div>
-        <div class="work-title" id="wtitle-7">Christmasland in New Taipei City</div>
-        <div class="work-type" id="wtype-7">Television Commercial · 2025</div>
-      </div></div>
+    <div class="works-head-right">
+      <p class="works-count" id="works-count">— items</p>
+      <div class="filter-tabs">
+        <button class="ftab active" data-filter="all">All</button>
+        <button class="ftab" data-filter="works">Works</button>
+        <button class="ftab" data-filter="live-action">Live Action</button>
+        <button class="ftab" data-filter="playground">Playground</button>
+      </div>
     </div>
   </div>
 
-  <div class="works-cta reveal">
-    <a href="works.html" class="view-all-btn">
-      View Works Archive
-      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M1 7h12M7 1l6 6-6 6"/>
-      </svg>
-    </a>
-  </div>
+  <!-- Dynamic content injected here -->
+  <div id="works-content"></div>
 </section>
 
-<!-- ── Footer ─────────────────────────────────────── -->
+<!-- Footer -->
 <footer>
   <div class="foot-main">
     <div class="foot-nav">
-      <a href="works.html">Works</a>
       <a href="reel.html">Reel</a>
       <a href="about.html">About</a>
     </div>
@@ -549,134 +543,237 @@
   </div>
 </footer>
 
-<!-- ── Reel Modal ── -->
-<div id="reel-modal" role="dialog" aria-modal="true">
+<!-- Reel Modal -->
+<div id="reel-modal">
   <iframe id="reel-iframe" src="" frameborder="0"
-    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
-    referrerpolicy="strict-origin-when-cross-origin"
-    style="position:absolute;inset:0;width:100%;height:100%;border:none;"
-    title="2025 Elaine Chen Demoreel"></iframe>
-  <button id="reel-close" aria-label="Close reel">✕</button>
+    allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media"
+    title="Elaine Chen Demoreel"></iframe>
+  <button id="reel-close" aria-label="Close">✕</button>
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox">
+  <button id="lb-close" aria-label="Close"></button>
+  <div id="lb-stage">
+    <img id="lb-img" src="" alt="">
+    <video id="lb-video" controls autoplay playsinline></video>
+  </div>
+  <div id="lb-footer">
+    <button id="lb-prev"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
+    <div id="lb-info"><span id="lb-group"></span><span id="lb-counter"></span></div>
+    <button id="lb-next"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
+  </div>
 </div>
 
 <script>
 /* ── Preloader ── */
-(function () {
-  const pl      = document.getElementById('preloader');
-  const plLine  = document.getElementById('pl-line');
-  const pctEl   = document.getElementById('pl-pct');
-  const heroVid = document.querySelector('.hero-video video');
-  let progress = 0, dismissed = false;
-
-  // Only show preloader on first visit per session
-  if (sessionStorage.getItem('visited')) {
-    pl.remove();
-    return;
-  }
-  sessionStorage.setItem('visited', '1');
-
-  function setP(p) {
-    progress = Math.min(97, p); // never reach 100 until video is ready
-    plLine.style.transform = 'scaleX(' + (progress / 100) + ')';
-    pctEl.textContent = Math.round(progress) + '%';
-  }
-
-  function dismiss() {
-    if (dismissed) return;
-    dismissed = true;
-    // snap to 100% then slide away
-    plLine.style.transition = 'transform .3s ease';
-    plLine.style.transform = 'scaleX(1)';
-    pctEl.textContent = '100%';
-    setTimeout(() => {
-      pl.classList.add('pl-done');
-      pl.addEventListener('transitionend', () => pl.remove(), { once: true });
-    }, 350);
-  }
-
-  // Simulated progress stalls at 97% — only canplay finishes it
-  let iv = setInterval(() => {
-    const step = progress < 50 ? 6 : progress < 75 ? 3 : progress < 90 ? 1.2 : 0.3;
-    setP(progress + step * (Math.random() * .6 + .4));
-    if (progress >= 97) clearInterval(iv);
-  }, 120);
-
-  if (heroVid) {
-    heroVid.addEventListener('canplay', dismiss);
-    heroVid.addEventListener('canplaythrough', dismiss);
-  }
-  setTimeout(dismiss, 6000);
+(function(){
+  const pl=document.getElementById('preloader');
+  const plLine=document.getElementById('pl-line');
+  const pctEl=document.getElementById('pl-pct');
+  const heroVid=document.querySelector('.hero-video video');
+  let progress=0, dismissed=false;
+  if(sessionStorage.getItem('visited')){pl.remove();return;}
+  sessionStorage.setItem('visited','1');
+  function setP(p){progress=Math.min(97,p);plLine.style.transform='scaleX('+(progress/100)+')';pctEl.textContent=Math.round(progress)+'%';}
+  function dismiss(){if(dismissed)return;dismissed=true;plLine.style.transition='transform .3s ease';plLine.style.transform='scaleX(1)';pctEl.textContent='100%';setTimeout(()=>{pl.classList.add('pl-done');pl.addEventListener('transitionend',()=>pl.remove(),{once:true});},350);}
+  let iv=setInterval(()=>{const step=progress<50?6:progress<75?3:progress<90?1.2:.3;setP(progress+step*(Math.random()*.6+.4));if(progress>=97)clearInterval(iv);},120);
+  if(heroVid){heroVid.addEventListener('canplay',dismiss);heroVid.addEventListener('canplaythrough',dismiss);}
+  setTimeout(dismiss,6000);
 })();
 
-const DEMOREEL_ID = '1186376055';
-
-  const projects = [
-  { thumb: 'Project file/NEW YORK PULSE/Styleframe06.jpg' },
-  { thumb: 'Project file/The Milky Way Home/Styleframe/Frame-06.jpg' },
-  { thumb: 'Project file/THE GOOD, THE BAD, and THE UGLY/thumbnail.webp', thumbZoom: true },
-  { thumb: 'Project file/The Geometry of Logic - Adelphi/Adelphi kinetic specimen.png' },
-  { thumb: 'Project file/Oreo/Styleframe/Artboard 5.png' },
-  { thumb: 'Project file/Nike Sneaker Projection/Thumbnail.png' },
-  { thumb: 'Project file/World Athletics/Styleframe/Styleframe 8.jpg' },
-  { vimeoId: '1187493872' },
+/* ── Data ── */
+const projects = [
+  { num:'01', category:'works', title:'NEW YORK PULSE', type:'Motion Graphics · 2026', page:'work-new-york-pulse.html', thumb:'Project file/NEW YORK PULSE/Styleframe06.jpg' },
+  { num:'02', category:'works', title:'THE MILKY WAY HOME', type:'Motion Graphics · 2026', page:'work-milky-way-home.html', thumb:'Project file/The Milky Way Home/Styleframe/Frame-06.jpg' },
+  { num:'03', category:'works', title:'THE GOOD, THE BAD, and THE UGLY', type:'Ending Title Sequence · 2025', page:'work-good-bad-ugly.html', thumb:'Project file/THE GOOD, THE BAD, and THE UGLY/thumbnail.webp', thumbZoom:true },
+  { num:'04', category:'works', title:'The Geometry of Logic — Adelphi', type:'Motion Graphic · 2026', page:'work-adelphi.html', thumb:'Project file/The Geometry of Logic - Adelphi/Adelphi kinetic specimen.png' },
+  { num:'05', category:'works', title:'OREO: BRIGHT IDEAS', type:'Motion Graphics · 2026', page:'work-oreo.html', thumb:'Project file/Oreo/Styleframe/Artboard 5.png' },
+  { num:'06', category:'works', title:'NIKE SNEAKER PROJECTION', type:'Projection · 2026', page:'work-nike.html', thumb:'Project file/Nike Sneaker Projection/Thumbnail.png' },
+  { num:'07', category:'works', title:'7 KINDS OF REST', type:'Styleframe Design · 2026', page:'work-7-kinds-of-rest.html', thumb:'Project file/7 kinds of rest/Styleframe/04.jpg' },
+  { num:'08', category:'works', title:'WORLD ATHLETICS', type:'Styleframe Design · 2026', page:'work-world-athletics.html', thumb:'Project file/World Athletics/Styleframe/Styleframe 8.jpg' },
+  { num:'01', category:'live-action', title:'Christmasland in New Taipei City', type:'Television Commercial · 2025', page:'work-christmasland.html', vimeoId:'1187493872' },
+  { num:'02', category:'live-action', title:'Taoyuan Pearl Coast Music Festival', type:'Television Commercial · 2025', page:'work-taoyuan.html', vimeoId:'1187495431' },
+  { num:'03', category:'live-action', title:'Love On a Shoestring', type:'Television Commercial · 2024', page:'work-love-on-shoestring.html', vimeoId:'1187499775' },
+  { num:'04', category:'live-action', title:'Taipei City Cup International Esports Tournament', type:'Television Commercial · 2025', page:'work-taipei-esports.html', vimeoId:'1187495234' },
+  { num:'05', category:'live-action', title:"Who's The Boss Teaser", type:'Television Commercial · 2024', page:'work-whos-the-boss.html', vimeoId:'1187501636' },
 ];
 
+const playgroundItems = [
+  { type:'image', title:'Sushiro', src:'Project file/Playground/sushiro.png' },
+  { type:'video', title:'Memory', src:'Project file/Playground/memory.mp4' },
+  { type:'video', title:'Me Time', src:'Project file/Playground/Me time.mp4' },
+  { type:'video', title:'Shower', src:'Project file/Playground/Shower.mp4' },
+  { type:'video', title:'Mario', src:'Project file/Playground/Mario.mp4' },
+  { type:'video', title:'L', src:'Project file/Playground/L.mp4' },
+  { type:'video', title:'N', src:'Project file/Playground/N.mp4' },
+];
 
-  projects.forEach((p, i) => {
-    if (p.thumb) {
-      const el = document.getElementById(`thumb-${i}`);
-      if (el) el.outerHTML = `<img class="work-thumb${p.thumbZoom ? ' work-thumb--zoom' : ''}" src="${p.thumb}" alt="" loading="lazy">`;
-    } else if (p.vimeoId) {
-      fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${p.vimeoId}&width=800`)
-        .then(r => r.json())
-        .then(d => {
-          const el = document.getElementById(`thumb-${i}`);
-          if (el) el.outerHTML = `<img class="work-thumb" src="${d.thumbnail_url}" alt="" loading="lazy">`;
-        }).catch(() => {});
-    }
-  });
+const _vCache = {};
+function vimeoThumb(id,cb){
+  if(_vCache[id]){cb(_vCache[id]);return;}
+  fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${id}&width=800`)
+    .then(r=>r.json()).then(d=>{_vCache[id]=d.thumbnail_url;cb(d.thumbnail_url);}).catch(()=>{});
+}
 
-  /* ── Cursor ────────────────────────────────── */
-  const cur = document.getElementById('cur');
-  const ring = document.getElementById('cur-ring');
-  document.addEventListener('mousemove', e => {
-    cur.style.left  = e.clientX + 'px';
-    cur.style.top   = e.clientY + 'px';
-    ring.style.left = e.clientX + 'px';
-    ring.style.top  = e.clientY + 'px';
-  });
-  document.querySelectorAll('a, button, .work-card').forEach(el => {
-    el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
-    el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
-  });
+let _firstRender=true;
+function renderWorks(filter){
+  document.querySelectorAll('.ftab').forEach(b=>b.classList.toggle('active',b.dataset.filter===filter));
+  const content=document.getElementById('works-content');
 
-  /* ── Scroll Reveal ──────────────────────────── */
-  const obs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
-  }, { threshold: .12 });
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  const showWorks=filter==='all'||filter==='works';
+  const showLa   =filter==='all'||filter==='live-action';
+  const showPg   =filter==='all'||filter==='playground';
+  const worksItems=projects.filter(p=>p.category==='works');
+  const laItems   =projects.filter(p=>p.category==='live-action');
+  const total=(showWorks?worksItems.length:0)+(showLa?laItems.length:0)+(showPg?playgroundItems.length:0);
+  document.getElementById('works-count').textContent=`${String(total).padStart(2,'0')} Projects`;
 
-
-
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') {
-      const rm = document.getElementById('reel-modal');
-      if (rm.classList.contains('open')) closeReel();
-    }
-  });
-
-  const _reelModal = document.getElementById('reel-modal');
-
-  function openReel() {
-    _reelModal.classList.add('open');
-    document.getElementById('reel-iframe').src = 'https://player.vimeo.com/video/1186376055?autoplay=1&title=0&byline=0&portrait=0&badge=0&autopause=0&app_id=58479';
-  }
-  function closeReel() {
-    _reelModal.classList.remove('open');
-    document.getElementById('reel-iframe').src = '';
+  function makeCard(p,i){
+    const thumb=p.thumb
+      ?`<img class="work-thumb${p.thumbZoom?' work-thumb--zoom':''}" src="${p.thumb}" alt="${p.title}" loading="lazy">`
+      :`<div class="work-placeholder" data-vimeo="${p.vimeoId||''}" data-title="${p.title}"></div>`;
+    return `<div class="work-card" onclick="location.href='${p.page}'">
+      ${thumb}
+      <div class="work-card-overlay"><div class="work-meta">
+        <div class="work-num">${p.num}</div>
+        <div class="work-title">${p.title}</div>
+        <div class="work-type">${p.type}</div>
+      </div></div>
+    </div>`;
   }
 
-  document.getElementById('reel-close').addEventListener('click', closeReel);
+  let html='';
+
+  if(showWorks){
+    html+=`<div class="w2-grid grid-fade">${worksItems.map(makeCard).join('')}</div>`;
+  }
+  if(showLa){
+    html+=`<div class="section-label">Live Action Motion /</div>`;
+    html+=`<div class="w2-grid grid-fade">${laItems.map(makeCard).join('')}</div>`;
+  }
+  if(showPg){
+    html+=`<div class="section-label">Playground /</div>`;
+    html+=`<div class="playground-grid grid-fade">${playgroundItems.map((item,i)=>{
+      const thumb=item.type==='video'
+        ?`<video class="work-thumb" src="${item.src}" autoplay muted loop playsinline></video>`
+        :`<img class="work-thumb" src="${item.src}" alt="${item.title}" loading="lazy">`;
+      return `<div class="work-card" onclick="playgroundLbOpen(${i})">
+        ${thumb}
+        <div class="work-card-overlay"><div class="work-meta">
+          <div class="work-num">Playground</div>
+          <div class="work-title">${item.title}</div>
+          <div class="work-type">${item.type==='video'?'Video':'Image'}</div>
+        </div></div>
+      </div>`;
+    }).join('')}</div>`;
+  }
+
+  content.innerHTML=html;
+
+  // Hover bindings
+  content.querySelectorAll('.work-card').forEach(c=>{
+    c.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
+    c.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
+  });
+
+  // Vimeo thumbs
+  content.querySelectorAll('[data-vimeo]').forEach(el=>{
+    const vid=el.dataset.vimeo; if(!vid) return;
+    vimeoThumb(vid,url=>{
+      const img=document.createElement('img');
+      img.className='work-thumb'; img.src=url; img.alt=el.dataset.title||''; img.loading='lazy';
+      el.replaceWith(img);
+    });
+  });
+}
+
+renderWorks('all');
+
+document.querySelectorAll('.ftab').forEach(btn=>{
+  btn.addEventListener('click',()=>renderWorks(btn.dataset.filter));
+  btn.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
+  btn.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
+});
+
+/* ── Cursor ── */
+const cur=document.getElementById('cur');
+const ring=document.getElementById('cur-ring');
+document.addEventListener('mousemove',e=>{
+  cur.style.left=e.clientX+'px'; cur.style.top=e.clientY+'px';
+  ring.style.left=e.clientX+'px'; ring.style.top=e.clientY+'px';
+});
+document.querySelectorAll('a,button,.work-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
+});
+
+/* ── Scroll Reveal ── */
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis');});
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+/* ── Play Reel Cursor on Hero ── */
+(function(){
+  const hero = document.getElementById('hero');
+  const playCur = document.getElementById('play-cursor');
+
+  hero.addEventListener('mouseenter', () => {
+    playCur.classList.add('show');
+    cur.style.opacity = '0';
+    ring.style.opacity = '0';
+  });
+  hero.addEventListener('mouseleave', () => {
+    playCur.classList.remove('show');
+    cur.style.opacity = '1';
+    ring.style.opacity = '1';
+  });
+  hero.addEventListener('mousemove', e => {
+    playCur.style.left = e.clientX + 'px';
+    playCur.style.top  = e.clientY + 'px';
+  });
+  hero.addEventListener('click', e => {
+    // Don't trigger if clicking the scroll indicator
+    if (e.target.closest('.hero-scroll')) return;
+    window.location.href = 'reel.html?play=1';
+  });
+})();
+
+/* ── Reel modal ── */
+const _reelModal=document.getElementById('reel-modal');
+function openReel(){_reelModal.classList.add('open');document.getElementById('reel-iframe').src='https://player.vimeo.com/video/1186376055?autoplay=1&title=0&byline=0&portrait=0';}
+function closeReel(){_reelModal.classList.remove('open');document.getElementById('reel-iframe').src='';}
+document.getElementById('reel-close').addEventListener('click',closeReel);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeReel();});
+
+/* ── Playground Lightbox ── */
+let _pgIdx=0;
+const lbEl=document.getElementById('lightbox'),lbImg=document.getElementById('lb-img'),
+      lbVideo=document.getElementById('lb-video'),lbGrpEl=document.getElementById('lb-group'),
+      lbCntEl=document.getElementById('lb-counter'),lbPrevEl=document.getElementById('lb-prev'),
+      lbNextEl=document.getElementById('lb-next');
+
+function _lbMedia(src,type){
+  if(type==='video'){lbImg.style.display='none';lbImg.classList.remove('lb-vis');lbImg.src='';lbVideo.style.display='block';lbVideo.src=src;lbVideo.load();lbVideo.play().catch(()=>{});}
+  else{lbVideo.style.display='none';lbVideo.pause();lbVideo.src='';lbImg.style.display='block';lbImg.src=src;requestAnimationFrame(()=>requestAnimationFrame(()=>lbImg.classList.add('lb-vis')));}
+}
+function playgroundLbOpen(idx){_pgIdx=idx;const i=playgroundItems[idx];lbGrpEl.textContent='Playground';lbCntEl.textContent=`${idx+1} / ${playgroundItems.length}`;lbEl.classList.add('lb-open');_lbMedia(i.src,i.type);}
+function lbClose(){lbImg.classList.remove('lb-vis');lbEl.classList.remove('lb-open');setTimeout(()=>{lbImg.src='';lbVideo.pause();lbVideo.src='';lbVideo.style.display='none';},380);}
+function lbChange(d){_pgIdx=(_pgIdx+d+playgroundItems.length)%playgroundItems.length;lbImg.classList.remove('lb-vis');lbVideo.pause();setTimeout(()=>{const i=playgroundItems[_pgIdx];lbCntEl.textContent=`${_pgIdx+1} / ${playgroundItems.length}`;_lbMedia(i.src,i.type);},200);}
+document.getElementById('lb-close').addEventListener('click',lbClose);
+lbPrevEl.addEventListener('click',()=>lbChange(-1));
+lbNextEl.addEventListener('click',()=>lbChange(1));
+lbEl.addEventListener('click',e=>{if(e.target===lbEl||e.target.id==='lb-stage')lbClose();});
+document.querySelectorAll('#lb-close,#lb-prev,#lb-next').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
+});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&lbEl.classList.contains('lb-open'))lbClose();
+  if(e.key==='ArrowLeft'&&lbEl.classList.contains('lb-open'))lbChange(-1);
+  if(e.key==='ArrowRight'&&lbEl.classList.contains('lb-open'))lbChange(1);
+});
 </script>
 </body>
 </html>

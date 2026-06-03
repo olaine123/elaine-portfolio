@@ -93,20 +93,25 @@
 <nav>
   <a href="index.html" class="nav-logo"><img src="brand_assets/LOGO.png" alt="Elaine Chen"></a>
   <div class="nav-links">
-    <a href="works.html">Works</a>
     <a class="active">Reel</a>
     <a href="about.html">About</a>
   </div>
 </nav>
 
 <div id="stage">
-  <iframe src="https://player.vimeo.com/video/1186376055?title=0&byline=0&portrait=0&badge=0&autopause=0&app_id=58479"
+  <iframe id="reel-frame" src="https://player.vimeo.com/video/1186376055?title=0&byline=0&portrait=0&badge=0&autopause=0&app_id=58479"
     frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share"
     referrerpolicy="strict-origin-when-cross-origin"
     title="2025 Elaine Chen Demoreel"></iframe>
 </div>
 
 <script>
+// Autoplay if redirected from hero click
+if (new URLSearchParams(location.search).get('play') === '1') {
+  const fr = document.getElementById('reel-frame');
+  fr.src = fr.src + '&autoplay=1&muted=0';
+}
+
 const cur = document.getElementById('cur');
 const ring = document.getElementById('cur-ring');
 document.addEventListener('mousemove', e => {
