@@ -276,10 +276,10 @@ const projects = [
     thumb: '',
     processGroups: [
       { group: 'Process', cols: 2, items: [
-        { src: 'Project file/Carnical Bites/IMG_7892.jpeg' },
-        { src: 'Project file/Carnical Bites/IMG_7889.jpeg' },
-        { src: 'Project file/Carnical Bites/IMG_1558.jpg' },
-        { src: 'Project file/Carnical Bites/IMG_7907.jpeg' },
+        { src: 'Project file/Carnical Bites/Process01.jpeg' },
+        { src: 'Project file/Carnical Bites/Process02.jpeg' },
+        { src: 'Project file/Carnical Bites/Process03.jpeg' },
+        { src: 'Project file/Carnical Bites/Process04.jpg' },
       ]},
     ],
     page: 'work-carnical-bites.html',
