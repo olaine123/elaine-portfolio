@@ -314,10 +314,10 @@ const projects = [
     thumb: 'https://i.vimeocdn.com/video/2165186943-a51ed673e44c9668f52895370c73a4447b2e5558c9b72b7456a9c03e97426557-d_1280',
     processGroups: [
       { group: 'Motion Graphics', cols: 2, items: [
-        { src: 'Project file/NBA on ESP Broadcast Design/01-Head to head 10 Sec.mp4' },
-        { src: 'Project file/NBA on ESP Broadcast Design/02-Player Profile 10 Sec.mp4' },
-        { src: 'Project file/NBA on ESP Broadcast Design/03-Wipe from live 5 Sec.mp4' },
-        { src: 'Project file/NBA on ESP Broadcast Design/04-Info Overlay 5 Sec.mp4' },
+        { src: 'Project file/NBA on ESP Broadcast Design/01-Head to head 10 Sec_1.mp4', caption: 'Head to Head 10 Sec' },
+        { src: 'Project file/NBA on ESP Broadcast Design/02-Player Profile 10 Sec_1.mp4', caption: 'Player Profile 10 Sec' },
+        { src: 'Project file/NBA on ESP Broadcast Design/03-Wipe from live 5 Sec_1.mp4', caption: 'Wipe from Live 5 Sec' },
+        { src: 'Project file/NBA on ESP Broadcast Design/04-Info Overlay 5 Sec_1.mp4', caption: 'Info Overlay 5 Sec' },
       ]},
     ],
     page: 'work-nba-on-espn.html',
@@ -516,10 +516,12 @@ function renderGroup(g) {
   return `<div class="process-section">
     ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
     <div class="process-section-grid" style="${st}">
-      ${g.items.map((item) => isVideo(item.src)
-        ? `<video src="${item.src}" autoplay muted loop playsinline style="width:100%;display:block;aspect-ratio:16/9;object-fit:cover"></video>`
-        : `<img src="${item.src}" alt="${g.group}" loading="lazy" onclick="lbOpen(${grpIdx},${imgIdx++})">`
-      ).join('')}
+      ${g.items.map((item) => {
+        const media = isVideo(item.src)
+          ? `<video src="${item.src}" autoplay muted loop playsinline style="width:100%;display:block;aspect-ratio:16/9;object-fit:cover"></video>`
+          : `<img src="${item.src}" alt="${g.group}" loading="lazy" onclick="lbOpen(${grpIdx},${imgIdx++})">`;
+        return item.caption ? `<div>${media}<div class="process-cap">${item.caption}</div></div>` : media;
+      }).join('')}
     </div></div>`;
 }
 
