@@ -311,7 +311,7 @@ const projects = [
       { k: 'Type', v: 'Graphics Package' },
       { k: 'Location', v: 'USA' },
     ],
-    thumb: 'https://i.vimeocdn.com/video/2165186943-a51ed673e44c9668f52895370c73a4447b2e5558c9b72b7456a9c03e97426557-d_640',
+    thumb: 'https://i.vimeocdn.com/video/2165186943-a51ed673e44c9668f52895370c73a4447b2e5558c9b72b7456a9c03e97426557-d_1280',
     processGroups: [
       { group: 'Motion Graphics', cols: 2, items: [
         { src: 'Project file/NBA on ESP Broadcast Design/01-Head to head 10 Sec.mp4' },
