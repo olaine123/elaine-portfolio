@@ -62,7 +62,7 @@ const projects = [
   },
   {
     num: '03', category: 'works', label: 'Motion Graphics',
-    title: 'THE GOOD, THE BAD, and THE UGLY', type: 'Ending Title Sequence · 2025', vimeoId: '1170318485',
+    title: 'THE GOOD, THE BAD, and THE UGLY - OFFICIAL TITLE SEQUENCE', type: 'Ending Title Sequence · 2025', vimeoId: '1170318485',
     chairFrames: Array.from({length:14}, (_,i) => `Project file/THE GOOD, THE BAD, and THE UGLY/chair/${i+1}.png`),
     desc: 'For this original drama\'s end credits, I dove deep into the script and worked closely with the director and writer. We wanted to create a visual journey that really captured the protagonist\'s search for happiness.\n\nUsing kaleidoscope effects and Dolly-in visuals to pull the audience into the story. I also wove in key locations like the breakfast shop, beauty salon, and toy store. To add more narrative tension, I hid "Easter eggs" throughout the sequence, such as a Chinese chess piece that symbolizes manipulation.',
     specs: [{ k: 'Year', v: '2025' }, { k: 'Type', v: 'Ending Title Sequence' }, { k: 'Location', v: 'Taiwan' }],
@@ -97,6 +97,7 @@ const projects = [
         { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe14.png' },
         { src: 'Project file/THE GOOD, THE BAD, and THE UGLY/styleframe/styleframe15.png' },
       ]},
+      { group: "It's on Netflix Now!", items: [{ src: 'Project file/THE GOOD, THE BAD, and THE UGLY/Netflix.png' }] },
     ],
     page: 'work-good-bad-ugly.html',
   },
@@ -313,11 +314,11 @@ const projects = [
     ],
     thumb: 'https://i.vimeocdn.com/video/2165186943-a51ed673e44c9668f52895370c73a4447b2e5558c9b72b7456a9c03e97426557-d_1280',
     processGroups: [
-      { group: 'Motion Graphics', cols: 2, items: [
-        { src: 'Project file/NBA on ESP Broadcast Design/01-Head to head 10 Sec_1.mp4', caption: 'Head to Head 10 Sec' },
-        { src: 'Project file/NBA on ESP Broadcast Design/02-Player Profile 10 Sec_1.mp4', caption: 'Player Profile 10 Sec' },
-        { src: 'Project file/NBA on ESP Broadcast Design/03-Wipe from live 5 Sec_1.mp4', caption: 'Wipe from Live 5 Sec' },
-        { src: 'Project file/NBA on ESP Broadcast Design/04-Info Overlay 5 Sec_1.mp4', caption: 'Info Overlay 5 Sec' },
+      { group: '', cols: 2, items: [
+        { src: 'Project file/NBA on ESP Broadcast Design/01-Head to head 10 Sec_1.mp4', caption: 'Head to Head' },
+        { src: 'Project file/NBA on ESP Broadcast Design/02-Player Profile 10 Sec_1.mp4', caption: 'Player Profile' },
+        { src: 'Project file/NBA on ESP Broadcast Design/03-Wipe from live 5 Sec_1.mp4', caption: 'Wipe from Live' },
+        { src: 'Project file/NBA on ESP Broadcast Design/04-Info Overlay 5 Sec_1.mp4', caption: 'Info Overlay' },
       ]},
     ],
     page: 'work-nba-on-espn.html',
@@ -520,7 +521,7 @@ function renderGroup(g) {
         const media = isVideo(item.src)
           ? `<video src="${item.src}" autoplay muted loop playsinline style="width:100%;display:block;aspect-ratio:16/9;object-fit:cover"></video>`
           : `<img src="${item.src}" alt="${g.group}" loading="lazy" onclick="lbOpen(${grpIdx},${imgIdx++})">`;
-        return item.caption ? `<div>${media}<div class="process-cap">${item.caption}</div></div>` : media;
+        return item.caption ? `<div><div class="process-video-label">${item.caption}</div>${media}</div>` : media;
       }).join('')}
     </div></div>`;
 }

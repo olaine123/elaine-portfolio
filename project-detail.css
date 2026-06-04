@@ -161,6 +161,7 @@ nav {
 .process-section-grid img { width: 100%; height: auto; display: block; cursor: none; transition: transform .3s ease; }
 .process-section-grid img:hover { transform: scale(1.02); }
 .process-cap { font-size: .8rem; letter-spacing: .16em; text-transform: uppercase; color: #444; margin-top: 10px; }
+.process-video-label { font-size: .62rem; letter-spacing: .28em; text-transform: uppercase; color: var(--red); margin-top: 20px; margin-bottom: 4px; }
 .process-two-col { display: grid; grid-template-columns: 1fr 2fr; gap: 24px; margin-bottom: 52px; }
 .yt-lyrics-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
 .process-two-col-left .process-section,
