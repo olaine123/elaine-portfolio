@@ -552,7 +552,7 @@ function updateMoreProjects(currentIdx) {
       </a>
     </div>`;
   el.querySelectorAll('.dmp-vimeo-ph').forEach(ph => {
-    fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${ph.dataset.vimeo}&width=600`)
+    fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${ph.dataset.vimeo}&width=1280`)
       .then(r => r.json())
       .then(d => {
         const img = document.createElement('img');

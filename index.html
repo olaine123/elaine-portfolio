@@ -617,7 +617,7 @@ const playgroundItems = [
 const _vCache = {};
 function vimeoThumb(id,cb){
   if(_vCache[id]){cb(_vCache[id]);return;}
-  fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${id}&width=800`)
+  fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${id}&width=1280`)
     .then(r=>r.json()).then(d=>{_vCache[id]=d.thumbnail_url;cb(d.thumbnail_url);}).catch(()=>{});
 }
 
