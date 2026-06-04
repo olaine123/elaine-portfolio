@@ -302,6 +302,27 @@ const projects = [
     page: 'work-from-1-to-many.html',
   },
   {
+    num: '11', category: 'works', label: 'Broadcast Design',
+    title: 'NBA ON ESPN BROADCAST DESIGN', type: 'Graphics Package · May 2026',
+    vimeoId: '1198298776',
+    desc: '',
+    specs: [
+      { k: 'Year', v: 'May 2026' },
+      { k: 'Type', v: 'Graphics Package' },
+      { k: 'Location', v: 'USA' },
+    ],
+    thumb: '',
+    processGroups: [
+      { group: 'Motion Graphics', cols: 2, items: [
+        { src: 'Project file/NBA on ESP Broadcast Design/01-Head to head 10 Sec.mp4' },
+        { src: 'Project file/NBA on ESP Broadcast Design/02-Player Profile 10 Sec.mp4' },
+        { src: 'Project file/NBA on ESP Broadcast Design/03-Wipe from live 5 Sec.mp4' },
+        { src: 'Project file/NBA on ESP Broadcast Design/04-Info Overlay 5 Sec.mp4' },
+      ]},
+    ],
+    page: 'work-nba-on-espn.html',
+  },
+  {
     num: '01', category: 'live-action', label: 'Live Action Motion',
     title: 'Christmas­land in New Taipei City', type: 'Television Commercial · 2025', vimeoId: '1187493872',
     desc: 'The Magic of Christmas\n\nThere\'s something special about the way light brings the holidays to life. For this project, I used glowing lines to unveil the festive energy of the city\'s Christmas event, leading the audience through a wonderland of festive decorations.\n\nTo keep the vibe warm and joyful, I used the animation with charming, childlike illustrations. It\'s a mix of that pure, innocent Christmas spirit we all love.',
@@ -486,14 +507,19 @@ function renderGroup(g) {
       </div>
     </div>`;
   }
+  const isVideo = src => /\.(mp4|webm|mov)$/i.test(src);
   const grpIdx = window._lbGroups.length;
-  window._lbGroups.push({ label: g.group, srcs: g.items.map(i => i.src) });
+  window._lbGroups.push({ label: g.group, srcs: g.items.filter(i => !isVideo(i.src)).map(i => i.src) });
   const n = g.cols || (g.items.length === 1 ? 1 : g.items.length === 2 ? 2 : 3);
   const st = [`grid-template-columns:repeat(${n},1fr)`, g.maxWidth ? `max-width:${g.maxWidth};margin:0 auto` : ''].filter(Boolean).join(';');
+  let imgIdx = 0;
   return `<div class="process-section">
     ${g.group ? `<div class="process-section-label">${g.group}</div>` : ''}
     <div class="process-section-grid" style="${st}">
-      ${g.items.map((img, idx) => `<img src="${img.src}" alt="${g.group}" loading="lazy" onclick="lbOpen(${grpIdx},${idx})">`).join('')}
+      ${g.items.map((item) => isVideo(item.src)
+        ? `<video src="${item.src}" autoplay muted loop playsinline style="width:100%;display:block;aspect-ratio:16/9;object-fit:cover"></video>`
+        : `<img src="${item.src}" alt="${g.group}" loading="lazy" onclick="lbOpen(${grpIdx},${imgIdx++})">`
+      ).join('')}
     </div></div>`;
 }
 
