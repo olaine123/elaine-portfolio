@@ -48,6 +48,7 @@
     .nav-links a {
       font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
       color: var(--white); text-decoration: none; position: relative;
+      display: inline-flex; align-items: center; overflow: hidden;
     }
     .nav-links a::after {
       content: ''; position: absolute; bottom: -2px; left: 0;
@@ -94,50 +95,75 @@ if (new URLSearchParams(location.search).get('play') === '1') {
   fr.src = fr.src + '&autoplay=1&muted=0';
 }
 
-// Letter swap animation
+// Letter swap — flex column slide
 function initLetterSwap(el) {
-  const text = el.textContent;
-  el.textContent = '';
+  const text = el.textContent.trim();
+
+  // Measure actual rendered letter height
+  const probe = document.createElement('span');
+  probe.style.cssText = 'display:inline-block;visibility:hidden;position:absolute;pointer-events:none;white-space:nowrap;';
+  probe.textContent = 'X';
+  document.body.appendChild(probe);
+  const h = probe.offsetHeight;
+  document.body.removeChild(probe);
+
+  el.innerHTML = '';
+  const STAGGER = 30, DUR = 580, EASE = 'cubic-bezier(0.16,1,0.3,1)';
+  const cols = [];
+
   [...text].forEach(char => {
-    const g = document.createElement('span');
-    g.style.cssText = 'position:relative;display:inline-block;overflow:hidden;vertical-align:bottom;';
-    const a = document.createElement('span');
-    a.textContent = char === ' ' ? ' ' : char;
-    a.style.display = 'block';
+    if (char === ' ') {
+      const sp = document.createElement('span');
+      sp.innerHTML = '&nbsp;';
+      el.appendChild(sp);
+      return;
+    }
+    const wrap = document.createElement('span');
+    wrap.style.cssText = `display:inline-block;overflow:hidden;height:${h}px;vertical-align:middle;`;
+
+    const col = document.createElement('span');
+    col.style.cssText = `display:flex;flex-direction:column;transform:translateY(-${h}px);`;
+
+    // b = secondary (top slot, hidden above, slides into view on hover)
     const b = document.createElement('span');
-    b.textContent = char === ' ' ? ' ' : char;
+    b.textContent = char;
     b.setAttribute('aria-hidden', 'true');
-    b.style.cssText = 'display:block;position:absolute;top:0;left:0;transform:translateY(-100%);';
-    g.append(a, b);
-    el.appendChild(g);
+    b.style.cssText = `display:block;height:${h}px;line-height:${h}px;flex-shrink:0;text-align:center;`;
+
+    // a = primary (bottom slot, visible initially, slides down out on hover)
+    const a = document.createElement('span');
+    a.textContent = char;
+    a.style.cssText = `display:block;height:${h}px;line-height:${h}px;flex-shrink:0;text-align:center;`;
+
+    col.append(b, a);
+    wrap.appendChild(col);
+    el.appendChild(wrap);
+    cols.push(col);
   });
-  const STAGGER = 30, DUR = 480, EASE = 'cubic-bezier(0.16,1,0.3,1)';
+
   let busy = false;
   el.addEventListener('mouseenter', () => {
     if (busy) return;
     busy = true;
-    const groups = [...el.children];
-    groups.forEach((g, i) => {
-      const [a, b] = g.children;
+    cols.forEach((col, i) => {
       setTimeout(() => {
-        a.style.transition = `transform ${DUR}ms ${EASE}`;
-        b.style.transition = `transform ${DUR}ms ${EASE}`;
-        a.style.transform = 'translateY(100%)';
-        b.style.transform = 'translateY(0)';
+        col.style.transition = `transform ${DUR}ms ${EASE}`;
+        col.style.transform = 'translateY(0)';
       }, i * STAGGER);
     });
     setTimeout(() => {
-      groups.forEach(g => {
-        const [a, b] = g.children;
-        a.style.transition = b.style.transition = 'none';
-        a.style.transform = '';
-        b.style.transform = 'translateY(-100%)';
+      cols.forEach(col => {
+        col.style.transition = 'none';
+        col.style.transform = `translateY(-${h}px)`;
       });
       busy = false;
-    }, (groups.length - 1) * STAGGER + DUR + 80);
+    }, (cols.length - 1) * STAGGER + DUR + 100);
   });
 }
-document.querySelectorAll('.nav-links a').forEach(el => initLetterSwap(el));
+
+document.fonts.ready.then(() => {
+  document.querySelectorAll('.nav-links a').forEach(el => initLetterSwap(el));
+});
 </script>
 </body>
 </html>
