@@ -33,7 +33,7 @@
 
     #cur, #cur-ring { display: none; }
 
-    /* ─── Nav ─── */
+    /* --- Nav --- */
     nav {
       position: fixed; inset: 0 0 auto 0; z-index: 200;
       padding: 28px 52px;
@@ -58,7 +58,7 @@
     .nav-links a.active::after { width: 100%; }
     .nav-links a.active { color: var(--red); }
 
-    /* ─── Stage ─── */
+    /* --- Stage --- */
     #stage { position: fixed; inset: 0; }
     #stage iframe { width: 100%; height: 100%; display: block; border: none; }
 
@@ -66,12 +66,9 @@
       nav { padding: 20px 24px; }
       .nav-links { gap: 20px; }
     }
-    @media (pointer: coarse) {
-    }
   </style>
 </head>
 <body>
-
 
 <nav>
   <a href="index.html" class="nav-logo"><img src="brand_assets/LOGO.png" alt="Elaine Chen"></a>
@@ -95,39 +92,39 @@ if (new URLSearchParams(location.search).get('play') === '1') {
   fr.src = fr.src + '&autoplay=1&muted=0';
 }
 
+// Letter swap — structure mirrors React LetterSwapForward exactly:
+// overflow:hidden on the outer wrapper, no clip-path (clip-path breaks inside
+// mix-blend-mode parents in Safari), primary exits via transform, secondary via top.
 function initLetterSwap(el) {
   const text = el.textContent.trim();
   if (!text) return;
   el.innerHTML = '';
 
+  // Inner container with overflow:hidden — equivalent to the React component's outer <span>
+  // Nested inside 'el' so ::after pseudo-elements on 'el' still render outside the clip
+  const inner = document.createElement('span');
+  inner.style.cssText = 'display:inline-flex;overflow:hidden;vertical-align:middle;';
+  el.appendChild(inner);
+
   const STAGGER = 30, DUR = 580, EASE = 'cubic-bezier(0.16,1,0.3,1)';
   const items = [];
 
   [...text].forEach((char, idx) => {
-    const c = char === ' ' ? ' ' : char;
+    const c = char;
     const wrap = document.createElement('span');
-    // overflow:hidden (not clip-path) for Safari compatibility inside mix-blend-mode parents
-    wrap.style.cssText = 'position:relative;display:inline-block;overflow:hidden;vertical-align:middle;';
+    wrap.style.cssText = 'white-space:pre;position:relative;display:inline-flex;';
 
-    // Invisible spacer stays in flow → gives wrap its natural dimensions
-    const spacer = document.createElement('span');
-    spacer.textContent = c;
-    spacer.setAttribute('aria-hidden', 'true');
-    spacer.style.cssText = 'display:inline-block;white-space:pre;visibility:hidden;';
-
-    // Primary: visible initially, exits downward (top: 0 → 100%)
     const primary = document.createElement('span');
     primary.textContent = c;
-    primary.style.cssText = 'position:absolute;top:0;left:0;display:block;white-space:pre;width:100%;';
+    primary.style.cssText = 'position:relative;display:block;';
 
-    // Secondary: starts above (top: -100%), slides in on hover
     const secondary = document.createElement('span');
     secondary.textContent = c;
     secondary.setAttribute('aria-hidden', 'true');
-    secondary.style.cssText = 'position:absolute;top:-100%;left:0;display:block;white-space:pre;width:100%;';
+    secondary.style.cssText = 'position:absolute;top:-100%;left:0;display:block;width:100%;';
 
-    wrap.append(spacer, primary, secondary);
-    el.appendChild(wrap);
+    wrap.append(primary, secondary);
+    inner.appendChild(wrap);
     items.push({ primary, secondary, delay: idx * STAGGER });
   });
 
@@ -137,15 +134,15 @@ function initLetterSwap(el) {
     busy = true;
     items.forEach(({ primary, secondary, delay }) => {
       setTimeout(() => {
-        primary.style.transition = `top ${DUR}ms ${EASE}`;
-        primary.style.top = '100%';
-        secondary.style.transition = `top ${DUR}ms ${EASE}`;
+        primary.style.transition = 'transform ' + DUR + 'ms ' + EASE;
+        primary.style.transform = 'translateY(100%)';
+        secondary.style.transition = 'top ' + DUR + 'ms ' + EASE;
         secondary.style.top = '0%';
       }, delay);
     });
     setTimeout(() => {
       items.forEach(({ primary, secondary }) => {
-        primary.style.transition = 'none'; primary.style.top = '0';
+        primary.style.transition = 'none'; primary.style.transform = '';
         secondary.style.transition = 'none'; secondary.style.top = '-100%';
       });
       busy = false;

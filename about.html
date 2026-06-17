@@ -321,31 +321,28 @@
     if (!text) return;
     el.innerHTML = '';
 
+    const inner = document.createElement('span');
+    inner.style.cssText = 'display:inline-flex;overflow:hidden;vertical-align:middle;';
+    el.appendChild(inner);
+
     const STAGGER = 30, DUR = 580, EASE = 'cubic-bezier(0.16,1,0.3,1)';
     const items = [];
 
     [...text].forEach((char, idx) => {
-      const c = char === ' ' ? ' ' : char;
       const wrap = document.createElement('span');
-      // overflow:hidden (not clip-path) for Safari compatibility inside mix-blend-mode parents
-      wrap.style.cssText = 'position:relative;display:inline-block;overflow:hidden;vertical-align:middle;';
-
-      const spacer = document.createElement('span');
-      spacer.textContent = c;
-      spacer.setAttribute('aria-hidden', 'true');
-      spacer.style.cssText = 'display:inline-block;white-space:pre;visibility:hidden;';
+      wrap.style.cssText = 'white-space:pre;position:relative;display:inline-flex;';
 
       const primary = document.createElement('span');
-      primary.textContent = c;
-      primary.style.cssText = 'position:absolute;top:0;left:0;display:block;white-space:pre;width:100%;';
+      primary.textContent = char;
+      primary.style.cssText = 'position:relative;display:block;';
 
       const secondary = document.createElement('span');
-      secondary.textContent = c;
+      secondary.textContent = char;
       secondary.setAttribute('aria-hidden', 'true');
-      secondary.style.cssText = 'position:absolute;top:-100%;left:0;display:block;white-space:pre;width:100%;';
+      secondary.style.cssText = 'position:absolute;top:-100%;left:0;display:block;width:100%;';
 
-      wrap.append(spacer, primary, secondary);
-      el.appendChild(wrap);
+      wrap.append(primary, secondary);
+      inner.appendChild(wrap);
       items.push({ primary, secondary, delay: idx * STAGGER });
     });
 
@@ -355,15 +352,15 @@
       busy = true;
       items.forEach(({ primary, secondary, delay }) => {
         setTimeout(() => {
-          primary.style.transition = `top ${DUR}ms ${EASE}`;
-          primary.style.top = '100%';
-          secondary.style.transition = `top ${DUR}ms ${EASE}`;
+          primary.style.transition = 'transform ' + DUR + 'ms ' + EASE;
+          primary.style.transform = 'translateY(100%)';
+          secondary.style.transition = 'top ' + DUR + 'ms ' + EASE;
           secondary.style.top = '0%';
         }, delay);
       });
       setTimeout(() => {
         items.forEach(({ primary, secondary }) => {
-          primary.style.transition = 'none'; primary.style.top = '0';
+          primary.style.transition = 'none'; primary.style.transform = '';
           secondary.style.transition = 'none'; secondary.style.top = '-100%';
         });
         busy = false;
