@@ -316,54 +316,58 @@
   }, { threshold: .12 });
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-  // Letter swap — mirrors the React LetterSwapForward component exactly
   function initLetterSwap(el) {
     const text = el.textContent.trim();
+    if (!text) return;
     el.innerHTML = '';
 
     const STAGGER = 30, DUR = 580, EASE = 'cubic-bezier(0.16,1,0.3,1)';
-    const primaries = [], secondaries = [];
+    const items = [];
 
     [...text].forEach((char, idx) => {
+      const c = char === ' ' ? ' ' : char;
       const wrap = document.createElement('span');
-      wrap.style.cssText = 'position:relative;display:inline-flex;white-space:pre;clip-path:inset(0);';
+      // overflow:hidden (not clip-path) for Safari compatibility inside mix-blend-mode parents
+      wrap.style.cssText = 'position:relative;display:inline-block;overflow:hidden;vertical-align:middle;';
+
+      const spacer = document.createElement('span');
+      spacer.textContent = c;
+      spacer.setAttribute('aria-hidden', 'true');
+      spacer.style.cssText = 'display:inline-block;white-space:pre;visibility:hidden;';
 
       const primary = document.createElement('span');
-      primary.textContent = char;
-      primary.style.cssText = 'position:relative;display:block;';
+      primary.textContent = c;
+      primary.style.cssText = 'position:absolute;top:0;left:0;display:block;white-space:pre;width:100%;';
 
       const secondary = document.createElement('span');
-      secondary.textContent = char;
+      secondary.textContent = c;
       secondary.setAttribute('aria-hidden', 'true');
-      secondary.style.cssText = 'position:absolute;top:-100%;left:0;display:block;width:100%;';
+      secondary.style.cssText = 'position:absolute;top:-100%;left:0;display:block;white-space:pre;width:100%;';
 
-      wrap.append(primary, secondary);
+      wrap.append(spacer, primary, secondary);
       el.appendChild(wrap);
-      primaries.push({ el: primary, delay: idx * STAGGER });
-      secondaries.push({ el: secondary, delay: idx * STAGGER });
+      items.push({ primary, secondary, delay: idx * STAGGER });
     });
 
     let busy = false;
     el.addEventListener('mouseenter', () => {
       if (busy) return;
       busy = true;
-      primaries.forEach(({ el: p, delay }) => {
+      items.forEach(({ primary, secondary, delay }) => {
         setTimeout(() => {
-          p.style.transition = `transform ${DUR}ms ${EASE}`;
-          p.style.transform = 'translateY(100%)';
-        }, delay);
-      });
-      secondaries.forEach(({ el: s, delay }) => {
-        setTimeout(() => {
-          s.style.transition = `top ${DUR}ms ${EASE}`;
-          s.style.top = '0%';
+          primary.style.transition = `top ${DUR}ms ${EASE}`;
+          primary.style.top = '100%';
+          secondary.style.transition = `top ${DUR}ms ${EASE}`;
+          secondary.style.top = '0%';
         }, delay);
       });
       setTimeout(() => {
-        primaries.forEach(({ el: p }) => { p.style.transition = 'none'; p.style.transform = ''; });
-        secondaries.forEach(({ el: s }) => { s.style.transition = 'none'; s.style.top = '-100%'; });
+        items.forEach(({ primary, secondary }) => {
+          primary.style.transition = 'none'; primary.style.top = '0';
+          secondary.style.transition = 'none'; secondary.style.top = '-100%';
+        });
         busy = false;
-      }, (primaries.length - 1) * STAGGER + DUR + 100);
+      }, (items.length - 1) * STAGGER + DUR + 100);
     });
   }
 
