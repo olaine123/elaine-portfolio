@@ -173,9 +173,14 @@
     }
     .foot-top:hover { color: var(--red); }
 
-    /* ─── Scroll Reveal ─── */
-    .reveal { opacity: 0; transform: translateY(36px); transition: opacity .8s ease, transform .8s ease; }
-    .reveal.vis { opacity: 1; transform: translateY(0); }
+    /* ─── Scroll Reveal (blur-fade) ─── */
+    .reveal {
+      opacity: 0;
+      filter: blur(10px);
+      transform: translateY(12px);
+      transition: opacity .7s ease, filter .7s ease, transform .7s ease;
+    }
+    .reveal.vis { opacity: 1; filter: blur(0px); transform: translateY(0); }
 
     @media (max-width: 900px) {
       nav { padding: 20px 24px; }
@@ -209,22 +214,22 @@
 
 <!-- ── Page Header ── -->
 <div class="page-header">
-  <p class="s-label reveal">About Me</p>
-  <h1 class="s-title reveal">ABOUT</h1>
+  <p class="s-label reveal" style="transition-delay:.05s">About Me</p>
+  <h1 class="s-title reveal" style="transition-delay:.15s">ABOUT</h1>
 </div>
 
 <!-- ── About Content ── -->
 <div class="about-section">
   <div class="about-grid">
     <div>
-      <p class="about-bio reveal">
+      <p class="about-bio reveal" style="transition-delay:.1s">
         Hello, I'm <strong>Elaine Chen</strong>, a Motion Designer
         based in Savannah with a passion for exploring different perspectives
         and pushing the boundaries of my work.<br><br>
         Nice to meet u!
       </p>
 
-      <div class="reveal">
+      <div class="reveal" style="transition-delay:.18s">
         <p class="edu-head">Education /</p>
         <div class="edu-item">
           <div class="edu-year">2025 — 2027</div>
@@ -243,7 +248,7 @@
         </div>
       </div>
 
-      <div class="awards-wrap reveal">
+      <div class="awards-wrap reveal" style="transition-delay:.26s">
         <p class="edu-head" style="margin-top:44px">Award /</p>
         <div class="award-item">
           <div>
@@ -255,7 +260,7 @@
       </div>
     </div>
 
-    <div class="avatar-wrap reveal">
+    <div class="avatar-wrap reveal" style="transition-delay:.22s">
       <div class="avatar-frame">
         <img src="brand_assets/Elaine Chen.jpg" alt="Elaine Chen">
       </div>
@@ -266,7 +271,7 @@
 
 <!-- ── Footer ── -->
 <footer>
-  <div class="foot-main">
+  <div class="foot-main reveal">
     <div class="foot-nav">
       <a href="reel.html">Reel</a>
       <a href="about.html">About</a>
@@ -308,6 +313,51 @@
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
   }, { threshold: .12 });
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // Letter swap animation
+  function initLetterSwap(el) {
+    const text = el.textContent;
+    el.textContent = '';
+    [...text].forEach(char => {
+      const g = document.createElement('span');
+      g.style.cssText = 'position:relative;display:inline-block;overflow:hidden;vertical-align:bottom;';
+      const a = document.createElement('span');
+      a.textContent = char === ' ' ? ' ' : char;
+      a.style.display = 'block';
+      const b = document.createElement('span');
+      b.textContent = char === ' ' ? ' ' : char;
+      b.setAttribute('aria-hidden', 'true');
+      b.style.cssText = 'display:block;position:absolute;top:0;left:0;transform:translateY(-100%);';
+      g.append(a, b);
+      el.appendChild(g);
+    });
+    const STAGGER = 30, DUR = 480, EASE = 'cubic-bezier(0.16,1,0.3,1)';
+    let busy = false;
+    el.addEventListener('mouseenter', () => {
+      if (busy) return;
+      busy = true;
+      const groups = [...el.children];
+      groups.forEach((g, i) => {
+        const [a, b] = g.children;
+        setTimeout(() => {
+          a.style.transition = `transform ${DUR}ms ${EASE}`;
+          b.style.transition = `transform ${DUR}ms ${EASE}`;
+          a.style.transform = 'translateY(100%)';
+          b.style.transform = 'translateY(0)';
+        }, i * STAGGER);
+      });
+      setTimeout(() => {
+        groups.forEach(g => {
+          const [a, b] = g.children;
+          a.style.transition = b.style.transition = 'none';
+          a.style.transform = '';
+          b.style.transform = 'translateY(-100%)';
+        });
+        busy = false;
+      }, (groups.length - 1) * STAGGER + DUR + 80);
+    });
+  }
+  document.querySelectorAll('.nav-links a, .foot-nav a').forEach(el => initLetterSwap(el));
 </script>
 </body>
 </html>

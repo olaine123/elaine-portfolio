@@ -241,8 +241,17 @@
     }
     .section-label:first-child { border-top: none; }
 
-    @keyframes gridFadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-    .grid-fade { animation: gridFadeIn .4s ease forwards; }
+    /* ─── Scroll Reveal ─── */
+    .work-card {
+      opacity: 0; transform: translateY(22px);
+      transition: opacity .55s ease, transform .55s ease;
+    }
+    .work-card.vis { opacity: 1; transform: translateY(0); }
+    .section-label {
+      opacity: 0; transform: translateY(14px);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+    .section-label.vis { opacity: 1; transform: translateY(0); }
 
     /* ─── Footer ─── */
     footer {
@@ -519,7 +528,7 @@
 
 <!-- Footer -->
 <footer>
-  <div class="foot-main">
+  <div class="foot-main reveal">
     <div class="foot-nav">
       <a href="reel.html">Reel</a>
       <a href="about.html">About</a>
@@ -539,7 +548,7 @@
       </div>
     </div>
   </div>
-  <div class="foot-bottom">
+  <div class="foot-bottom reveal">
     <span class="foot-copy">© 2026 Elaine Chen. All rights reserved.</span>
     <a href="#hero" class="foot-top">Back to Top ↑</a>
   </div>
@@ -652,15 +661,15 @@ function renderWorks(filter){
   let html='';
 
   if(showWorks){
-    html+=`<div class="w2-grid grid-fade">${worksItems.map(makeCard).join('')}</div>`;
+    html+=`<div class="w2-grid">${worksItems.map(makeCard).join('')}</div>`;
   }
   if(showLa){
     html+=`<div class="section-label">Live Action Motion /</div>`;
-    html+=`<div class="w2-grid grid-fade">${laItems.map(makeCard).join('')}</div>`;
+    html+=`<div class="w2-grid">${laItems.map(makeCard).join('')}</div>`;
   }
   if(showPg){
     html+=`<div class="section-label">Playground /</div>`;
-    html+=`<div class="playground-grid grid-fade">${playgroundItems.map((item,i)=>{
+    html+=`<div class="playground-grid">${playgroundItems.map((item,i)=>{
       const thumb=item.type==='video'
         ?`<video class="work-thumb" src="${item.src}" autoplay muted loop playsinline></video>`
         :`<img class="work-thumb" src="${item.src}" alt="${item.title}" loading="lazy">`;
@@ -691,6 +700,16 @@ function renderWorks(filter){
       img.className='work-thumb'; img.src=url; img.alt=el.dataset.title||''; img.loading='lazy';
       el.replaceWith(img);
     });
+  });
+
+  // Scroll reveal for dynamic content
+  const revObs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('vis');revObs.unobserve(e.target);}});
+  },{threshold:0.06,rootMargin:'0px 0px -20px 0px'});
+  content.querySelectorAll('.section-label').forEach(el=>revObs.observe(el));
+  content.querySelectorAll('.work-card').forEach((card,i)=>{
+    card.style.transitionDelay=Math.min((i%4)*0.07,0.21)+'s';
+    revObs.observe(card);
   });
 }
 

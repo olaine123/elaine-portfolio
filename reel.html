@@ -94,6 +94,50 @@ if (new URLSearchParams(location.search).get('play') === '1') {
   fr.src = fr.src + '&autoplay=1&muted=0';
 }
 
+// Letter swap animation
+function initLetterSwap(el) {
+  const text = el.textContent;
+  el.textContent = '';
+  [...text].forEach(char => {
+    const g = document.createElement('span');
+    g.style.cssText = 'position:relative;display:inline-block;overflow:hidden;vertical-align:bottom;';
+    const a = document.createElement('span');
+    a.textContent = char === ' ' ? ' ' : char;
+    a.style.display = 'block';
+    const b = document.createElement('span');
+    b.textContent = char === ' ' ? ' ' : char;
+    b.setAttribute('aria-hidden', 'true');
+    b.style.cssText = 'display:block;position:absolute;top:0;left:0;transform:translateY(-100%);';
+    g.append(a, b);
+    el.appendChild(g);
+  });
+  const STAGGER = 30, DUR = 480, EASE = 'cubic-bezier(0.16,1,0.3,1)';
+  let busy = false;
+  el.addEventListener('mouseenter', () => {
+    if (busy) return;
+    busy = true;
+    const groups = [...el.children];
+    groups.forEach((g, i) => {
+      const [a, b] = g.children;
+      setTimeout(() => {
+        a.style.transition = `transform ${DUR}ms ${EASE}`;
+        b.style.transition = `transform ${DUR}ms ${EASE}`;
+        a.style.transform = 'translateY(100%)';
+        b.style.transform = 'translateY(0)';
+      }, i * STAGGER);
+    });
+    setTimeout(() => {
+      groups.forEach(g => {
+        const [a, b] = g.children;
+        a.style.transition = b.style.transition = 'none';
+        a.style.transform = '';
+        b.style.transform = 'translateY(-100%)';
+      });
+      busy = false;
+    }, (groups.length - 1) * STAGGER + DUR + 80);
+  });
+}
+document.querySelectorAll('.nav-links a').forEach(el => initLetterSwap(el));
 </script>
 </body>
 </html>
