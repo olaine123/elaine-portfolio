@@ -48,7 +48,7 @@
     .nav-links a {
       font-size: .68rem; letter-spacing: .18em; text-transform: uppercase;
       color: var(--white); text-decoration: none; position: relative;
-      display: inline-flex; align-items: center; overflow: hidden;
+      display: inline-flex; align-items: center;
     }
     .nav-links a::after {
       content: ''; position: absolute; bottom: -2px; left: 0;
@@ -95,69 +95,57 @@ if (new URLSearchParams(location.search).get('play') === '1') {
   fr.src = fr.src + '&autoplay=1&muted=0';
 }
 
-// Letter swap — flex column slide
+// Letter swap — mirrors the React LetterSwapForward component exactly
 function initLetterSwap(el) {
   const text = el.textContent.trim();
-
-  // Measure actual rendered letter height
-  const probe = document.createElement('span');
-  probe.style.cssText = 'display:inline-block;visibility:hidden;position:absolute;pointer-events:none;white-space:nowrap;';
-  probe.textContent = 'X';
-  document.body.appendChild(probe);
-  const h = probe.offsetHeight;
-  document.body.removeChild(probe);
-
   el.innerHTML = '';
+
   const STAGGER = 30, DUR = 580, EASE = 'cubic-bezier(0.16,1,0.3,1)';
-  const cols = [];
+  const primaries = [], secondaries = [];
 
-  [...text].forEach(char => {
-    if (char === ' ') {
-      const sp = document.createElement('span');
-      sp.innerHTML = '&nbsp;';
-      el.appendChild(sp);
-      return;
-    }
+  [...text].forEach((char, idx) => {
+    // Each character gets a wrapper that clips via clip-path
     const wrap = document.createElement('span');
-    wrap.style.cssText = `display:inline-block;overflow:hidden;height:${h}px;vertical-align:middle;`;
+    wrap.style.cssText = 'position:relative;display:inline-flex;white-space:pre;clip-path:inset(0);';
 
-    const col = document.createElement('span');
-    col.style.cssText = `display:flex;flex-direction:column;transform:translateY(-${h}px);`;
+    // Primary letter — visible initially, exits downward on hover
+    const primary = document.createElement('span');
+    primary.textContent = char;
+    primary.style.cssText = 'position:relative;display:block;';
 
-    // b = secondary (top slot, hidden above, slides into view on hover)
-    const b = document.createElement('span');
-    b.textContent = char;
-    b.setAttribute('aria-hidden', 'true');
-    b.style.cssText = `display:block;height:${h}px;line-height:${h}px;flex-shrink:0;text-align:center;`;
+    // Secondary letter — starts above, slides in on hover
+    const secondary = document.createElement('span');
+    secondary.textContent = char;
+    secondary.setAttribute('aria-hidden', 'true');
+    secondary.style.cssText = 'position:absolute;top:-100%;left:0;display:block;width:100%;';
 
-    // a = primary (bottom slot, visible initially, slides down out on hover)
-    const a = document.createElement('span');
-    a.textContent = char;
-    a.style.cssText = `display:block;height:${h}px;line-height:${h}px;flex-shrink:0;text-align:center;`;
-
-    col.append(b, a);
-    wrap.appendChild(col);
+    wrap.append(primary, secondary);
     el.appendChild(wrap);
-    cols.push(col);
+    primaries.push({ el: primary, delay: idx * STAGGER });
+    secondaries.push({ el: secondary, delay: idx * STAGGER });
   });
 
   let busy = false;
   el.addEventListener('mouseenter', () => {
     if (busy) return;
     busy = true;
-    cols.forEach((col, i) => {
+    primaries.forEach(({ el: p, delay }) => {
       setTimeout(() => {
-        col.style.transition = `transform ${DUR}ms ${EASE}`;
-        col.style.transform = 'translateY(0)';
-      }, i * STAGGER);
+        p.style.transition = `transform ${DUR}ms ${EASE}`;
+        p.style.transform = 'translateY(100%)';
+      }, delay);
+    });
+    secondaries.forEach(({ el: s, delay }) => {
+      setTimeout(() => {
+        s.style.transition = `top ${DUR}ms ${EASE}`;
+        s.style.top = '0%';
+      }, delay);
     });
     setTimeout(() => {
-      cols.forEach(col => {
-        col.style.transition = 'none';
-        col.style.transform = `translateY(-${h}px)`;
-      });
+      primaries.forEach(({ el: p }) => { p.style.transition = 'none'; p.style.transform = ''; });
+      secondaries.forEach(({ el: s }) => { s.style.transition = 'none'; s.style.top = '-100%'; });
       busy = false;
-    }, (cols.length - 1) * STAGGER + DUR + 100);
+    }, (primaries.length - 1) * STAGGER + DUR + 100);
   });
 }
 
