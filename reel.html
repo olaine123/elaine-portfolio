@@ -92,36 +92,33 @@ if (new URLSearchParams(location.search).get('play') === '1') {
   fr.src = fr.src + '&autoplay=1&muted=0';
 }
 
-// Letter swap — structure mirrors React LetterSwapForward exactly:
-// overflow:hidden on the outer wrapper, no clip-path (clip-path breaks inside
-// mix-blend-mode parents in Safari), primary exits via transform, secondary via top.
 function initLetterSwap(el) {
   const text = el.textContent.trim();
   if (!text) return;
   el.innerHTML = '';
 
-  // Inner container with overflow:hidden — equivalent to the React component's outer <span>
-  // Nested inside 'el' so ::after pseudo-elements on 'el' still render outside the clip
+  // inner has overflow:hidden + transform:translateZ(0) to force its own compositor
+  // layer — this makes overflow:hidden clip GPU-animated children in Safari too.
   const inner = document.createElement('span');
-  inner.style.cssText = 'display:inline-flex;overflow:hidden;vertical-align:middle;';
+  inner.style.cssText = 'display:inline-flex;overflow:hidden;vertical-align:middle;transform:translateZ(0);';
   el.appendChild(inner);
 
   const STAGGER = 30, DUR = 580, EASE = 'cubic-bezier(0.16,1,0.3,1)';
   const items = [];
 
   [...text].forEach((char, idx) => {
-    const c = char;
     const wrap = document.createElement('span');
     wrap.style.cssText = 'white-space:pre;position:relative;display:inline-flex;';
 
     const primary = document.createElement('span');
-    primary.textContent = c;
+    primary.textContent = char;
     primary.style.cssText = 'position:relative;display:block;';
 
+    // Secondary starts above via transform (GPU path), not top:-100% (layout path)
     const secondary = document.createElement('span');
-    secondary.textContent = c;
+    secondary.textContent = char;
     secondary.setAttribute('aria-hidden', 'true');
-    secondary.style.cssText = 'position:absolute;top:-100%;left:0;display:block;width:100%;';
+    secondary.style.cssText = 'position:absolute;top:0;left:0;display:block;width:100%;transform:translateY(-100%);';
 
     wrap.append(primary, secondary);
     inner.appendChild(wrap);
@@ -132,21 +129,24 @@ function initLetterSwap(el) {
   el.addEventListener('mouseenter', () => {
     if (busy) return;
     busy = true;
+
+    // Use Web Animations API — runs on compositor thread, clipped by inner's overflow:hidden
     items.forEach(({ primary, secondary, delay }) => {
-      setTimeout(() => {
-        primary.style.transition = 'transform ' + DUR + 'ms ' + EASE;
-        primary.style.transform = 'translateY(100%)';
-        secondary.style.transition = 'top ' + DUR + 'ms ' + EASE;
-        secondary.style.top = '0%';
-      }, delay);
+      primary.animate(
+        [{ transform: 'translateY(0)' }, { transform: 'translateY(100%)' }],
+        { duration: DUR, easing: EASE, delay }
+      );
+      secondary.animate(
+        [{ transform: 'translateY(-100%)' }, { transform: 'translateY(0)' }],
+        { duration: DUR, easing: EASE, delay }
+      );
     });
-    setTimeout(() => {
-      items.forEach(({ primary, secondary }) => {
-        primary.style.transition = 'none'; primary.style.transform = '';
-        secondary.style.transition = 'none'; secondary.style.top = '-100%';
-      });
-      busy = false;
-    }, (items.length - 1) * STAGGER + DUR + 100);
+
+    // After all letters finish, animation auto-resets (no fill:forwards)
+    // primary returns to its inline style (no transform = visible)
+    // secondary returns to translateY(-100%) (hidden above) — seamless because
+    // primary and secondary share the same character at the same position.
+    setTimeout(() => { busy = false; }, (items.length - 1) * STAGGER + DUR + 100);
   });
 }
 

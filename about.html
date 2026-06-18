@@ -321,8 +321,10 @@
     if (!text) return;
     el.innerHTML = '';
 
+    // transform:translateZ(0) forces inner onto its own compositor layer so that
+    // overflow:hidden clips GPU-animated children correctly in Safari.
     const inner = document.createElement('span');
-    inner.style.cssText = 'display:inline-flex;overflow:hidden;vertical-align:middle;';
+    inner.style.cssText = 'display:inline-flex;overflow:hidden;vertical-align:middle;transform:translateZ(0);';
     el.appendChild(inner);
 
     const STAGGER = 30, DUR = 580, EASE = 'cubic-bezier(0.16,1,0.3,1)';
@@ -339,7 +341,7 @@
       const secondary = document.createElement('span');
       secondary.textContent = char;
       secondary.setAttribute('aria-hidden', 'true');
-      secondary.style.cssText = 'position:absolute;top:-100%;left:0;display:block;width:100%;';
+      secondary.style.cssText = 'position:absolute;top:0;left:0;display:block;width:100%;transform:translateY(-100%);';
 
       wrap.append(primary, secondary);
       inner.appendChild(wrap);
@@ -350,21 +352,19 @@
     el.addEventListener('mouseenter', () => {
       if (busy) return;
       busy = true;
+
       items.forEach(({ primary, secondary, delay }) => {
-        setTimeout(() => {
-          primary.style.transition = 'transform ' + DUR + 'ms ' + EASE;
-          primary.style.transform = 'translateY(100%)';
-          secondary.style.transition = 'top ' + DUR + 'ms ' + EASE;
-          secondary.style.top = '0%';
-        }, delay);
+        primary.animate(
+          [{ transform: 'translateY(0)' }, { transform: 'translateY(100%)' }],
+          { duration: DUR, easing: EASE, delay }
+        );
+        secondary.animate(
+          [{ transform: 'translateY(-100%)' }, { transform: 'translateY(0)' }],
+          { duration: DUR, easing: EASE, delay }
+        );
       });
-      setTimeout(() => {
-        items.forEach(({ primary, secondary }) => {
-          primary.style.transition = 'none'; primary.style.transform = '';
-          secondary.style.transition = 'none'; secondary.style.top = '-100%';
-        });
-        busy = false;
-      }, (items.length - 1) * STAGGER + DUR + 100);
+
+      setTimeout(() => { busy = false; }, (items.length - 1) * STAGGER + DUR + 100);
     });
   }
 
