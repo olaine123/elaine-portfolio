@@ -323,11 +323,11 @@
     el.innerHTML = '';
     const wrap = document.createElement('span');
     wrap.setAttribute('aria-hidden', 'true');
-    wrap.style.cssText = 'display:inline-flex;overflow:hidden;height:1em;line-height:1;vertical-align:middle;';
+    wrap.style.cssText = 'display:inline-block;overflow:hidden;height:1em;line-height:1;white-space:nowrap;vertical-align:middle;';
     [...text].forEach((char, i) => {
       const s = document.createElement('span');
       s.textContent = char === ' ' ? ' ' : char;
-      s.style.cssText = `display:inline-block;will-change:transform;text-shadow:0 1em currentColor;transition:transform 280ms ease;transition-delay:${i * 25}ms;`;
+      s.style.cssText = `display:inline-block;line-height:1;text-shadow:0 1em currentColor;transition:transform 280ms ease ${i * 25}ms;`;
       wrap.appendChild(s);
     });
     el.appendChild(wrap);
