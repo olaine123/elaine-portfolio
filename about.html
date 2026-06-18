@@ -315,61 +315,6 @@
     entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
   }, { threshold: .12 });
   document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-
-  function initLetterSwap(el) {
-    const text = el.textContent.trim();
-    if (!text) return;
-    el.innerHTML = '';
-
-    const STAGGER = 25, DUR = 420, EASE = 'cubic-bezier(0.16,1,0.3,1)';
-    const items = [];
-
-    [...text].forEach((char, idx) => {
-      const wrap = document.createElement('span');
-      wrap.style.cssText = 'position:relative;display:inline-flex;white-space:pre;';
-
-      const primary = document.createElement('span');
-      primary.textContent = char;
-      primary.style.cssText = 'position:relative;display:block;';
-
-      // Secondary starts invisible above — no clipping needed, opacity hides it
-      const secondary = document.createElement('span');
-      secondary.textContent = char;
-      secondary.setAttribute('aria-hidden', 'true');
-      secondary.style.cssText = 'position:absolute;top:0;left:0;display:block;width:100%;opacity:0;transform:translateY(-100%);';
-
-      wrap.append(primary, secondary);
-      el.appendChild(wrap);
-      items.push({ primary, secondary, delay: idx * STAGGER });
-    });
-
-    let busy = false;
-    el.addEventListener('mouseenter', () => {
-      if (busy) return;
-      busy = true;
-      items.forEach(({ primary, secondary, delay }) => {
-        primary.animate(
-          [{ opacity: 1, transform: 'translateY(0)' }, { opacity: 0, transform: 'translateY(100%)' }],
-          { duration: DUR, easing: EASE, delay }
-        );
-        secondary.animate(
-          [{ opacity: 0, transform: 'translateY(-100%)' }, { opacity: 1, transform: 'translateY(0)' }],
-          { duration: DUR, easing: EASE, delay }
-        );
-      });
-      setTimeout(() => { busy = false; }, (items.length - 1) * STAGGER + DUR + 100);
-    });
-  }
-
-  // Run immediately (script is at bottom of body, DOM is ready)
-  // Also re-run after fonts load as fallback
-  let _lsDone = false;
-  function _runLS() {
-    if (_lsDone) return; _lsDone = true;
-    document.querySelectorAll('.nav-links a, .foot-nav a').forEach(el => initLetterSwap(el));
-  }
-  _runLS();
-  document.fonts.ready.then(_runLS);
 </script>
 </body>
 </html>
