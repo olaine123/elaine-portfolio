@@ -799,6 +799,29 @@ document.addEventListener('keydown',e=>{
   if(e.key==='ArrowLeft'&&lbEl.classList.contains('lb-open'))lbChange(-1);
   if(e.key==='ArrowRight'&&lbEl.classList.contains('lb-open'))lbChange(1);
 });
+function initTextReveal(el) {
+  const text = el.textContent.trim();
+  if (!text) return;
+  el.setAttribute('aria-label', text);
+  el.innerHTML = '';
+  const wrap = document.createElement('span');
+  wrap.setAttribute('aria-hidden', 'true');
+  wrap.style.cssText = 'display:inline-block;overflow:hidden;height:1em;line-height:1;white-space:nowrap;vertical-align:middle;';
+  [...text].forEach((char, i) => {
+    const s = document.createElement('span');
+    s.textContent = char === ' ' ? ' ' : char;
+    s.style.cssText = `display:inline-block;line-height:1;text-shadow:0 1em currentColor;transition:transform 280ms ease ${i * 25}ms;`;
+    wrap.appendChild(s);
+  });
+  el.appendChild(wrap);
+  el.addEventListener('mouseenter', () => {
+    wrap.querySelectorAll('span').forEach(s => { s.style.transform = 'translateY(-1em)'; });
+  });
+  el.addEventListener('mouseleave', () => {
+    wrap.querySelectorAll('span').forEach(s => { s.style.transform = ''; });
+  });
+}
+document.querySelectorAll('.nav-links a, .foot-nav a').forEach(el => initTextReveal(el));
 </script>
 </body>
 </html>
